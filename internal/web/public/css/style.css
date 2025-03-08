@@ -827,6 +827,29 @@ body {
   color: white;
 }
 
+/* 时间选择器图标样式 */
+.form-group input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.form-group input[type="time"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* Firefox */
+.form-group input[type="time"]::-moz-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.7;
+}
+
+/* Microsoft Edge */
+.form-group input[type="time"]::-ms-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.7;
+}
+
 .form-group input[type="text"]:focus,
 .form-group input[type="time"]:focus {
   outline: none;
