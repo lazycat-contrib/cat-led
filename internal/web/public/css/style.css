@@ -859,11 +859,44 @@ body {
 
 .time-picker-group {
   display: flex;
-  gap: 16px;
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
-.time-picker {
+.time-picker, .operation-picker {
   flex: 1;
+}
+
+.operation-picker select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background-color: white;
+  color: var(--text-primary);
+  font-size: 16px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238E8E93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+}
+
+.operation-picker select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+}
+
+.schedule-operation {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.schedule-operation i {
+  margin-right: 8px;
+  font-size: 18px;
 }
 
 .repeat-days {
@@ -956,16 +989,10 @@ input:checked + .toggle-label:before {
 @media (max-width: 400px) {
   .time-picker-group {
     flex-direction: column;
-    gap: 12px;
   }
   
-  .repeat-days {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .day-select {
-    margin-bottom: 8px;
+  .time-picker, .operation-picker {
+    width: 100%;
   }
 }
 

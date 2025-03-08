@@ -91,12 +91,15 @@
                         </div>
                         <div class="form-group time-picker-group">
                             <div class="time-picker">
-                                <label for="start-time">开始时间</label>
+                                <label for="start-time">执行时间</label>
                                 <input type="time" id="start-time" required>
                             </div>
-                            <div class="time-picker">
-                                <label for="end-time">结束时间</label>
-                                <input type="time" id="end-time" required>
+                            <div class="operation-picker">
+                                <label for="operation">操作</label>
+                                <select id="operation" required>
+                                    <option value="on">开灯</option>
+                                    <option value="off">关灯</option>
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">

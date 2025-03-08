@@ -5,9 +5,17 @@ import (
 	"cat-led/internal/web"
 	"context"
 	"log"
+	"os"
+	"path/filepath"
 )
 
 func main() {
+	// 确定数据库路径
+	dbPath := getDbPath()
+
+	// 初始化scheduleUseCase
+	handlers.InitScheduleUseCase(dbPath)
+
 	// 初始化LED状态
 	handlers.InitLedStatus(context.Background())
 
@@ -27,4 +35,27 @@ func main() {
 	if err := server.Run(":3000"); err != nil {
 		log.Fatalf("启动服务器失败: %v", err)
 	}
+}
+
+// getDbPath 获取数据库文件路径
+func getDbPath() string {
+	// 首选标准数据目录
+	dataDir := "/lzcapp/var/data"
+	dbName := "cat_led.db"
+
+	// 检查标准目录是否可用
+	if _, err := os.Stat(dataDir); err == nil {
+		// 确保目录存在
+		if err := os.MkdirAll(dataDir, 0755); err == nil {
+			return filepath.Join(dataDir, dbName)
+		}
+	}
+
+	// 回退到本地目录
+	localDataDir := "./data"
+	if err := os.MkdirAll(localDataDir, 0755); err != nil {
+		log.Printf("无法创建本地数据目录: %v", err)
+	}
+
+	return filepath.Join(localDataDir, dbName)
 }

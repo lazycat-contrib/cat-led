@@ -5,6 +5,7 @@ import (
 	"cat-led/internal/ent/schedule"
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/google/uuid"
 	_ "github.com/lib-x/entsqlite"
@@ -18,8 +19,19 @@ func NewScheduleUseCase(dbPath string) *ScheduleUsecase {
 	dataSourceName := fmt.Sprintf("file:%s?cache=shared&_pragma=foreign_keys(1)&_pragma=journal_mode(WAL)&_pragma=synchronous(NORMAL)&_pragma=busy_timeout(10000)", dbPath)
 	entClient, err := ent.Open("sqlite3", dataSourceName)
 	if err != nil {
+		log.Printf("无法连接到数据库: %v", err)
 		return nil
 	}
+
+	// 自动创建数据库表
+	ctx := context.Background()
+	if err := entClient.Schema.Create(ctx); err != nil {
+		log.Printf("无法创建数据库表: %v", err)
+		entClient.Close()
+		return nil
+	}
+
+	log.Printf("数据库初始化成功，已创建必要的表结构")
 	return &ScheduleUsecase{client: entClient}
 }
 

@@ -150,11 +150,11 @@ function updateUserInfoDisplay() {
             // 如果至少有一个值，显示设备信息区域
             deviceInfoSection.style.display = '';
         } else {
-            // 没有任何设备信息时，隐藏整个区域
+            // 如果没有设备信息，隐藏整个区域
             deviceInfoSection.style.display = 'none';
         }
     } catch (error) {
-        console.error('更新用户信息DOM时出错:', error);
+        console.error('更新用户信息显示错误:', error);
     }
 }
 
@@ -162,133 +162,166 @@ function updateUserInfoDisplay() {
 async function fetchLedStatus() {
     try {
         const response = await fetch('/api/led-status');
-        if (response.ok) {
-            const data = await response.json();
-            updateLedStatus(data.status);
-            
-            // 连续失败计数器重置
-            if (window.ledStatusErrorCount && window.ledStatusErrorCount > 0) {
-                window.ledStatusErrorCount = 0;
-                console.log('设备状态连接已恢复');
-            }
-        } else {
-            handleLedStatusError('API返回错误: ' + response.status);
+        if (!response.ok) {
+            throw new Error('获取LED状态失败');
         }
+        
+        const data = await response.json();
+        
+        // 添加调试日志
+        console.log('LED状态API响应:', data);
+        
+        if (typeof data.status !== 'boolean') {
+            throw new Error('无效的LED状态数据');
+        }
+        
+        updateLedStatus(data.status);
     } catch (error) {
-        handleLedStatusError(error.message);
+        console.error('获取LED状态错误:', error);
+        handleLedStatusError('获取状态失败');
     }
 }
 
-// 处理LED状态获取错误
+// 处理LED状态错误
 function handleLedStatusError(errorMsg) {
-    // 使用全局变量跟踪连续失败次数
-    if (!window.ledStatusErrorCount) {
-        window.ledStatusErrorCount = 0;
-    }
+    // 日志记录错误
+    console.error('LED状态错误:', errorMsg);
     
-    window.ledStatusErrorCount++;
+    // 更新UI以显示错误状态
+    $ledStatus.textContent = '状态未知';
+    $ledStatus.classList.add('error');
     
-    console.log(`设备状态刷新失败 (${window.ledStatusErrorCount}): ${errorMsg}`);
+    // 禁用开关
+    $ledToggle.disabled = true;
+    $ledToggle.checked = false;
     
-    // 如果连续失败5次以上，显示通知并减慢刷新频率
-    if (window.ledStatusErrorCount === 5) {
-        showNotification('设备状态连接异常，正在尝试重新连接...', 'warning');
-        // 调整为5秒刷新一次
-        restartStatusRefreshWithInterval(5000);
-    }
+    // 显示错误通知
+    showNotification('无法获取LED状态', 'error');
     
-    // 如果连续失败15次以上，考虑暂停刷新或进一步降低频率
-    if (window.ledStatusErrorCount === 15) {
-        showNotification('设备状态连接失败，请检查网络连接', 'error');
-        // 调整为10秒刷新一次
-        restartStatusRefreshWithInterval(10000);
-    }
+    // 尝试在更长的延迟后重新获取
+    setTimeout(() => {
+        // 停止当前的刷新间隔（如果有）
+        stopStatusRefresh();
+        
+        // 尝试重新获取
+        fetchLedStatus()
+            .then(() => {
+                // 如果成功，恢复正常的刷新间隔
+                restartStatusRefreshWithInterval(2000);
+            })
+            .catch(() => {
+                // 如果仍然失败，使用更长的刷新间隔
+                restartStatusRefreshWithInterval(5000);
+            });
+    }, 2000);
 }
 
-// 使用指定的时间间隔重启状态刷新
+// 用指定间隔重启状态刷新
 function restartStatusRefreshWithInterval(interval) {
-    if (statusRefreshInterval) {
-        clearInterval(statusRefreshInterval);
-    }
+    // 停止现有的刷新
+    stopStatusRefresh();
     
-    statusRefreshInterval = setInterval(fetchLedStatus, interval);
-    console.log(`设备状态刷新已调整为${interval/1000}秒刷新一次`);
+    // 启动新的刷新计时器
+    statusRefreshInterval = setInterval(() => {
+        fetchLedStatus().catch(error => {
+            console.error('状态刷新错误:', error);
+        });
+    }, interval);
 }
 
-// 开始定时刷新设备状态
+// 开始状态刷新
 function startStatusRefresh() {
-    // 如果已经有定时器在运行，先清除它
-    if (statusRefreshInterval) {
-        clearInterval(statusRefreshInterval);
-    }
+    // 如果已经有一个刷新间隔，先停止它
+    stopStatusRefresh();
     
-    // 重置错误计数器
-    window.ledStatusErrorCount = 0;
+    // 设置新的刷新间隔
+    statusRefreshInterval = setInterval(() => {
+        fetchLedStatus().catch(error => {
+            console.error('状态刷新错误:', error);
+        });
+    }, 2000);
     
-    // 设置新的定时器，每2秒刷新一次设备状态
-    statusRefreshInterval = setInterval(fetchLedStatus, 2000);
-    console.log('设备状态刷新已启动，每2秒刷新一次');
+    // 添加页面可见性变化的处理程序
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 }
 
-// 停止定时刷新设备状态
+// 停止状态刷新
 function stopStatusRefresh() {
     if (statusRefreshInterval) {
         clearInterval(statusRefreshInterval);
         statusRefreshInterval = null;
-        console.log('设备状态刷新已停止');
     }
 }
 
-// 更新LED状态显示
+// 更新LED状态UI
 function updateLedStatus(status) {
     currentLedStatus = status;
-    
-    // 更新复选框状态
     $ledToggle.checked = status;
-    
-    // 更新文本状态
-    $ledStatus.textContent = status ? '开启' : '关闭';
+    $ledStatus.textContent = status ? '已开启' : '已关闭';
+    $ledStatus.classList.remove('error');
+    $ledToggle.disabled = false;
 }
 
 // 切换LED状态
 async function toggleLedStatus() {
+    const newStatus = !currentLedStatus;
+    
     try {
-        const response = await fetch('/ledcontrol');
+        // 更新UI以显示加载状态
+        $ledToggle.disabled = true;
+        $ledStatus.textContent = '更新中...';
+        
+        // 构建请求URL
+        const url = `/ledcontrol?turn=${newStatus ? 'on' : 'off'}`;
+        
+        // 发送请求
+        const response = await fetch(url);
+        
         if (!response.ok) {
             throw new Error('切换LED状态失败');
         }
         
-        // 更新状态 (由于我们没有获取状态的接口，所以切换后直接反转当前已知状态)
-        updateLedStatus(!currentLedStatus);
+        // 更新UI
+        updateLedStatus(newStatus);
         
-        showNotification(`LED已${currentLedStatus ? '开启' : '关闭'}`, 'success');
+        // 显示通知
+        showNotification(`灯已${newStatus ? '开启' : '关闭'}`, 'success');
     } catch (error) {
         console.error('切换LED状态错误:', error);
-        showNotification('切换LED状态失败', 'error');
-
-        // 发生错误时恢复复选框状态
-        $ledToggle.checked = currentLedStatus;
+        
+        // 恢复原状态
+        updateLedStatus(currentLedStatus);
+        
+        // 显示错误通知
+        showNotification('操作失败', 'error');
     }
 }
 
-// 获取定时任务列表
+// 获取定时任务
 async function fetchSchedules() {
     try {
         const response = await fetch('/api/schedules');
         if (!response.ok) {
-            throw new Error('获取定时任务列表失败');
+            throw new Error('获取定时任务失败');
         }
         
         schedules = await response.json();
+        console.log('获取的定时任务:', schedules);
+        
+        // 渲染任务列表
         renderSchedulesList();
     } catch (error) {
-        console.error('获取定时任务列表错误:', error);
-        showNotification('获取定时任务列表失败', 'error');
+        console.error('获取定时任务错误:', error);
+        showNotification('获取定时任务失败', 'error');
     }
 }
 
 // 渲染定时任务列表
 function renderSchedulesList() {
+    // 清空列表内容
+    $schedulesList.innerHTML = '';
+    
+    // 如果没有任务，显示空状态
     if (!schedules || schedules.length === 0) {
         $schedulesList.innerHTML = `
             <div class="empty-state">
@@ -299,103 +332,146 @@ function renderSchedulesList() {
         return;
     }
     
-    let html = '';
-    
+    // 渲染每个任务
     schedules.forEach(schedule => {
-        const startTime = new Date(schedule.startTime).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-        const endTime = new Date(schedule.endTime).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-        const creatorName = findUserNameById(schedule.creatorId);
-        const isCurrentUserCreator = schedule.creatorId === currentUserInfo.UserId;
-        const canEdit = isCurrentUserCreator || schedule.allowEdit;
+        // 格式化时间
+        const hour = schedule.hour || 0;
+        const minute = schedule.minute || 0;
+        const timeFormatted = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
         
-        html += `
-            <div class="schedule-item" data-id="${schedule.id}">
-                <div class="schedule-header">
-                    <div class="schedule-name">${schedule.name}</div>
-                    <div class="schedule-toggle">
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="toggle-${schedule.id}" ${schedule.enabled ? 'checked' : ''} ${canEdit ? '' : 'disabled'}>
-                            <label for="toggle-${schedule.id}" class="toggle-label" onclick="toggleSchedule('${schedule.id}')"></label>
-                        </div>
-                    </div>
-                </div>
-                <div class="schedule-times">
-                    <span>${startTime}</span>
-                    <i class="ri-arrow-right-line"></i>
-                    <span>${endTime}</span>
-                </div>
-                <div class="schedule-dates">
-                    ${renderWeekdays(schedule.repeatDays)}
-                </div>
-                <div class="schedule-creator">
-                    <i class="ri-user-line"></i>
-                    <span>${creatorName}</span>
-                    ${schedule.allowEdit ? '<span class="public-badge">公开</span>' : ''}
-                </div>
-                ${canEdit ? `
+        // 确定操作类型图标和文本
+        const operationIcon = schedule.operation === 'on' ? 'ri-lightbulb-line' : 'ri-lightbulb-flash-line';
+        const operationText = schedule.operation === 'on' ? '开灯' : '关灯';
+        
+        // 创建任务元素
+        const scheduleElement = document.createElement('div');
+        scheduleElement.className = 'schedule-item';
+        
+        // 添加启用/禁用状态类
+        if (!schedule.enabled) {
+            scheduleElement.classList.add('disabled');
+        }
+        
+        scheduleElement.innerHTML = `
+            <div class="schedule-header">
+                <h3 class="schedule-name">${schedule.name}</h3>
                 <div class="schedule-actions">
-                    <button class="schedule-action-btn edit" onclick="openEditScheduleModal('${schedule.id}')">
-                        编辑
+                    <button class="edit-btn" data-id="${schedule.id}" aria-label="编辑任务">
+                        <i class="ri-edit-line"></i>
                     </button>
-                    ${isCurrentUserCreator ? `
-                    <button class="schedule-action-btn delete" onclick="deleteSchedule('${schedule.id}')">
-                        删除
+                    <button class="delete-btn" data-id="${schedule.id}" aria-label="删除任务">
+                        <i class="ri-delete-bin-line"></i>
                     </button>
-                    ` : ''}
                 </div>
-                ` : ''}
+            </div>
+            <div class="schedule-time">
+                <i class="ri-time-line"></i>
+                <span>${timeFormatted}</span>
+            </div>
+            <div class="schedule-operation">
+                <i class="${operationIcon}"></i>
+                <span>${operationText}</span>
+            </div>
+            <div class="schedule-repeat">
+                <i class="ri-repeat-line"></i>
+                <span>${renderWeekdays(schedule.repeatDays)}</span>
+            </div>
+            <div class="schedule-creator" title="创建者">
+                <i class="ri-user-line"></i>
+                <span>${schedule.creatorId || '未知'}</span>
+            </div>
+            <div class="schedule-toggle">
+                <div class="toggle-switch small">
+                    <input type="checkbox" id="toggle-${schedule.id}" ${schedule.enabled ? 'checked' : ''}>
+                    <label for="toggle-${schedule.id}" class="toggle-label"></label>
+                </div>
             </div>
         `;
+        
+        // 添加到列表
+        $schedulesList.appendChild(scheduleElement);
+        
+        // 添加事件监听器
+        const toggleInput = scheduleElement.querySelector(`#toggle-${schedule.id}`);
+        toggleInput.addEventListener('change', () => toggleSchedule(schedule.id));
+        
+        // 编辑按钮
+        const editBtn = scheduleElement.querySelector('.edit-btn');
+        editBtn.addEventListener('click', () => openEditScheduleModal(schedule.id));
+        
+        // 删除按钮
+        const deleteBtn = scheduleElement.querySelector('.delete-btn');
+        deleteBtn.addEventListener('click', () => deleteSchedule(schedule.id));
     });
-    
-    $schedulesList.innerHTML = html;
 }
 
-// 渲染星期显示
+// 渲染星期几
 function renderWeekdays(days) {
-    const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
-    let html = '';
+    if (!days || days.length === 0) return '无重复';
     
-    weekdays.forEach((day, index) => {
-        const isActive = days.includes(index);
-        html += `<div class="schedule-day ${isActive ? 'active' : ''}">${day}</div>`;
-    });
+    const weekdayNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
     
-    return html;
+    // 如果包含所有日期
+    if (days.length === 7) return '每天';
+    
+    // 如果是工作日
+    if (days.length === 5 && days.includes(1) && days.includes(2) && days.includes(3) && days.includes(4) && days.includes(5)) {
+        return '工作日';
+    }
+    
+    return days.map(day => weekdayNames[day]).join(', ');
 }
 
-// 打开添加定时任务模态框
+// 打开添加任务模态框
 function openAddScheduleModal() {
-    currentEditingScheduleId = null;
-    $modalTitle.textContent = '添加定时任务';
+    // 重置表单
     $scheduleForm.reset();
+    $modalTitle.textContent = '添加定时任务';
+    currentEditingScheduleId = null;
     
-    // 重置星期选择
+    // 重置选择的星期几
     $daySelects.forEach(el => el.classList.remove('selected'));
+    
+    // 设置默认时间 (格式: HH:MM)
+    document.getElementById('start-time').value = '22:00';
+    
+    // 设置默认操作为开灯
+    document.getElementById('operation').value = 'on';
     
     // 显示模态框
     $scheduleModal.classList.add('show');
 }
 
-// 打开编辑定时任务模态框
+// 打开编辑任务模态框
 function openEditScheduleModal(scheduleId) {
     const schedule = schedules.find(s => s.id === scheduleId);
     if (!schedule) return;
     
+    // 设置当前正在编辑的任务ID
     currentEditingScheduleId = scheduleId;
     $modalTitle.textContent = '编辑定时任务';
     
-    // 填充表单
+    // 填充表单数据
     document.getElementById('schedule-name').value = schedule.name;
-    document.getElementById('start-time').value = formatTimeForInput(new Date(schedule.startTime));
-    document.getElementById('end-time').value = formatTimeForInput(new Date(schedule.endTime));
+    
+    // 设置时间 - 使用小时和分钟
+    const hour = schedule.hour || 0;
+    const minute = schedule.minute || 0;
+    document.getElementById('start-time').value = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+    
+    // 设置操作
+    document.getElementById('operation').value = schedule.operation || 'on';
+    
+    // 设置允许他人编辑
     document.getElementById('allow-edit').checked = schedule.allowEdit;
+    
+    // 设置启用状态
     document.getElementById('schedule-enabled').checked = schedule.enabled;
     
-    // 设置星期选择
+    // 设置重复的星期几
     $daySelects.forEach(el => {
         const day = parseInt(el.dataset.day);
-        if (schedule.repeatDays.includes(day)) {
+        if (schedule.repeatDays && schedule.repeatDays.includes(day)) {
             el.classList.add('selected');
         } else {
             el.classList.remove('selected');
@@ -424,8 +500,8 @@ async function saveSchedule(e) {
     
     // 获取表单数据
     const name = document.getElementById('schedule-name').value;
-    const startTimeStr = document.getElementById('start-time').value;
-    const endTimeStr = document.getElementById('end-time').value;
+    const timeString = document.getElementById('start-time').value;
+    const operation = document.getElementById('operation').value;
     const allowEdit = document.getElementById('allow-edit').checked;
     const enabled = document.getElementById('schedule-enabled').checked;
     
@@ -437,25 +513,18 @@ async function saveSchedule(e) {
         }
     });
     
-    // 创建日期对象
-    const now = new Date();
-    const [startHours, startMinutes] = startTimeStr.split(':').map(Number);
-    const [endHours, endMinutes] = endTimeStr.split(':').map(Number);
+    // 直接从时间字符串中提取小时和分钟
+    const [hours, minutes] = timeString.split(':').map(Number);
     
-    const startTime = new Date(now);
-    startTime.setHours(startHours, startMinutes, 0, 0);
-    
-    const endTime = new Date(now);
-    endTime.setHours(endHours, endMinutes, 0, 0);
-    
-    // 构建任务数据
+    // 构建任务数据 - 直接使用小时和分钟数
     const scheduleData = {
         name,
-        startTime,
-        endTime,
+        hour: hours,
+        minute: minutes,
         repeatDays,
         allowEdit,
-        enabled
+        enabled,
+        operation
     };
     
     try {
@@ -482,7 +551,8 @@ async function saveSchedule(e) {
         }
         
         if (!response.ok) {
-            throw new Error(currentEditingScheduleId ? '更新任务失败' : '创建任务失败');
+            const errorData = await response.json();
+            throw new Error(errorData.error || (currentEditingScheduleId ? '更新任务失败' : '创建任务失败'));
         }
         
         // 关闭模态框
@@ -494,7 +564,7 @@ async function saveSchedule(e) {
         showNotification(currentEditingScheduleId ? '任务已更新' : '任务已创建', 'success');
     } catch (error) {
         console.error('保存定时任务错误:', error);
-        showNotification('保存任务失败', 'error');
+        showNotification(`保存任务失败: ${error.message}`, 'error');
     }
 }
 
@@ -503,9 +573,15 @@ async function toggleSchedule(scheduleId) {
     const schedule = schedules.find(s => s.id === scheduleId);
     if (!schedule) return;
     
+    // 创建更新数据
     const updatedSchedule = {
-        ...schedule,
-        enabled: !schedule.enabled
+        name: schedule.name,
+        hour: schedule.hour || 0,
+        minute: schedule.minute || 0,
+        repeatDays: schedule.repeatDays || [],
+        allowEdit: schedule.allowEdit,
+        enabled: !schedule.enabled,
+        operation: schedule.operation
     };
     
     try {
@@ -518,19 +594,23 @@ async function toggleSchedule(scheduleId) {
         });
         
         if (!response.ok) {
-            throw new Error('更新任务状态失败');
+            const errorData = await response.json();
+            throw new Error(errorData.error || '更新任务状态失败');
         }
         
-        // 更新本地数据
-        schedule.enabled = !schedule.enabled;
+        // 重新获取任务列表而不是直接更新本地数据
+        await fetchSchedules();
         
-        // 重新渲染列表
-        renderSchedulesList();
-        
-        showNotification(`任务已${schedule.enabled ? '启用' : '禁用'}`, 'success');
+        showNotification(`任务已${!schedule.enabled ? '启用' : '禁用'}`, 'success');
     } catch (error) {
         console.error('切换任务状态错误:', error);
-        showNotification('更新任务状态失败', 'error');
+        showNotification(`更新任务状态失败: ${error.message}`, 'error');
+        
+        // 恢复UI状态（因为操作失败）
+        const toggleInput = document.querySelector(`#toggle-${scheduleId}`);
+        if (toggleInput) {
+            toggleInput.checked = schedule.enabled;
+        }
     }
 }
 
@@ -544,73 +624,81 @@ async function deleteSchedule(scheduleId) {
         });
         
         if (!response.ok) {
-            throw new Error('删除任务失败');
+            const errorData = await response.json();
+            throw new Error(errorData.error || '删除任务失败');
         }
         
-        // 从本地数据中移除
-        schedules = schedules.filter(s => s.id !== scheduleId);
-        
-        // 重新渲染列表
-        renderSchedulesList();
+        // 重新获取任务列表
+        await fetchSchedules();
         
         showNotification('任务已删除', 'success');
     } catch (error) {
         console.error('删除任务错误:', error);
-        showNotification('删除任务失败', 'error');
+        showNotification(`删除任务失败: ${error.message}`, 'error');
     }
 }
 
 // 显示通知
 function showNotification(message, type = 'info') {
-    // 创建toast元素
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     
-    // 根据类型设置图标
-    let icon = '';
-    switch(type) {
+    // 设置图标
+    let icon;
+    switch (type) {
         case 'success':
             icon = 'ri-check-line';
             break;
         case 'error':
             icon = 'ri-error-warning-line';
             break;
+        case 'warning':
+            icon = 'ri-alert-line';
+            break;
         default:
             icon = 'ri-information-line';
     }
     
-    // 设置toast内容
     toast.innerHTML = `
-        <i class="toast-icon ${icon}"></i>
-        <div class="toast-message">${message}</div>
-        <button class="toast-close" aria-label="关闭通知"><i class="ri-close-line"></i></button>
+        <div class="toast-icon">
+            <i class="${icon}"></i>
+        </div>
+        <div class="toast-content">
+            <p>${message}</p>
+        </div>
+        <button class="toast-close" aria-label="关闭">
+            <i class="ri-close-line"></i>
+        </button>
     `;
     
-    // 获取toast容器
+    // 添加到容器
     const container = document.getElementById('toast-container');
     container.appendChild(toast);
     
-    // 添加关闭事件
+    // 关闭按钮事件
     const closeBtn = toast.querySelector('.toast-close');
     closeBtn.addEventListener('click', () => {
         closeToast(toast);
     });
     
-    // 显示动画
+    // 添加显示类，触发动画
     setTimeout(() => {
         toast.classList.add('show');
     }, 10);
     
-    // 3秒后自动关闭
+    // 自动关闭
     setTimeout(() => {
         closeToast(toast);
     }, 3000);
 }
 
-// 关闭toast
+// 关闭通知
 function closeToast(toast) {
-    // 添加隐藏动画
-    toast.classList.add('hide');
+    // 如果已经关闭，不执行
+    if (!toast.parentNode) return;
+    
+    // 触发关闭动画
+    toast.classList.remove('show');
     
     // 动画结束后移除元素
     setTimeout(() => {
@@ -622,68 +710,57 @@ function closeToast(toast) {
 
 // 初始化事件监听器
 function initEventListeners() {
-    // LED复选框切换
-    $ledToggle.addEventListener('change', function(e) {
-        // 阻止默认行为，我们手动控制复选框状态
-        e.preventDefault();
-        
-        // 调用后端切换LED状态
-        toggleLedStatus();
-    });
+    // LED开关
+    $ledToggle.addEventListener('change', toggleLedStatus);
     
-    // 添加定时任务按钮
+    // 添加任务按钮
     $addScheduleBtn.addEventListener('click', openAddScheduleModal);
     
     // 关闭模态框按钮
     $closeModalBtn.addEventListener('click', closeModal);
     $cancelScheduleBtn.addEventListener('click', closeModal);
     
-    // 表单提交
+    // 保存任务
     $scheduleForm.addEventListener('submit', saveSchedule);
     
-    // 星期选择
+    // 重复日期选择
     $daySelects.forEach(el => {
         el.addEventListener('click', () => {
             el.classList.toggle('selected');
         });
     });
     
-    // 点击模态框外部关闭
+    // 模态框外部点击关闭
     $scheduleModal.addEventListener('click', (e) => {
         if (e.target === $scheduleModal) {
             closeModal();
         }
     });
     
-    // 点击模态框内容区域阻止冒泡
-    document.querySelector('.modal-content').addEventListener('click', (e) => {
-        e.stopPropagation();
+    // 添加键盘Escape键关闭模态框
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && $scheduleModal.classList.contains('show')) {
+            closeModal();
+        }
     });
     
-    // 页面卸载时清理定时器
-    window.addEventListener('beforeunload', () => {
-        stopStatusRefresh();
-    });
-    
-    // 页面可见性变化事件
+    // 监听页面可见性变化
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
-    // 给定时任务列表添加委托事件处理
-    $schedulesList.addEventListener('click', handleScheduleActions);
 }
 
 // 处理页面可见性变化
 function handleVisibilityChange() {
-    if (document.hidden) {
-        // 当页面不可见时，降低刷新频率为10秒一次，以节省资源
-        console.log('页面不可见，调整设备状态刷新频率');
-        restartStatusRefreshWithInterval(10000);
-    } else {
-        // 当页面重新可见时，恢复正常的刷新频率
-        console.log('页面可见，恢复设备状态刷新频率');
-        restartStatusRefreshWithInterval(2000);
+    if (document.visibilityState === 'visible') {
+        // 页面变为可见时，立即获取最新状态并重启定时刷新
+        fetchLedStatus().catch(console.error);
+        fetchSchedules().catch(console.error);
         
-        // 页面可见时立即刷新一次状态
-        fetchLedStatus();
+        // 如果刷新计时器不存在，重新启动它
+        if (!statusRefreshInterval) {
+            startStatusRefresh();
+        }
+    } else {
+        // 页面不可见时，停止刷新以节省资源
+        stopStatusRefresh();
     }
 } 
