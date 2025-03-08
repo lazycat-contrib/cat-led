@@ -4,6 +4,7 @@ let allUserInfos = [];
 let currentLedStatus = false;
 let schedules = [];
 let currentEditingScheduleId = null;
+let statusRefreshInterval = null; // 新增：用于存储状态刷新的定时器ID
 
 // DOM元素
 const $ledToggle = document.getElementById('led-toggle');
@@ -29,6 +30,9 @@ async function initApp() {
     
     // 获取LED状态
     await fetchLedStatus();
+    
+    // 设置2秒定时刷新设备状态
+    startStatusRefresh();
     
     // 获取定时任务
     await fetchSchedules();
@@ -157,20 +161,81 @@ function updateUserInfoDisplay() {
 // 获取LED状态
 async function fetchLedStatus() {
     try {
-        // 这里模拟获取LED状态，由于后端只有切换功能，没有获取当前状态的功能
-        // 实际应用中应该从后端获取当前状态
         const response = await fetch('/api/led-status');
         if (response.ok) {
             const data = await response.json();
             updateLedStatus(data.status);
+            
+            // 连续失败计数器重置
+            if (window.ledStatusErrorCount && window.ledStatusErrorCount > 0) {
+                window.ledStatusErrorCount = 0;
+                console.log('设备状态连接已恢复');
+            }
         } else {
-            // 如果接口不存在，假设LED初始状态为关闭
-            updateLedStatus(false);
+            handleLedStatusError('API返回错误: ' + response.status);
         }
     } catch (error) {
-        console.log('获取LED状态错误 (可能未实现此接口):', error);
-        // 假设LED初始状态为关闭
-        updateLedStatus(false);
+        handleLedStatusError(error.message);
+    }
+}
+
+// 处理LED状态获取错误
+function handleLedStatusError(errorMsg) {
+    // 使用全局变量跟踪连续失败次数
+    if (!window.ledStatusErrorCount) {
+        window.ledStatusErrorCount = 0;
+    }
+    
+    window.ledStatusErrorCount++;
+    
+    console.log(`设备状态刷新失败 (${window.ledStatusErrorCount}): ${errorMsg}`);
+    
+    // 如果连续失败5次以上，显示通知并减慢刷新频率
+    if (window.ledStatusErrorCount === 5) {
+        showNotification('设备状态连接异常，正在尝试重新连接...', 'warning');
+        // 调整为5秒刷新一次
+        restartStatusRefreshWithInterval(5000);
+    }
+    
+    // 如果连续失败15次以上，考虑暂停刷新或进一步降低频率
+    if (window.ledStatusErrorCount === 15) {
+        showNotification('设备状态连接失败，请检查网络连接', 'error');
+        // 调整为10秒刷新一次
+        restartStatusRefreshWithInterval(10000);
+    }
+}
+
+// 使用指定的时间间隔重启状态刷新
+function restartStatusRefreshWithInterval(interval) {
+    if (statusRefreshInterval) {
+        clearInterval(statusRefreshInterval);
+    }
+    
+    statusRefreshInterval = setInterval(fetchLedStatus, interval);
+    console.log(`设备状态刷新已调整为${interval/1000}秒刷新一次`);
+}
+
+// 开始定时刷新设备状态
+function startStatusRefresh() {
+    // 如果已经有定时器在运行，先清除它
+    if (statusRefreshInterval) {
+        clearInterval(statusRefreshInterval);
+    }
+    
+    // 重置错误计数器
+    window.ledStatusErrorCount = 0;
+    
+    // 设置新的定时器，每2秒刷新一次设备状态
+    statusRefreshInterval = setInterval(fetchLedStatus, 2000);
+    console.log('设备状态刷新已启动，每2秒刷新一次');
+}
+
+// 停止定时刷新设备状态
+function stopStatusRefresh() {
+    if (statusRefreshInterval) {
+        clearInterval(statusRefreshInterval);
+        statusRefreshInterval = null;
+        console.log('设备状态刷新已停止');
     }
 }
 
@@ -594,4 +659,31 @@ function initEventListeners() {
     document.querySelector('.modal-content').addEventListener('click', (e) => {
         e.stopPropagation();
     });
+    
+    // 页面卸载时清理定时器
+    window.addEventListener('beforeunload', () => {
+        stopStatusRefresh();
+    });
+    
+    // 页面可见性变化事件
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // 给定时任务列表添加委托事件处理
+    $schedulesList.addEventListener('click', handleScheduleActions);
+}
+
+// 处理页面可见性变化
+function handleVisibilityChange() {
+    if (document.hidden) {
+        // 当页面不可见时，降低刷新频率为10秒一次，以节省资源
+        console.log('页面不可见，调整设备状态刷新频率');
+        restartStatusRefreshWithInterval(10000);
+    } else {
+        // 当页面重新可见时，恢复正常的刷新频率
+        console.log('页面可见，恢复设备状态刷新频率');
+        restartStatusRefreshWithInterval(2000);
+        
+        // 页面可见时立即刷新一次状态
+        fetchLedStatus();
+    }
 } 
