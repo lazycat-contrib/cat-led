@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>懒猫关灯</title>
+    <link rel="stylesheet" href="/static/css/normalize-5.0.0.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- 添加图标库 -->
+    <link rel="stylesheet" href="/static/css/remixicon.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 顶部导航栏 -->
+        <header class="app-header">
+            <div class="header-title">懒猫关灯</div>
+            <div class="header-actions">
+                <button id="add-schedule-btn" aria-label="添加定时任务">
+                    <i class="ri-add-line"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- 用户信息区域 -->
+        <section class="user-info-section">
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <i class="ri-user-3-line"></i>
+                </div>
+                <div class="user-details">
+                    <div class="user-name">加载中...</div>
+                    <div class="user-role">角色: 加载中...</div>
+                </div>
+            </div>
+            <div class="device-info">
+                <div class="device-id">设备ID: 加载中...</div>
+                <div class="device-version">版本: 加载中...</div>
+            </div>
+        </section>
+
+        <!-- LED当前状态展示 -->
+        <section class="led-status-section">
+            <div class="switch">
+                <input type="checkbox" name="toggle" id="led-toggle">
+                <label for="led-toggle">
+                    <i class="bulb">
+                        <span class="bulb-center"></span>
+                        <span class="filament-1"></span>
+                        <span class="filament-2"></span>
+                        <span class="reflections">
+                            <span></span>
+                        </span>
+                        <span class="sparks">
+                            <i class="spark1"></i>
+                            <i class="spark2"></i>
+                            <i class="spark3"></i>
+                            <i class="spark4"></i>
+                        </span>
+                    </i>
+                </label>
+            </div>
+            <div class="led-status-text">当前状态: <span id="led-status">加载中...</span></div>
+        </section>
+
+        <!-- 定时任务列表 -->
+        <section class="schedules-section">
+            <h2 class="section-title">定时任务</h2>
+            <div class="schedules-list" id="schedules-list">
+                <!-- 定时任务将通过JavaScript动态插入 -->
+                <div class="empty-state">
+                    <i class="ri-time-line"></i>
+                    <p>暂无定时任务，点击右上角添加</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 添加/编辑定时任务模态框 -->
+        <div class="modal" id="schedule-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-title">添加定时任务</h3>
+                    <button id="close-modal-btn" aria-label="关闭">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="schedule-form">
+                        <div class="form-group">
+                            <label for="schedule-name">任务名称</label>
+                            <input type="text" id="schedule-name" placeholder="请输入任务名称" required>
+                        </div>
+                        <div class="form-group time-picker-group">
+                            <div class="time-picker">
+                                <label for="start-time">开始时间</label>
+                                <input type="time" id="start-time" required>
+                            </div>
+                            <div class="time-picker">
+                                <label for="end-time">结束时间</label>
+                                <input type="time" id="end-time" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>重复</label>
+                            <div class="repeat-days">
+                                <div class="day-select" data-day="0">日</div>
+                                <div class="day-select" data-day="1">一</div>
+                                <div class="day-select" data-day="2">二</div>
+                                <div class="day-select" data-day="3">三</div>
+                                <div class="day-select" data-day="4">四</div>
+                                <div class="day-select" data-day="5">五</div>
+                                <div class="day-select" data-day="6">六</div>
+                            </div>
+                        </div>
+                        <div class="form-group toggle-group">
+                            <label for="allow-edit">允许他人编辑</label>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="allow-edit">
+                                <label for="allow-edit" class="toggle-label"></label>
+                            </div>
+                        </div>
+                        <div class="form-group toggle-group">
+                            <label for="schedule-enabled">启用任务</label>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="schedule-enabled" checked>
+                                <label for="schedule-enabled" class="toggle-label"></label>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="primary-button" id="save-schedule-btn">保存</button>
+                            <button type="button" class="secondary-button" id="cancel-schedule-btn">取消</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast通知容器 -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html> 

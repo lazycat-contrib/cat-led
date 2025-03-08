@@ -1,0 +1,14 @@
+lzc-sdk-version: 0.1
+name: 懒猫关灯
+package: cloud.lazycat.app.czyt.lazy-cat-led-helper
+version: 0.0.1
+description: 
+license: https://choosealicense.com/licenses/mit/
+homepage: 
+author: 
+application:
+  subdomain: lazy-cat-led-helper
+  public_path:
+    - /
+  routes:
+    - /=exec://3000,/lzcapp/pkg/content/cat-led

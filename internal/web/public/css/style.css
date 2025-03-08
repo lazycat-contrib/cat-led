@@ -1,0 +1,1060 @@
+/* 基础样式和变量 */
+:root {
+  --primary-color: #007AFF;
+  --success-color: #34C759;
+  --warning-color: #FF9500;
+  --danger-color: #FF3B30;
+  --background-color: #F2F2F7;
+  --card-background: #FFFFFF;
+  --modal-background: rgba(0, 0, 0, 0.4);
+  --text-primary: #000000;
+  --text-secondary: #8E8E93;
+  --border-color: #E5E5EA;
+  --toggle-off-bg: #E9E9EA;
+  --toggle-on-bg: var(--primary-color);
+  --led-on-color: #34C759;
+  --led-off-color: #8E8E93;
+  --border-radius: 12px;
+  --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #514878;
+  color: white;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+#app {
+  max-width: 450px;
+  margin: 0 auto;
+  padding: 0 0 30px 0;
+  min-height: 100vh;
+  position: relative;
+  background-color: transparent;
+}
+
+/* 头部样式 */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(81, 72, 120, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+}
+
+.header-actions button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s ease;
+}
+
+.header-actions button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 用户信息区域 */
+.user-info-section {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  margin: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-right: 16px;
+  overflow: hidden;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-details {
+  flex: 1;
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 4px;
+  color: white;
+}
+
+.user-role {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.device-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 12px;
+}
+
+/* LED状态区域 */
+.led-status-section {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  margin: 16px;
+  padding: 30px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.led-status-text {
+  font-size: 18px;
+  font-weight: 500;
+  margin-top: 30px;
+  color: white;
+  text-align: center;
+}
+
+/* 灯泡开关样式 */
+.switch {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.switch input {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  z-index: 100;
+  cursor: pointer;
+}
+
+.switch label {
+  height: 110px;
+  width: 220px;
+  background-color: #39315a;
+  border-radius: 100px;
+  display: block;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.2), inset 0 0 5px -2px rgba(0,0,0,0.4);
+}
+
+.switch label .bulb {
+  height: 90px;
+  width: 90px;
+  background-color: #4a426b;
+  border-radius: 50%;
+  position: relative;
+  top: 10px;
+  left: 10px;
+  display: block;
+  transition: 0.7s;
+  box-shadow: inset 0 0 1px 3px #4a426b, inset 0 0 6px 8px #423963, 0 20px 30px -10px rgba(0,0,0,0.4);
+}
+
+.switch label .bulb .bulb-center {
+  position: absolute;
+  display: block;
+  height: 36px;
+  width: 36px;
+  background-color: #5a527b;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transition: 0.7s;
+  transform: translate(-50%, -50%);
+  box-shadow: inset 0 0 0 4px #635a84;
+}
+
+.switch label .bulb .bulb-center:after {
+  content: "";
+  display: block;
+  height: 14px;
+  width: 14px;
+  background-color: #7b7394;
+  border-radius: 50%;
+  position: absolute;
+  transition: 0.7s;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 2px 4px #524a73;
+}
+
+.switch label .bulb .filament-1,
+.switch label .bulb .filament-2 {
+  position: absolute;
+  display: block;
+  height: 35px;
+  width: 35px;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  overflow: hidden;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.switch label .bulb .filament-1:after,
+.switch label .bulb .filament-2:after,
+.switch label .bulb .filament-1:before,
+.switch label .bulb .filament-2:before {
+  content: "";
+  display: block;
+  height: 6px;
+  width: 17px;
+  border-radius: 50%;
+  border: 2px solid #4a426b;
+  position: absolute;
+  transition: 0.7s;
+  top: -4px;
+  left: -2px;
+  transform: rotate(-10deg);
+}
+
+.switch label .bulb .filament-1:before,
+.switch label .bulb .filament-2:before {
+  left: 15px;
+  transform: rotate(10deg);
+}
+
+.switch label .bulb .filament-2 {
+  transform: translate(-50%, -50%) rotate(45deg) !important;
+}
+
+.reflections {
+  height: 100%;
+  width: 100%;
+  display: block;
+  border-radius: 50%;
+  overflow: hidden;
+  position: absolute;
+  z-index: 90;
+  perspective: 70px;
+}
+
+.reflections span {
+  height: 80px;
+  width: 80px;
+  border-radius: 50%;
+  background-image: linear-gradient(-135deg, transparent 10%, rgba(255,255,255,0.3));
+  position: absolute;
+  left: -40px;
+  bottom: -45px;
+}
+
+.reflections span:after {
+  content: "";
+  display: block;
+  height: 35px;
+  width: 20px;
+  position: absolute;
+  top: -36px;
+  right: -40px;
+  border-radius: 50%;
+  box-shadow: 4px -2px 0 -3px rgba(255,255,255,0.4);
+  filter: blur(1px);
+  transform: rotate(-10deg);
+}
+
+.reflections:after {
+  content: "";
+  display: block;
+  height: 80px;
+  width: 50px;
+  background-image: linear-gradient(80deg, rgba(255,255,255,0.05) 45%, rgba(255,255,255,0.5));
+  border-radius: 10% 20% 50% 30%/30% 60% 30% 40%;
+  position: absolute;
+  transform-style: preserve-3d;
+  transform: rotateX(-25deg) rotate(-35deg) skewx(-15deg) translate(10px, -20px);
+  top: -8px;
+  left: -5px;
+}
+
+.reflections:before {
+  content: "";
+  display: block;
+  position: absolute;
+  height: 10px;
+  width: 30px;
+  background-image: linear-gradient(to right, transparent, rgba(255,255,255,0.15));
+  bottom: 10px;
+  right: 0px;
+  transform: rotate(45deg);
+}
+
+.sparks .spark1 {
+  display: block;
+  height: 1px;
+  width: 1px;
+  background-color: #d1b82b;
+  position: absolute;
+  right: -5px;
+  border-radius: 50%;
+  bottom: 23px;
+  transition: 0.4s;
+  opacity: 0;
+}
+
+.sparks .spark2 {
+  display: block;
+  height: 3px;
+  width: 3px;
+  background-color: #d1b82b;
+  position: absolute;
+  right: 20px;
+  border-radius: 50%;
+  bottom: 80px;
+  transition: 0.4s;
+  opacity: 0;
+}
+
+.sparks .spark3 {
+  display: block;
+  height: 3px;
+  width: 3px;
+  background-color: #d1b82b;
+  position: absolute;
+  left: 20px;
+  border-radius: 50%;
+  bottom: 80px;
+  transition: 0.4s;
+  opacity: 0;
+}
+
+.sparks .spark4 {
+  display: block;
+  height: 3px;
+  width: 3px;
+  background-color: #d1b82b;
+  position: absolute;
+  left: 20px;
+  border-radius: 50%;
+  bottom: 20px;
+  transition: 0.4s;
+  opacity: 0;
+}
+
+.switch input:checked ~ label .bulb {
+  left: 120px;
+  background-color: #a7694a;
+  box-shadow: inset 0 0 1px 3px #a56758, inset 0 0 6px 8px #6b454f, 0 20px 30px -10px rgba(0,0,0,0.4), 0 0 30px 50px rgba(253,184,67,0.1);
+}
+
+.switch input:checked ~ label .bulb > .bulb-center {
+  background-color: #feed6b;
+  box-shadow: inset 0 0 0 4px #fdec6a, 0 0 12px 10px #bca83c, 0 0 20px 14px #a1664a;
+}
+
+.switch input:checked ~ label .bulb > .bulb-center:after {
+  background-color: #fef401;
+  box-shadow: 0 0 2px 4px #fdb843;
+}
+
+.switch input:checked ~ label .bulb >.filament-1:before,
+.switch input:checked ~ label .bulb >.filament-2:before,
+.switch input:checked ~ label .bulb >.filament-1:after,
+.switch input:checked ~ label .bulb >.filament-2:after {
+  border-color: #fef4d5;
+}
+
+.switch input:checked ~ label .bulb > .sparks .spark1 {
+  height: 1px;
+  width: 1px;
+  -webkit-animation: spark1 2s ease-in-out;
+          animation: spark1 2s ease-in-out;
+  -webkit-animation-delay: 0.4s;
+          animation-delay: 0.4s;
+}
+
+.switch input:checked ~ label .bulb > .sparks .spark2 {
+  height: 1px;
+  width: 1px;
+  -webkit-animation: spark2 2.4s ease-in-out;
+          animation: spark2 2.4s ease-in-out;
+  -webkit-animation-delay: 0.4s;
+          animation-delay: 0.4s;
+}
+
+.switch input:checked ~ label .bulb > .sparks .spark3 {
+  height: 1px;
+  width: 1px;
+  -webkit-animation: spark3 2s ease-in-out;
+          animation: spark3 2s ease-in-out;
+  -webkit-animation-delay: 0.9s;
+          animation-delay: 0.9s;
+}
+
+.switch input:checked ~ label .bulb > .sparks .spark4 {
+  height: 1px;
+  width: 1px;
+  -webkit-animation: spark4 1.7s ease-in-out;
+          animation: spark4 1.7s ease-in-out;
+  -webkit-animation-delay: 0.9s;
+          animation-delay: 0.9s;
+}
+
+@-webkit-keyframes spark1 {
+  0% {
+    right: -5px;
+    height: 1px;
+    width: 1px;
+    opacity: 0;
+  }
+  20% {
+    height: 3px;
+    width: 3px;
+    right: 0px;
+    opacity: 1;
+  }
+  30% {
+    right: -5px;
+    opacity: 1;
+    height: 3px;
+    width: 3px;
+  }
+  70% {
+    height: 3px;
+    width: 3px;
+  }
+  100% {
+    right: -60px;
+    bottom: 40px;
+    opacity: 0;
+  }
+}
+
+@keyframes spark1 {
+  0% {
+    right: -5px;
+    height: 1px;
+    width: 1px;
+    opacity: 0;
+  }
+  20% {
+    height: 3px;
+    width: 3px;
+    right: 0px;
+    opacity: 1;
+  }
+  30% {
+    right: -5px;
+    opacity: 1;
+    height: 3px;
+    width: 3px;
+  }
+  70% {
+    height: 3px;
+    width: 3px;
+  }
+  100% {
+    right: -60px;
+    bottom: 40px;
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes spark2 {
+  0% {
+    height: 1px;
+    width: 1px;
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    right: -20px;
+    bottom: 100px;
+    opacity: 0;
+  }
+}
+
+@keyframes spark2 {
+  0% {
+    height: 1px;
+    width: 1px;
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    right: -20px;
+    bottom: 100px;
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes spark3 {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+    height: 2px;
+    width: 2px;
+  }
+  100% {
+    left: 0px;
+    bottom: 100px;
+    opacity: 0;
+    height: 3px;
+    width: 3px;
+  }
+}
+
+@keyframes spark3 {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+    height: 2px;
+    width: 2px;
+  }
+  100% {
+    left: 0px;
+    bottom: 100px;
+    opacity: 0;
+    height: 3px;
+    width: 3px;
+  }
+}
+
+@-webkit-keyframes spark4 {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+    height: 2px;
+    width: 2px;
+  }
+  100% {
+    left: -20px;
+    bottom: -10px;
+    opacity: 0;
+    height: 3px;
+    width: 3px;
+  }
+}
+
+@keyframes spark4 {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+    height: 2px;
+    width: 2px;
+  }
+  100% {
+    left: -20px;
+    bottom: -10px;
+    opacity: 0;
+    height: 3px;
+    width: 3px;
+  }
+}
+
+/* 按钮样式 */
+.primary-button {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.primary-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.primary-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.secondary-button {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.secondary-button:hover {
+  background-color: rgba(0, 122, 255, 0.1);
+}
+
+/* 定时任务列表 */
+.schedules-section {
+  margin: 16px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding-left: 4px;
+  color: white;
+}
+
+.schedules-list {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.schedule-item {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: 0.3s ease;
+}
+
+.schedule-item:last-child {
+  border-bottom: none;
+}
+
+.schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.schedule-name {
+  font-weight: 500;
+  font-size: 16px;
+  color: white;
+}
+
+.schedule-times {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 8px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.empty-state i {
+  font-size: 32px;
+  margin-bottom: 12px;
+  opacity: 0.7;
+}
+
+.empty-state p {
+  font-size: 15px;
+  text-align: center;
+}
+
+/* 模态框样式 */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal.show {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-content {
+  background-color: #3D3663;
+  width: 90%;
+  max-width: 420px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.modal.show .modal-content {
+  transform: scale(1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+}
+
+.modal-header button {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: var(--transition);
+}
+
+.modal-header button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.modal-body {
+  padding: 16px;
+}
+
+/* 表单样式 */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 16px;
+  color: white;
+}
+
+.form-group input[type="text"],
+.form-group input[type="time"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  font-size: 16px;
+  transition: var(--transition);
+  -webkit-appearance: none;
+  font-family: inherit;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="time"]:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.time-picker-group {
+  display: flex;
+  gap: 16px;
+}
+
+.time-picker {
+  flex: 1;
+}
+
+.repeat-days {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.day-select {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.day-select.selected {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.toggle-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 51px;
+  height: 31px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-label {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.toggle-label:before {
+  position: absolute;
+  content: "";
+  height: 27px;
+  width: 27px;
+  left: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .toggle-label {
+  background-color: var(--success-color);
+}
+
+input:checked + .toggle-label:before {
+  transform: translate(20px, -50%);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+/* 响应式适配 */
+@media (max-width: 400px) {
+  .time-picker-group {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .repeat-days {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .day-select {
+    margin-bottom: 8px;
+  }
+}
+
+.schedule-toggle {
+  position: relative;
+}
+
+.schedule-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.schedule-action-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: 0.3s ease;
+}
+
+.schedule-action-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.schedule-action-btn.delete {
+  color: #FF9F87;
+}
+
+.schedule-action-btn.delete:hover {
+  background-color: rgba(255, 59, 48, 0.1);
+}
+
+/* Toast通知样式 */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  min-width: 250px;
+  max-width: 350px;
+  margin-bottom: 10px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: white;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateX(30px);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast.hide {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.toast.info {
+  background-color: rgba(52, 152, 219, 0.9);
+  border-left: 4px solid #2980b9;
+}
+
+.toast.success {
+  background-color: rgba(46, 204, 113, 0.9);
+  border-left: 4px solid #27ae60;
+}
+
+.toast.error {
+  background-color: rgba(231, 76, 60, 0.9);
+  border-left: 4px solid #c0392b;
+}
+
+.toast-icon {
+  margin-right: 12px;
+  font-size: 18px;
+}
+
+.toast-message {
+  flex: 1;
+}
+
+.toast-close {
+  margin-left: 12px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.toast-close:hover {
+  opacity: 1;
+} 
