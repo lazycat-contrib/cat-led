@@ -344,11 +344,11 @@ function renderSchedulesList() {
         let operationText;
         switch (schedule.operation) {
             case 'on':
-                operationIcon = 'ri-lightbulb-line';
+                operationIcon = 'ri-lightbulb-flash-line';
                 operationText = '开灯';
                 break; // 不要忘记 break!
             case 'off': // 需要显式处理 'off'
-                operationIcon = 'ri-lightbulb-flash-line';
+                operationIcon = 'ri-lightbulb-line';
                 operationText = '关灯';
                 break;
             case 'shutdown':
