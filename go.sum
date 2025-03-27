@@ -1,7 +1,7 @@
 ariga.io/atlas v0.31.1-0.20250212144724-069be8033e83 h1:nX4HXncwIdvQ8/8sIUIf1nyCkK8qdBaHQ7EtzPpuiGE=
 ariga.io/atlas v0.31.1-0.20250212144724-069be8033e83/go.mod h1:Oe1xWPuu5q9LzyrWfbZmEZxFYeu4BHTyzfjeW2aZp/w=
-entgo.io/ent v0.14.3 h1:wokAV/kIlH9TeklJWGGS7AYJdVckr0DloWjIcO9iIIQ=
-entgo.io/ent v0.14.3/go.mod h1:aDPE/OziPEu8+OWbzy4UlvWmD2/kbRuWfK2A40hcxJM=
+entgo.io/ent v0.14.4 h1:/DhDraSLXIkBhyiVoJeSshr4ZYi7femzhj6/TckzZuI=
+entgo.io/ent v0.14.4/go.mod h1:aDPE/OziPEu8+OWbzy4UlvWmD2/kbRuWfK2A40hcxJM=
 gitee.com/linakesi/lzc-baseos-protos v0.0.0-20240409034726-d8d3d3375144 h1:MKeurY7yFxSUUiDNfBPL7Fgl3zwR/dym9QYlXS5RHZU=
 gitee.com/linakesi/lzc-baseos-protos v0.0.0-20240409034726-d8d3d3375144/go.mod h1:uky2Sm1Sz7B8CC0L2aRaDC8CiImM4xoLPAMKwJAT1jc=
 gitee.com/linakesi/lzc-sdk v0.0.0-20250307093731-41fc0a4beab9 h1:BLHNt8rROxvJaojTQId7+a1V3rjV4LBoJegzEpjCib8=

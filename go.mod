@@ -3,7 +3,7 @@ module cat-led
 go 1.24
 
 require (
-	entgo.io/ent v0.14.3
+	entgo.io/ent v0.14.4
 	gitee.com/linakesi/lzc-sdk v0.0.0-20250307093731-41fc0a4beab9
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
