@@ -20,7 +20,7 @@ func (Schedule) Fields() []ent.Field {
 		field.Ints("week_days"),
 		field.Int("hour"),
 		field.Int("minute"),
-		field.Enum("operation").Values("on", "off").Default("on"),
+		field.Enum("operation").Values("on", "off", "shutdown", "reboot").Default("on"),
 		field.Bool("enabled").Default(true),
 		field.Bool("allow_edit_by_others"),
 	}

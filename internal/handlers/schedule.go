@@ -4,30 +4,28 @@ import (
 	"cat-led/internal/biz"
 	"cat-led/internal/ent"
 	"cat-led/internal/ent/schedule"
+	"cat-led/internal/pkg/zlog"
 	"context"
 	"fmt"
-	"log"
-	"sync"
-	"time"
-
 	gohelper "gitee.com/linakesi/lzc-sdk/lang/go"
 	users "gitee.com/linakesi/lzc-sdk/lang/go/common"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"log"
+	"sync"
+	"time"
 )
 
 var (
 	// 全局的scheduleUseCase实例
 	scheduleUseCase *biz.ScheduleUsecase
 	schOnce         sync.Once
-	// 互斥锁用于保护scheduleUseCase的访问
-	scheduleMutex sync.Mutex
 )
 
 // InitScheduleUseCase 初始化scheduleUseCase
-func InitScheduleUseCase(dbPath string) {
+func InitScheduleUseCase(dbPath string, logger *zlog.Logger) {
 	schOnce.Do(func() {
-		scheduleUseCase = biz.NewScheduleUseCase(dbPath)
+		scheduleUseCase = biz.NewScheduleUseCase(dbPath, logger)
 		if scheduleUseCase == nil {
 			log.Println("初始化scheduleUseCase失败")
 		} else {
@@ -364,8 +362,36 @@ func SetLedStatus(ctx context.Context, status bool) error {
 	return nil
 }
 
+// Reboot 重启设备
+func Reboot(ctx context.Context) error {
+	gw, err := gohelper.NewAPIGateway(ctx)
+	if err != nil {
+		return err
+	}
+	defer gw.Close()
+
+	gw.Box.Shutdown(ctx, &users.ShutdownRequest{
+		Action: users.ShutdownRequest_Reboot,
+	})
+	return nil
+}
+
+// Shutdown  使设备关机
+func Shutdown(ctx context.Context) error {
+	gw, err := gohelper.NewAPIGateway(ctx)
+	if err != nil {
+		return err
+	}
+	defer gw.Close()
+
+	gw.Box.Shutdown(ctx, &users.ShutdownRequest{
+		Action: users.ShutdownRequest_Poweroff,
+	})
+	return nil
+}
+
 // InitScheduler 初始化定时任务调度器
-func InitScheduler() {
+func InitScheduler(logger *zlog.Logger) {
 	// 检查任务的定时器
 	go func() {
 		// 每分钟检查一次任务
@@ -375,14 +401,14 @@ func InitScheduler() {
 		for {
 			select {
 			case <-ticker.C:
-				checkSchedules()
+				checkSchedules(logger)
 			}
 		}
 	}()
 }
 
 // 检查是否有需要执行的任务
-func checkSchedules() {
+func checkSchedules(logger *zlog.Logger) {
 	if scheduleUseCase == nil {
 		log.Println("定时任务服务未初始化，跳过检查")
 		return
@@ -394,7 +420,7 @@ func checkSchedules() {
 	// 获取所有任务
 	allSchedules, err := scheduleUseCase.GetAllSchedules(ctx)
 	if err != nil {
-		log.Printf("获取任务失败: %v", err)
+		logger.Error().Err(err).Msg("获取任务失败")
 		return
 	}
 
@@ -420,13 +446,30 @@ func checkSchedules() {
 
 		// 检查是否是设定的时间
 		if now.Hour() == s.Hour && now.Minute() == s.Minute {
-			// 执行任务
-			status := s.Operation == schedule.OperationOn
-			if err := SetLedStatus(ctx, status); err != nil {
-				log.Printf("执行任务失败: %v", err)
-			} else {
-				log.Printf("执行任务成功: %s, 状态: %v", s.Name, status)
+			switch s.Operation {
+			case schedule.OperationOn, schedule.OperationOff:
+				status := s.Operation == schedule.OperationOn
+				if err = SetLedStatus(ctx, status); err != nil {
+					logger.Error().Err(err).Msg("执行任务失败")
+				} else {
+					logger.Info().Str("任务名称", s.Name).Bool("状态", status).Msg("执行任务成功")
+				}
+			case schedule.OperationShutdown:
+				if err = Shutdown(ctx); err != nil {
+					logger.Error().Err(err).Msg("关机调用失败")
+				} else {
+					logger.Info().Str("任务名称", s.Name).Msg("关机调用成功")
+				}
+			case schedule.OperationReboot:
+				if err = Reboot(ctx); err != nil {
+					logger.Error().Err(err).Msg("重启调用失败")
+				} else {
+					logger.Info().Str("任务名称", s.Name).Msg("重启调用成功")
+				}
+			default:
+				logger.Info().Msg("do nothing")
 			}
+
 		}
 	}
 }

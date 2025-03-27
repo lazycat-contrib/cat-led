@@ -52,7 +52,6 @@ func (s *Server) SetupRoutes() error {
 	})
 
 	// API路由
-	s.engine.GET("/reboot", handlers.Reboot)
 	s.engine.GET("/ledcontrol", handlers.LedControl)
 	s.engine.GET("/api/led-status", handlers.GetLedStatus)
 	s.engine.GET("/userinfo", handlers.GetUserInfo)

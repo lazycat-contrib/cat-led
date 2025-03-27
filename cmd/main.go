@@ -2,23 +2,35 @@ package main
 
 import (
 	"cat-led/internal/handlers"
+	"cat-led/internal/pkg/zlog"
 	"cat-led/internal/web"
 	"context"
 	"log"
 )
 
 func main() {
+
+	logConfig := zlog.LogConfig{
+		LogLevel:    "info",
+		LogDir:      "/lzcapp/var/logs",
+		LogFileName: "app.log",
+		MaxSize:     10, // 10 MB
+		MaxBackups:  5,  // 保留5个备份文件
+		MaxAge:      7,  // 保留7天的日志文件
+	}
+
+	logger := zlog.NewLogger(logConfig)
 	// 确定数据库路径
 	dbPath := getDbPath()
 
 	// 初始化scheduleUseCase
-	handlers.InitScheduleUseCase(dbPath)
+	handlers.InitScheduleUseCase(dbPath, logger)
 
 	// 初始化LED状态
 	handlers.InitLedStatus(context.Background())
 
 	// 初始化定时任务调度器
-	handlers.InitScheduler()
+	handlers.InitScheduler(logger)
 
 	// 创建Web服务器
 	server := web.NewServer()

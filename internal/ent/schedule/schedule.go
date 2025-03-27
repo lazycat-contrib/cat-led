@@ -72,8 +72,10 @@ const DefaultOperation = OperationOn
 
 // Operation values.
 const (
-	OperationOn  Operation = "on"
-	OperationOff Operation = "off"
+	OperationOn       Operation = "on"
+	OperationOff      Operation = "off"
+	OperationShutdown Operation = "shutdown"
+	OperationReboot   Operation = "reboot"
 )
 
 func (o Operation) String() string {
@@ -83,7 +85,7 @@ func (o Operation) String() string {
 // OperationValidator is a validator for the "operation" field enum values. It is called by the builders before save.
 func OperationValidator(o Operation) error {
 	switch o {
-	case OperationOn, OperationOff:
+	case OperationOn, OperationOff, OperationShutdown, OperationReboot:
 		return nil
 	default:
 		return fmt.Errorf("schedule: invalid enum value for operation field: %q", o)

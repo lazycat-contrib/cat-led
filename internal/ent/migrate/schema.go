@@ -16,7 +16,7 @@ var (
 		{Name: "week_days", Type: field.TypeJSON},
 		{Name: "hour", Type: field.TypeInt},
 		{Name: "minute", Type: field.TypeInt},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"on", "off"}, Default: "on"},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"on", "off", "shutdown", "reboot"}, Default: "on"},
 		{Name: "enabled", Type: field.TypeBool, Default: true},
 		{Name: "allow_edit_by_others", Type: field.TypeBool},
 	}

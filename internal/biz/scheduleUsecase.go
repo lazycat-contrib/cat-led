@@ -3,9 +3,9 @@ package biz
 import (
 	"cat-led/internal/ent"
 	"cat-led/internal/ent/schedule"
+	"cat-led/internal/pkg/zlog"
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/google/uuid"
 	_ "github.com/lib-x/entsqlite"
@@ -13,26 +13,30 @@ import (
 
 type ScheduleUsecase struct {
 	client *ent.Client
+	logger *zlog.Logger
 }
 
-func NewScheduleUseCase(dbPath string) *ScheduleUsecase {
+func NewScheduleUseCase(dbPath string, logger *zlog.Logger) *ScheduleUsecase {
 	dataSourceName := fmt.Sprintf("file:%s?cache=shared&_pragma=foreign_keys(1)&_pragma=journal_mode(WAL)&_pragma=synchronous(NORMAL)&_pragma=busy_timeout(10000)", dbPath)
 	entClient, err := ent.Open("sqlite3", dataSourceName)
 	if err != nil {
-		log.Printf("无法连接到数据库: %v", err)
+		logger.Error().Err(err).Msg("无法连接到数据库")
 		return nil
 	}
 
 	// 自动创建数据库表
 	ctx := context.Background()
 	if err := entClient.Schema.Create(ctx); err != nil {
-		log.Printf("无法创建数据库表: %v", err)
+		logger.Error().Err(err).Msg("无法创建数据库表")
 		entClient.Close()
 		return nil
 	}
 
-	log.Printf("数据库初始化成功，已创建必要的表结构")
-	return &ScheduleUsecase{client: entClient}
+	logger.Info().Msg("数据库初始化成功，已创建必要的表结构")
+	return &ScheduleUsecase{
+		client: entClient,
+		logger: logger,
+	}
 }
 
 // CreateSchedule creates a new schedule with the given parameters
