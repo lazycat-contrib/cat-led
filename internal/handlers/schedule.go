@@ -62,9 +62,16 @@ func convertToEntSchedule(frontendSchedule map[string]interface{}, creatorID str
 	// 确定操作类型 (on/off)
 	operation := schedule.OperationOn
 	if opStr, ok := frontendSchedule["operation"].(string); ok {
-		if opStr == "off" {
+		switch opStr {
+		case "on":
+			operation = schedule.OperationOn
+		case "off":
 			operation = schedule.OperationOff
-		} else if opStr == "on" {
+		case "shutdown":
+			operation = schedule.OperationShutdown
+		case "reboot":
+			operation = schedule.OperationReboot
+		default:
 			operation = schedule.OperationOn
 		}
 	}
