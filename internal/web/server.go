@@ -21,6 +21,7 @@ type Server struct {
 
 // NewServer 创建一个新的Web服务器
 func NewServer() *Server {
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	return &Server{
 		engine: r,
@@ -34,22 +35,19 @@ func (s *Server) SetupRoutes() error {
 	if err != nil {
 		return err
 	}
-
-	// 设置静态文件服务
-	s.engine.StaticFS("/static", http.FS(publicFS))
-
 	// 使用嵌入式HTML模板
-	templ := template.New("html")
-	templ, err = templ.ParseFS(staticFS, "public/index.html")
+	tpl := template.New("html")
+	tpl, err = tpl.ParseFS(staticFS, "public/index.html")
 	if err != nil {
 		return err
 	}
-	s.engine.SetHTMLTemplate(templ)
-
+	s.engine.SetHTMLTemplate(tpl)
 	// HTML文件路由
 	s.engine.GET("/", func(c *gin.Context) {
 		c.HTML(200, "index.html", nil)
 	})
+	// 设置静态文件服务
+	s.engine.StaticFS("/static", http.FS(publicFS))
 
 	// API路由
 	s.engine.GET("/ledcontrol", handlers.LedControl)
