@@ -5,6 +5,7 @@ let currentLedStatus = false;
 let schedules = [];
 let currentEditingScheduleId = null;
 let statusRefreshInterval = null; // 新增：用于存储状态刷新的定时器ID
+let currentTheme = 'dark'; // 默认使用暗色主题
 
 // DOM元素
 const $ledToggle = document.getElementById('led-toggle');
@@ -17,14 +18,18 @@ const $scheduleForm = document.getElementById('schedule-form');
 const $closeModalBtn = document.getElementById('close-modal-btn');
 const $cancelScheduleBtn = document.getElementById('cancel-schedule-btn');
 const $daySelects = document.querySelectorAll('.day-select');
+const $themeToggle = document.getElementById('theme-toggle'); // 主题切换按钮
 
 // 初始化应用
 document.addEventListener('DOMContentLoaded', () => {
     initApp();
 });
 
-// 应用初始化
+// 初始化应用
 async function initApp() {
+    // 初始化主题
+    initTheme();
+    
     // 获取用户信息
     await fetchUserInfo();
 
@@ -770,6 +775,57 @@ function initEventListeners() {
 
     // 监听页面可见性变化
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // 主题切换按钮
+    $themeToggle.addEventListener('click', toggleTheme);
+}
+
+// 初始化主题
+function initTheme() {
+    // 检查本地存储中是否有保存的主题设置
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        currentTheme = savedTheme;
+    }
+    
+    // 应用主题
+    applyTheme(currentTheme);
+    
+    // 确保初始图标显示正确
+    const darkIcon = document.getElementById('dark-icon');
+    const lightIcon = document.getElementById('light-icon');
+    
+    if (currentTheme === 'dark') {
+        darkIcon.style.display = 'block';
+        lightIcon.style.display = 'none';
+    } else {
+        darkIcon.style.display = 'none';
+        lightIcon.style.display = 'block';
+    }
+}
+
+// 切换主题
+function toggleTheme() {
+    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(currentTheme);
+    localStorage.setItem('theme', currentTheme);
+}
+
+// 应用主题
+function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    
+    // 更新主题切换按钮的图标
+    const darkIcon = document.getElementById('dark-icon');
+    const lightIcon = document.getElementById('light-icon');
+    
+    if (theme === 'dark') {
+        darkIcon.style.display = 'block';
+        lightIcon.style.display = 'none';
+    } else {
+        darkIcon.style.display = 'none';
+        lightIcon.style.display = 'block';
+    }
 }
 
 // 处理页面可见性变化
