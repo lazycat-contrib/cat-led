@@ -14,9 +14,38 @@
   --toggle-on-bg: var(--primary-color);
   --led-on-color: #34C759;
   --led-off-color: #8E8E93;
+  --header-text-color: #FFFFFF;
+  --dark-header-background: #514878;
+  --light-header-background: #8A7FB1;
   --border-radius: 12px;
   --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   --transition: all 0.3s ease;
+}
+
+/* 暗色主题变量 */
+[data-theme="dark"] {
+  --background-color: #1C1C1E;
+  --card-background: #2C2C2E;
+  --text-primary: #FFFFFF;
+  --text-secondary: #98989A;
+  --border-color: #48484A;
+  --toggle-off-bg: #48484A;
+  --modal-background: rgba(0, 0, 0, 0.7);
+  --header-background: var(--dark-header-background);
+  --header-text-color: #FFFFFF;
+}
+
+/* 明亮主题变量 */
+[data-theme="light"] {
+  --background-color: #F2F2F7;
+  --card-background: #FFFFFF;
+  --text-primary: #000000;
+  --text-secondary: #8E8E93;
+  --border-color: #E5E5EA;
+  --toggle-off-bg: #E9E9EA;
+  --modal-background: rgba(0, 0, 0, 0.4);
+  --header-background: var(--light-header-background);
+  --header-text-color: #FFFFFF;
 }
 
 * {
@@ -27,8 +56,8 @@
 
 body {
   font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background-color: #514878;
-  color: white;
+  background-color: var(--background-color);
+  color: var(--text-primary);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -59,17 +88,27 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* 暗色主题下的头部样式 */
+[data-theme="dark"] .app-header {
+  background: rgba(81, 72, 120, 0.85);
+}
+
+/* 明亮主题下的头部样式 */
+[data-theme="light"] .app-header {
+  background: rgba(138, 127, 177, 0.85);
+}
+
 .header-title {
   font-size: 20px;
   font-weight: 600;
-  color: white;
+  color: var(--header-text-color);
 }
 
 .header-actions button {
   background: none;
   border: none;
   font-size: 24px;
-  color: white;
+  color: var(--header-text-color);
   cursor: pointer;
   width: 40px;
   height: 40px;
@@ -78,10 +117,17 @@ body {
   align-items: center;
   justify-content: center;
   transition: 0.3s ease;
+  margin-left: 8px;
 }
 
 .header-actions button:hover {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 主题图标样式 */
+.theme-icon {
+  width: 24px;
+  height: 24px;
 }
 
 /* 用户信息区域 */
@@ -104,7 +150,7 @@ body {
   height: 50px;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.2);
-  color: white;
+  color: var(--header-text-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -127,7 +173,7 @@ body {
   font-weight: 600;
   font-size: 18px;
   margin-bottom: 4px;
-  color: white;
+  color: var(--header-text-color);
 }
 
 .user-role {
@@ -162,7 +208,7 @@ body {
   font-size: 18px;
   font-weight: 500;
   margin-top: 30px;
-  color: white;
+  color: var(--header-text-color);
   text-align: center;
 }
 
@@ -285,6 +331,60 @@ body {
   position: absolute;
   z-index: 90;
   perspective: 70px;
+}
+
+/* 暗色主题下的开关样式 */
+[data-theme="dark"] .switch label {
+  background-color: #39315a;
+}
+
+[data-theme="dark"] .switch label .bulb {
+  background-color: #4a426b;
+  box-shadow: inset 0 0 1px 3px #4a426b, inset 0 0 6px 8px #423963, 0 20px 30px -10px rgba(0,0,0,0.4);
+}
+
+[data-theme="dark"] .switch label .bulb .bulb-center {
+  background-color: #5a527b;
+  box-shadow: inset 0 0 0 4px #635a84;
+}
+
+[data-theme="dark"] .switch label .bulb .bulb-center:after {
+  background-color: #7b7394;
+  box-shadow: 0 0 2px 4px #524a73;
+}
+
+[data-theme="dark"] .switch label .bulb .filament-1:after,
+[data-theme="dark"] .switch label .bulb .filament-2:after,
+[data-theme="dark"] .switch label .bulb .filament-1:before,
+[data-theme="dark"] .switch label .bulb .filament-2:before {
+  border: 2px solid #4a426b;
+}
+
+/* 明亮主题下的开关样式 */
+[data-theme="light"] .switch label {
+  background-color: #d0c8e6;
+}
+
+[data-theme="light"] .switch label .bulb {
+  background-color: #e0d8f0;
+  box-shadow: inset 0 0 1px 3px #d0c8e6, inset 0 0 6px 8px #c0b8d6, 0 20px 30px -10px rgba(0,0,0,0.2);
+}
+
+[data-theme="light"] .switch label .bulb .bulb-center {
+  background-color: #e8e0f4;
+  box-shadow: inset 0 0 0 4px #d8d0e8;
+}
+
+[data-theme="light"] .switch label .bulb .bulb-center:after {
+  background-color: #f0e8fc;
+  box-shadow: 0 0 2px 4px #d0c8e6;
+}
+
+[data-theme="light"] .switch label .bulb .filament-1:after,
+[data-theme="light"] .switch label .bulb .filament-2:after,
+[data-theme="light"] .switch label .bulb .filament-1:before,
+[data-theme="light"] .switch label .bulb .filament-2:before {
+  border: 2px solid #d0c8e6;
 }
 
 .reflections span {
@@ -615,7 +715,7 @@ body {
 /* 按钮样式 */
 .primary-button {
   background-color: rgba(255, 255, 255, 0.2);
-  color: white;
+  color: var(--header-text-color);
   border: none;
   border-radius: 8px;
   padding: 12px 24px;
@@ -653,6 +753,16 @@ body {
   background-color: rgba(0, 122, 255, 0.1);
 }
 
+/* 明亮主题下的按钮样式 */
+[data-theme="light"] .primary-button {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .primary-button:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
 /* 定时任务列表 */
 .schedules-section {
   margin: 16px;
@@ -663,7 +773,7 @@ body {
   font-weight: 600;
   margin-bottom: 12px;
   padding-left: 4px;
-  color: white;
+  color: var(--header-text-color);
 }
 
 .schedules-list {
@@ -695,7 +805,7 @@ body {
 .schedule-name {
   font-weight: 500;
   font-size: 16px;
-  color: white;
+  color: var(--header-text-color);
 }
 
 .schedule-times {
@@ -735,7 +845,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: var(--modal-background);
   z-index: 1000;
   align-items: center;
   justify-content: center;
@@ -774,7 +884,7 @@ body {
 .modal-header h3 {
   font-size: 18px;
   font-weight: 600;
-  color: white;
+  color: var(--header-text-color);
 }
 
 .modal-header button {
@@ -796,6 +906,16 @@ body {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+/* 暗色主题下的模态框 */
+[data-theme="dark"] .modal-content {
+  background-color: #3D3663;
+}
+
+/* 明亮主题下的模态框 */
+[data-theme="light"] .modal-content {
+  background-color: var(--card-background);
+}
+
 .modal-body {
   padding: 16px;
 }
@@ -810,7 +930,7 @@ body {
   margin-bottom: 8px;
   font-weight: 500;
   font-size: 16px;
-  color: white;
+  color: var(--header-text-color);
 }
 
 .form-group input[type="text"],
@@ -824,7 +944,7 @@ body {
   -webkit-appearance: none;
   font-family: inherit;
   background-color: rgba(255, 255, 255, 0.1);
-  color: white;
+  color: var(--header-text-color);
 }
 
 /* 时间选择器图标样式 */
@@ -855,6 +975,26 @@ body {
   outline: none;
   border-color: rgba(255, 255, 255, 0.4);
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+/* 明亮主题下的表单样式 */
+[data-theme="light"] .form-group input[type="text"],
+[data-theme="light"] .form-group input[type="time"] {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .form-group input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: none;
+}
+
+[data-theme="light"] .form-group input[type="time"]::-moz-calendar-picker-indicator {
+  filter: none;
+}
+
+[data-theme="light"] .form-group input[type="time"]::-ms-calendar-picker-indicator {
+  filter: none;
 }
 
 .time-picker-group {
@@ -921,6 +1061,26 @@ body {
 
 .day-select.selected {
   background-color: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+/* 明亮主题下的操作选择器 */
+[data-theme="light"] .operation-picker select {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+/* 明亮主题下的日期选择器 */
+[data-theme="light"] .day-select {
+  background-color: var(--card-background);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+[data-theme="light"] .day-select.selected {
+  background-color: var(--primary-color);
   color: white;
 }
 
@@ -1107,4 +1267,137 @@ input:checked + .toggle-label:before {
 
 .toast-close:hover {
   opacity: 1;
+}
+
+/* 明亮主题特定样式 */
+[data-theme="light"] {
+  /* 用户信息区域 */
+  .user-info-section {
+    background-color: var(--card-background);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .user-name {
+    color: var(--text-primary);
+  }
+
+  .user-role {
+    color: var(--text-secondary);
+  }
+
+  .device-info {
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border-color);
+  }
+
+  /* LED状态区域 */
+  .led-status-section {
+    background-color: var(--card-background);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .led-status-text {
+    color: var(--text-primary);
+  }
+
+  /* 定时任务列表 */
+  .section-title {
+    color: var(--text-primary);
+  }
+
+  .schedules-list {
+    background-color: var(--card-background);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .schedule-name {
+    color: var(--text-primary);
+  }
+
+  .schedule-times {
+    color: var(--text-secondary);
+  }
+
+  .empty-state {
+    color: var(--text-secondary);
+  }
+
+  /* 模态框 */
+  .modal-content {
+    background-color: var(--card-background);
+  }
+
+  .modal-header h3 {
+    color: var(--text-primary);
+  }
+
+  .modal-header button {
+    color: var(--text-secondary);
+  }
+
+  .form-group label {
+    color: var(--text-primary);
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="time"] {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+  }
+
+  .form-group input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: none;
+  }
+
+  .form-group input[type="time"]::-moz-calendar-picker-indicator {
+    filter: none;
+  }
+
+  .form-group input[type="time"]::-ms-calendar-picker-indicator {
+    filter: none;
+  }
+
+  .operation-picker select {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  }
+
+  .day-select {
+    background-color: var(--card-background);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+  }
+
+  .day-select.selected {
+    background-color: var(--primary-color);
+    color: white;
+  }
+
+  .toggle-label {
+    background-color: var(--toggle-off-bg);
+  }
+
+  .schedule-action-btn {
+    color: var(--text-primary);
+  }
+
+  .schedule-action-btn:hover {
+    background-color: var(--background-color);
+  }
+
+  .schedule-action-btn.delete {
+    color: var(--danger-color);
+  }
+
+  .schedule-action-btn.delete:hover {
+    background-color: rgba(255, 59, 48, 0.1);
+  }
+  
+  /* 主题图标颜色 */
+  .theme-icon path {
+    fill: var(--text-primary);
+  }
 } 
