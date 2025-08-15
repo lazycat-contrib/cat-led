@@ -25,14 +25,16 @@
 /* 暗色主题变量 */
 [data-theme="dark"] {
   --background-color: #1C1C1E;
-  --card-background: #2C2C2E;
+  --card-background: #3A3A3A;
   --text-primary: #FFFFFF;
   --text-secondary: #98989A;
   --border-color: #48484A;
   --toggle-off-bg: #48484A;
   --modal-background: rgba(0, 0, 0, 0.7);
-  --header-background: var(--dark-header-background);
+  --header-background: #2C3E50;
   --header-text-color: #FFFFFF;
+  --led-on-color: #FF9500; /* 琥珀色/橙黄色，更符合灯光主题 */
+  --success-color: #FF9500; /* 琥珀色/橙黄色，与LED状态保持一致 */
 }
 
 /* 明亮主题变量 */
@@ -90,7 +92,7 @@ body {
 
 /* 暗色主题下的头部样式 */
 [data-theme="dark"] .app-header {
-  background: rgba(81, 72, 120, 0.85);
+  background: rgba(44, 62, 80, 0.85); /* 深蓝灰色 (#2C3E50) */
 }
 
 /* 明亮主题下的头部样式 */
@@ -441,7 +443,7 @@ body {
   display: block;
   height: 1px;
   width: 1px;
-  background-color: #d1b82b;
+  background-color: #FF9500; /* 琥珀色/橙黄色 */
   position: absolute;
   right: -5px;
   border-radius: 50%;
@@ -454,7 +456,7 @@ body {
   display: block;
   height: 3px;
   width: 3px;
-  background-color: #d1b82b;
+  background-color: #FF9500; /* 琥珀色/橙黄色 */
   position: absolute;
   right: 20px;
   border-radius: 50%;
@@ -467,7 +469,7 @@ body {
   display: block;
   height: 3px;
   width: 3px;
-  background-color: #d1b82b;
+  background-color: #FF9500; /* 琥珀色/橙黄色 */
   position: absolute;
   left: 20px;
   border-radius: 50%;
@@ -480,7 +482,7 @@ body {
   display: block;
   height: 3px;
   width: 3px;
-  background-color: #d1b82b;
+  background-color: #FF9500; /* 琥珀色/橙黄色 */
   position: absolute;
   left: 20px;
   border-radius: 50%;
@@ -496,12 +498,12 @@ body {
 }
 
 .switch input:checked ~ label .bulb > .bulb-center {
-  background-color: #feed6b;
+  background-color: #FF9500; /* 琥珀色/橙黄色 */
   box-shadow: inset 0 0 0 4px #fdec6a, 0 0 12px 10px #bca83c, 0 0 20px 14px #a1664a;
 }
 
 .switch input:checked ~ label .bulb > .bulb-center:after {
-  background-color: #fef401;
+  background-color: #FF9500; /* 琥珀色/橙黄色 */
   box-shadow: 0 0 2px 4px #fdb843;
 }
 
@@ -509,7 +511,7 @@ body {
 .switch input:checked ~ label .bulb >.filament-2:before,
 .switch input:checked ~ label .bulb >.filament-1:after,
 .switch input:checked ~ label .bulb >.filament-2:after {
-  border-color: #fef4d5;
+  border-color: #FF9500; /* 琥珀色/橙黄色 */
 }
 
 .switch input:checked ~ label .bulb > .sparks .spark1 {
