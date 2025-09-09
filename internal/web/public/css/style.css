@@ -1434,7 +1434,7 @@ input:checked + .toggle-label:before {
 }
 
 [data-theme="light"] .theme-icon path {
-  fill: var(--text-primary);
+  fill: var(--header-text-color);
 }
 
 /* 配置页面特定样式 */
