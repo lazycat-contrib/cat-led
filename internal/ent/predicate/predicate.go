@@ -8,3 +8,6 @@ import (
 
 // Schedule is the predicate function for schedule builders.
 type Schedule func(*sql.Selector)
+
+// ServerChanConfig is the predicate function for serverchanconfig builders.
+type ServerChanConfig func(*sql.Selector)

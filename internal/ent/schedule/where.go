@@ -84,6 +84,11 @@ func AllowEditByOthers(v bool) predicate.Schedule {
 	return predicate.Schedule(sql.FieldEQ(FieldAllowEditByOthers, v))
 }
 
+// NotifyViaServerChan applies equality check predicate on the "notify_via_server_chan" field. It's identical to NotifyViaServerChanEQ.
+func NotifyViaServerChan(v bool) predicate.Schedule {
+	return predicate.Schedule(sql.FieldEQ(FieldNotifyViaServerChan, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.Schedule {
 	return predicate.Schedule(sql.FieldEQ(FieldName, v))
@@ -332,6 +337,16 @@ func AllowEditByOthersEQ(v bool) predicate.Schedule {
 // AllowEditByOthersNEQ applies the NEQ predicate on the "allow_edit_by_others" field.
 func AllowEditByOthersNEQ(v bool) predicate.Schedule {
 	return predicate.Schedule(sql.FieldNEQ(FieldAllowEditByOthers, v))
+}
+
+// NotifyViaServerChanEQ applies the EQ predicate on the "notify_via_server_chan" field.
+func NotifyViaServerChanEQ(v bool) predicate.Schedule {
+	return predicate.Schedule(sql.FieldEQ(FieldNotifyViaServerChan, v))
+}
+
+// NotifyViaServerChanNEQ applies the NEQ predicate on the "notify_via_server_chan" field.
+func NotifyViaServerChanNEQ(v bool) predicate.Schedule {
+	return predicate.Schedule(sql.FieldNEQ(FieldNotifyViaServerChan, v))
 }
 
 // And groups predicates with the AND operator between them.

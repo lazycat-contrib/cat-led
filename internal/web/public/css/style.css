@@ -106,6 +106,12 @@ body {
   color: var(--header-text-color);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .header-actions button {
   background: none;
   border: none;
@@ -119,7 +125,6 @@ body {
   align-items: center;
   justify-content: center;
   transition: 0.3s ease;
-  margin-left: 8px;
 }
 
 .header-actions button:hover {
@@ -1430,4 +1435,124 @@ input:checked + .toggle-label:before {
 
 [data-theme="light"] .theme-icon path {
   fill: var(--text-primary);
+}
+
+/* 配置页面特定样式 */
+.config-section {
+  margin: 16px;
+}
+
+.config-form-container {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 16px;
+}
+
+[data-theme="light"] .config-form-container {
+  background-color: var(--card-background);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  font-size: 16px;
+  transition: var(--transition);
+  font-family: inherit;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--header-text-color);
+  resize: vertical;
+}
+
+.form-group textarea:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .form-group textarea {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.back-section {
+  margin: 16px;
+  text-align: center;
+}
+
+.back-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  transition: var(--transition);
+  background-color: rgba(0, 122, 255, 0.1);
+}
+
+.back-link:hover {
+  background-color: rgba(0, 122, 255, 0.2);
+}
+
+[data-theme="light"] .back-link {
+  color: var(--primary-color);
+  background-color: rgba(0, 122, 255, 0.1);
+}
+
+/* Server酱图标样式 */
+.header-actions a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: var(--header-text-color);
+  transition: 0.3s ease;
+}
+
+.header-actions a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .header-actions a:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* 定时任务中的Server酱通知样式 */
+.schedule-serverchan {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.schedule-serverchan i {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.schedule-serverchan span {
+  font-weight: 500;
+}
+
+[data-theme="light"] .schedule-serverchan {
+  color: var(--text-secondary);
+}
+
+/* 当启用Server酱通知时的样式 */
+.schedule-serverchan.enabled {
+  color: var(--success-color);
+}
+
+[data-theme="light"] .schedule-serverchan.enabled {
+  color: var(--success-color);
 } 

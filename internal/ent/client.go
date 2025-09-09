@@ -12,6 +12,7 @@ import (
 	"cat-led/internal/ent/migrate"
 
 	"cat-led/internal/ent/schedule"
+	"cat-led/internal/ent/serverchanconfig"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -26,6 +27,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Schedule is the client for interacting with the Schedule builders.
 	Schedule *ScheduleClient
+	// ServerChanConfig is the client for interacting with the ServerChanConfig builders.
+	ServerChanConfig *ServerChanConfigClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -38,6 +41,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Schedule = NewScheduleClient(c.config)
+	c.ServerChanConfig = NewServerChanConfigClient(c.config)
 }
 
 type (
@@ -128,9 +132,10 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:      ctx,
-		config:   cfg,
-		Schedule: NewScheduleClient(cfg),
+		ctx:              ctx,
+		config:           cfg,
+		Schedule:         NewScheduleClient(cfg),
+		ServerChanConfig: NewServerChanConfigClient(cfg),
 	}, nil
 }
 
@@ -148,9 +153,10 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:      ctx,
-		config:   cfg,
-		Schedule: NewScheduleClient(cfg),
+		ctx:              ctx,
+		config:           cfg,
+		Schedule:         NewScheduleClient(cfg),
+		ServerChanConfig: NewServerChanConfigClient(cfg),
 	}, nil
 }
 
@@ -180,12 +186,14 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Schedule.Use(hooks...)
+	c.ServerChanConfig.Use(hooks...)
 }
 
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.Schedule.Intercept(interceptors...)
+	c.ServerChanConfig.Intercept(interceptors...)
 }
 
 // Mutate implements the ent.Mutator interface.
@@ -193,6 +201,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *ScheduleMutation:
 		return c.Schedule.mutate(ctx, m)
+	case *ServerChanConfigMutation:
+		return c.ServerChanConfig.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
@@ -331,12 +341,145 @@ func (c *ScheduleClient) mutate(ctx context.Context, m *ScheduleMutation) (Value
 	}
 }
 
+// ServerChanConfigClient is a client for the ServerChanConfig schema.
+type ServerChanConfigClient struct {
+	config
+}
+
+// NewServerChanConfigClient returns a client for the ServerChanConfig from the given config.
+func NewServerChanConfigClient(c config) *ServerChanConfigClient {
+	return &ServerChanConfigClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `serverchanconfig.Hooks(f(g(h())))`.
+func (c *ServerChanConfigClient) Use(hooks ...Hook) {
+	c.hooks.ServerChanConfig = append(c.hooks.ServerChanConfig, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `serverchanconfig.Intercept(f(g(h())))`.
+func (c *ServerChanConfigClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ServerChanConfig = append(c.inters.ServerChanConfig, interceptors...)
+}
+
+// Create returns a builder for creating a ServerChanConfig entity.
+func (c *ServerChanConfigClient) Create() *ServerChanConfigCreate {
+	mutation := newServerChanConfigMutation(c.config, OpCreate)
+	return &ServerChanConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ServerChanConfig entities.
+func (c *ServerChanConfigClient) CreateBulk(builders ...*ServerChanConfigCreate) *ServerChanConfigCreateBulk {
+	return &ServerChanConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ServerChanConfigClient) MapCreateBulk(slice any, setFunc func(*ServerChanConfigCreate, int)) *ServerChanConfigCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ServerChanConfigCreateBulk{err: fmt.Errorf("calling to ServerChanConfigClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ServerChanConfigCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ServerChanConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ServerChanConfig.
+func (c *ServerChanConfigClient) Update() *ServerChanConfigUpdate {
+	mutation := newServerChanConfigMutation(c.config, OpUpdate)
+	return &ServerChanConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ServerChanConfigClient) UpdateOne(scc *ServerChanConfig) *ServerChanConfigUpdateOne {
+	mutation := newServerChanConfigMutation(c.config, OpUpdateOne, withServerChanConfig(scc))
+	return &ServerChanConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ServerChanConfigClient) UpdateOneID(id int) *ServerChanConfigUpdateOne {
+	mutation := newServerChanConfigMutation(c.config, OpUpdateOne, withServerChanConfigID(id))
+	return &ServerChanConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ServerChanConfig.
+func (c *ServerChanConfigClient) Delete() *ServerChanConfigDelete {
+	mutation := newServerChanConfigMutation(c.config, OpDelete)
+	return &ServerChanConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ServerChanConfigClient) DeleteOne(scc *ServerChanConfig) *ServerChanConfigDeleteOne {
+	return c.DeleteOneID(scc.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ServerChanConfigClient) DeleteOneID(id int) *ServerChanConfigDeleteOne {
+	builder := c.Delete().Where(serverchanconfig.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ServerChanConfigDeleteOne{builder}
+}
+
+// Query returns a query builder for ServerChanConfig.
+func (c *ServerChanConfigClient) Query() *ServerChanConfigQuery {
+	return &ServerChanConfigQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeServerChanConfig},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ServerChanConfig entity by its id.
+func (c *ServerChanConfigClient) Get(ctx context.Context, id int) (*ServerChanConfig, error) {
+	return c.Query().Where(serverchanconfig.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ServerChanConfigClient) GetX(ctx context.Context, id int) *ServerChanConfig {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ServerChanConfigClient) Hooks() []Hook {
+	return c.hooks.ServerChanConfig
+}
+
+// Interceptors returns the client interceptors.
+func (c *ServerChanConfigClient) Interceptors() []Interceptor {
+	return c.inters.ServerChanConfig
+}
+
+func (c *ServerChanConfigClient) mutate(ctx context.Context, m *ServerChanConfigMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ServerChanConfigCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ServerChanConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ServerChanConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ServerChanConfigDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ServerChanConfig mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Schedule []ent.Hook
+		Schedule, ServerChanConfig []ent.Hook
 	}
 	inters struct {
-		Schedule []ent.Interceptor
+		Schedule, ServerChanConfig []ent.Interceptor
 	}
 )

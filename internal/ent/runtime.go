@@ -5,6 +5,7 @@ package ent
 import (
 	"cat-led/internal/ent/schedule"
 	"cat-led/internal/ent/schema"
+	"cat-led/internal/ent/serverchanconfig"
 
 	"github.com/google/uuid"
 )
@@ -19,8 +20,26 @@ func init() {
 	scheduleDescEnabled := scheduleFields[7].Descriptor()
 	// schedule.DefaultEnabled holds the default value on creation for the enabled field.
 	schedule.DefaultEnabled = scheduleDescEnabled.Default.(bool)
+	// scheduleDescNotifyViaServerChan is the schema descriptor for notify_via_server_chan field.
+	scheduleDescNotifyViaServerChan := scheduleFields[9].Descriptor()
+	// schedule.DefaultNotifyViaServerChan holds the default value on creation for the notify_via_server_chan field.
+	schedule.DefaultNotifyViaServerChan = scheduleDescNotifyViaServerChan.Default.(bool)
 	// scheduleDescID is the schema descriptor for id field.
 	scheduleDescID := scheduleFields[0].Descriptor()
 	// schedule.DefaultID holds the default value on creation for the id field.
 	schedule.DefaultID = scheduleDescID.Default.(func() uuid.UUID)
+	serverchanconfigFields := schema.ServerChanConfig{}.Fields()
+	_ = serverchanconfigFields
+	// serverchanconfigDescOnTemplate is the schema descriptor for on_template field.
+	serverchanconfigDescOnTemplate := serverchanconfigFields[1].Descriptor()
+	// serverchanconfig.DefaultOnTemplate holds the default value on creation for the on_template field.
+	serverchanconfig.DefaultOnTemplate = serverchanconfigDescOnTemplate.Default.(string)
+	// serverchanconfigDescOffTemplate is the schema descriptor for off_template field.
+	serverchanconfigDescOffTemplate := serverchanconfigFields[2].Descriptor()
+	// serverchanconfig.DefaultOffTemplate holds the default value on creation for the off_template field.
+	serverchanconfig.DefaultOffTemplate = serverchanconfigDescOffTemplate.Default.(string)
+	// serverchanconfigDescEnabled is the schema descriptor for enabled field.
+	serverchanconfigDescEnabled := serverchanconfigFields[3].Descriptor()
+	// serverchanconfig.DefaultEnabled holds the default value on creation for the enabled field.
+	serverchanconfig.DefaultEnabled = serverchanconfigDescEnabled.Default.(bool)
 }

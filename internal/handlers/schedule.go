@@ -4,6 +4,7 @@ import (
 	"cat-led/internal/biz"
 	"cat-led/internal/ent"
 	"cat-led/internal/ent/schedule"
+	"cat-led/internal/pkg/serverchan"
 	"cat-led/internal/pkg/zlog"
 	"context"
 	"fmt"
@@ -39,6 +40,7 @@ func convertToEntSchedule(frontendSchedule map[string]interface{}, creatorID str
 	name, _ := frontendSchedule["name"].(string)
 	enabled, _ := frontendSchedule["enabled"].(bool)
 	allowEdit, _ := frontendSchedule["allowEdit"].(bool)
+	notifyViaServerChan, _ := frontendSchedule["notifyViaServerChan"].(bool)
 
 	// 处理重复日期
 	var weekDays []int
@@ -78,14 +80,15 @@ func convertToEntSchedule(frontendSchedule map[string]interface{}, creatorID str
 
 	// 创建Schedule实体
 	s := &ent.Schedule{
-		Name:              name,
-		Creator:           creatorID,
-		WeekDays:          weekDays,
-		Hour:              hour,
-		Minute:            minute,
-		Operation:         operation,
-		Enabled:           enabled,
-		AllowEditByOthers: allowEdit,
+		Name:                name,
+		Creator:             creatorID,
+		WeekDays:            weekDays,
+		Hour:                hour,
+		Minute:              minute,
+		Operation:           operation,
+		Enabled:             enabled,
+		AllowEditByOthers:   allowEdit,
+		NotifyViaServerChan: notifyViaServerChan,
 	}
 
 	return s, nil
@@ -95,17 +98,18 @@ func convertToEntSchedule(frontendSchedule map[string]interface{}, creatorID str
 func convertToFrontendSchedule(entSchedule *ent.Schedule) map[string]interface{} {
 	// 前端Schedule格式
 	return map[string]interface{}{
-		"id":           entSchedule.ID.String(),
-		"name":         entSchedule.Name,
-		"hour":         entSchedule.Hour,
-		"minute":       entSchedule.Minute,
-		"enabled":      entSchedule.Enabled,
-		"repeatDays":   entSchedule.WeekDays,
-		"creatorId":    entSchedule.Creator,
-		"allowEdit":    entSchedule.AllowEditByOthers,
-		"operation":    string(entSchedule.Operation),
-		"createdAt":    time.Now().Format(time.RFC3339),
-		"lastModified": time.Now().Format(time.RFC3339),
+		"id":                  entSchedule.ID.String(),
+		"name":                entSchedule.Name,
+		"hour":                entSchedule.Hour,
+		"minute":              entSchedule.Minute,
+		"enabled":             entSchedule.Enabled,
+		"repeatDays":          entSchedule.WeekDays,
+		"creatorId":           entSchedule.Creator,
+		"allowEdit":           entSchedule.AllowEditByOthers,
+		"operation":           string(entSchedule.Operation),
+		"notifyViaServerChan": entSchedule.NotifyViaServerChan,
+		"createdAt":           time.Now().Format(time.RFC3339),
+		"lastModified":        time.Now().Format(time.RFC3339),
 	}
 }
 
@@ -460,18 +464,30 @@ func checkSchedules(logger *zlog.Logger) {
 					logger.Error().Err(err).Msg("执行任务失败")
 				} else {
 					logger.Info().Str("任务名称", s.Name).Bool("状态", status).Msg("执行任务成功")
+					// 如果启用了Server酱通知，则发送通知
+					if s.NotifyViaServerChan {
+						sendServerChanNotification(ctx, logger, s.Name, status)
+					}
 				}
 			case schedule.OperationShutdown:
 				if err = Shutdown(ctx); err != nil {
 					logger.Error().Err(err).Msg("关机调用失败")
 				} else {
 					logger.Info().Str("任务名称", s.Name).Msg("关机调用成功")
+					// 如果启用了Server酱通知，则发送通知
+					if s.NotifyViaServerChan {
+						sendServerChanNotification(ctx, logger, s.Name, false) // 关机操作发送关灯通知
+					}
 				}
 			case schedule.OperationReboot:
 				if err = Reboot(ctx); err != nil {
 					logger.Error().Err(err).Msg("重启调用失败")
 				} else {
 					logger.Info().Str("任务名称", s.Name).Msg("重启调用成功")
+					// 如果启用了Server酱通知，则发送通知
+					if s.NotifyViaServerChan {
+						sendServerChanNotification(ctx, logger, s.Name, false) // 重启操作发送关灯通知
+					}
 				}
 			default:
 				logger.Info().Msg("do nothing")
@@ -479,4 +495,57 @@ func checkSchedules(logger *zlog.Logger) {
 
 		}
 	}
+}
+
+// sendServerChanNotification 发送Server酱通知
+func sendServerChanNotification(ctx context.Context, logger *zlog.Logger, taskName string, status bool) {
+	// 检查scheduleUseCase是否已初始化
+	if scheduleUseCase == nil {
+		logger.Error().Msg("定时任务服务未初始化")
+		return
+	}
+
+	// 获取数据库客户端
+	client := scheduleUseCase.GetClient()
+
+	// 查询配置
+	config, err := client.ServerChanConfig.Query().First(ctx)
+	if err != nil {
+		// 如果没有配置，使用默认配置
+		config = &ent.ServerChanConfig{
+			SendKey:     "",
+			OnTemplate:  "{{.Name}} 任务执行成功，灯已开启",
+			OffTemplate: "{{.Name}} 任务执行成功，灯已关闭",
+			Enabled:     false,
+		}
+	}
+
+	// 检查是否启用通知
+	if !config.Enabled || config.SendKey == "" {
+		return
+	}
+
+	// 创建Server酱推送器
+	pusher := serverchan.NewPusher(config.SendKey, config.OnTemplate, config.OffTemplate)
+
+	// 准备上下文数据
+	ledContext := serverchan.LEDContext{
+		Time:   time.Now(),
+		Status: status,
+		Name:   taskName,
+	}
+
+	// 发送通知
+	if status {
+		err = pusher.PushLedOpenNotify(ledContext)
+	} else {
+		err = pusher.PushLedCloseNotify(ledContext)
+	}
+
+	if err != nil {
+		logger.Error().Err(err).Msg("发送Server酱通知失败")
+		return
+	}
+
+	logger.Info().Str("任务名称", taskName).Bool("状态", status).Msg("发送Server酱通知成功")
 }

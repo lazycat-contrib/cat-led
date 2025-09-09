@@ -37,7 +37,7 @@ func (s *Server) SetupRoutes() error {
 	}
 	// 使用嵌入式HTML模板
 	tpl := template.New("html")
-	tpl, err = tpl.ParseFS(staticFS, "public/index.html")
+	tpl, err = tpl.ParseFS(staticFS, "public/index.html", "public/config.html")
 	if err != nil {
 		return err
 	}
@@ -45,6 +45,9 @@ func (s *Server) SetupRoutes() error {
 	// HTML文件路由
 	s.engine.GET("/", func(c *gin.Context) {
 		c.HTML(200, "index.html", nil)
+	})
+	s.engine.GET("/config.html", func(c *gin.Context) {
+		c.HTML(200, "config.html", nil)
 	})
 	// 设置静态文件服务
 	s.engine.StaticFS("/static", http.FS(publicFS))
@@ -59,6 +62,10 @@ func (s *Server) SetupRoutes() error {
 	s.engine.POST("/api/schedules", handlers.CreateSchedule)
 	s.engine.PUT("/api/schedules/:id", handlers.UpdateSchedule)
 	s.engine.DELETE("/api/schedules/:id", handlers.DeleteSchedule)
+
+	// Server酱配置相关API
+	s.engine.GET("/api/serverchan/config", handlers.GetServerChanConfig)
+	s.engine.POST("/api/serverchan/config", handlers.SaveServerChanConfig)
 
 	return nil
 }

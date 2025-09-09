@@ -4,6 +4,7 @@ package ent
 
 import (
 	"cat-led/internal/ent/schedule"
+	"cat-led/internal/ent/serverchanconfig"
 	"context"
 	"errors"
 	"fmt"
@@ -73,7 +74,8 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			schedule.Table: schedule.ValidColumn,
+			schedule.Table:         schedule.ValidColumn,
+			serverchanconfig.Table: serverchanconfig.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

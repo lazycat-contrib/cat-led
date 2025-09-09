@@ -39,6 +39,11 @@ func NewScheduleUseCase(dbPath string, logger *zlog.Logger) *ScheduleUsecase {
 	}
 }
 
+// GetClient 返回数据库客户端
+func (s *ScheduleUsecase) GetClient() *ent.Client {
+	return s.client
+}
+
 // CreateSchedule creates a new schedule with the given parameters
 func (s *ScheduleUsecase) CreateSchedule(ctx context.Context, schedule *ent.Schedule) (*ent.Schedule, error) {
 	creator := schedule.Creator
@@ -55,6 +60,7 @@ func (s *ScheduleUsecase) CreateSchedule(ctx context.Context, schedule *ent.Sche
 		SetOperation(schedule.Operation).
 		SetEnabled(schedule.Enabled).
 		SetAllowEditByOthers(schedule.AllowEditByOthers).
+		SetNotifyViaServerChan(schedule.NotifyViaServerChan).
 		Save(ctx)
 
 	if err != nil {
@@ -113,7 +119,8 @@ func (s *ScheduleUsecase) UpdateSchedule(ctx context.Context, schedule *ent.Sche
 		SetHour(schedule.Hour).
 		SetMinute(schedule.Minute).
 		SetOperation(schedule.Operation).
-		SetEnabled(schedule.Enabled)
+		SetEnabled(schedule.Enabled).
+		SetNotifyViaServerChan(schedule.NotifyViaServerChan)
 
 	// Only the creator can change this setting
 	if existingSchedule.Creator == currentUser {
@@ -144,6 +151,54 @@ func (s *ScheduleUsecase) DeleteSchedule(ctx context.Context, id uuid.UUID, curr
 	err = s.client.Schedule.DeleteOneID(id).Exec(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to delete schedule: %w", err)
+	}
+
+	return nil
+}
+
+// GetServerChanConfig 获取Server酱配置
+func (s *ScheduleUsecase) GetServerChanConfig(ctx context.Context) (*ent.ServerChanConfig, error) {
+	config, err := s.client.ServerChanConfig.Query().First(ctx)
+	if err != nil {
+		// 如果没有配置，返回默认配置
+		return &ent.ServerChanConfig{
+			SendKey:     "",
+			OnTemplate:  "{{.Name}} 任务执行成功，灯已开启",
+			OffTemplate: "{{.Name}} 任务执行成功，灯已关闭",
+			Enabled:     false,
+		}, nil
+	}
+	return config, nil
+}
+
+// SaveServerChanConfig 保存Server酱配置
+func (s *ScheduleUsecase) SaveServerChanConfig(ctx context.Context, config *ent.ServerChanConfig) error {
+	existingConfig, err := s.client.ServerChanConfig.Query().First(ctx)
+
+	if err != nil {
+		// 如果没有现有配置，创建新配置
+		_, err = s.client.ServerChanConfig.Create().
+			SetEnabled(config.Enabled).
+			SetSendKey(config.SendKey).
+			SetOnTemplate(config.OnTemplate).
+			SetOffTemplate(config.OffTemplate).
+			Save(ctx)
+
+		if err != nil {
+			return fmt.Errorf("failed to create serverchan config: %w", err)
+		}
+	} else {
+		// 更新现有配置
+		_, err = s.client.ServerChanConfig.UpdateOneID(existingConfig.ID).
+			SetEnabled(config.Enabled).
+			SetSendKey(config.SendKey).
+			SetOnTemplate(config.OnTemplate).
+			SetOffTemplate(config.OffTemplate).
+			Save(ctx)
+
+		if err != nil {
+			return fmt.Errorf("failed to update serverchan config: %w", err)
+		}
 	}
 
 	return nil
