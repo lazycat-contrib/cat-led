@@ -421,7 +421,7 @@ func InitScheduler(logger *zlog.Logger) {
 // 检查是否有需要执行的任务
 func checkSchedules(logger *zlog.Logger) {
 	if scheduleUseCase == nil {
-		log.Println("定时任务服务未初始化，跳过检查")
+		logger.Warn().Msg("定时任务服务未初始化，跳过检查")
 		return
 	}
 

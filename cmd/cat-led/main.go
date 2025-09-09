@@ -5,7 +5,6 @@ import (
 	"cat-led/internal/pkg/zlog"
 	"cat-led/internal/web"
 	"context"
-	"log"
 )
 
 func main() {
@@ -27,7 +26,7 @@ func main() {
 	handlers.InitScheduleUseCase(dbPath, logger)
 
 	// 初始化LED状态
-	handlers.InitLedStatus(context.Background())
+	handlers.InitLedStatus(context.Background(), logger)
 
 	// 初始化定时任务调度器
 	handlers.InitScheduler(logger)
@@ -37,13 +36,13 @@ func main() {
 
 	// 设置路由和静态文件
 	if err := server.SetupRoutes(); err != nil {
-		log.Fatalf("设置路由失败: %v", err)
+		logger.Fatal().Err(err).Msg("设置路由失败")
 	}
 
 	// 启动服务器
-	log.Println("Starting server at :3000")
+	logger.Info().Msg("Starting server at :3000")
 	if err := server.Run(":3000"); err != nil {
-		log.Fatalf("启动服务器失败: %v", err)
+		logger.Fatal().Err(err).Msg("启动服务器失败")
 	}
 }
 

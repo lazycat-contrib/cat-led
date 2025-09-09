@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"cat-led/internal/pkg/zlog"
 	"context"
 	"log"
 	"sync"
@@ -17,17 +18,17 @@ var (
 )
 
 // InitLedStatus 在程序启动时初始化LED状态
-func InitLedStatus(ctx context.Context) {
+func InitLedStatus(ctx context.Context, logger *zlog.Logger) {
 	gw, err := gohelper.NewAPIGateway(ctx)
 	if err != nil {
-		log.Printf("Error creating API gateway for LED status initialization: %v", err)
+		logger.Error().Err(err).Msg("Error creating API gateway for LED status initialization")
 		return
 	}
 	defer gw.Close()
 
 	boxInfo, err := gw.Box.QueryInfo(ctx, nil)
 	if err != nil {
-		log.Printf("Error querying box info for LED status initialization: %v", err)
+		logger.Error().Err(err).Msg("Error querying box info for LED status initialization")
 		return
 	}
 
