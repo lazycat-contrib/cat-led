@@ -35,8 +35,8 @@ func GetServerChanConfig(c *gin.Context) {
 		c.JSON(200, ServerChanConfig{
 			Enabled:     false,
 			SendKey:     "",
-			OnTemplate:  "{{.Name}} 任务执行成功，灯已开启",
-			OffTemplate: "{{.Name}} 任务执行成功，灯已关闭",
+			OnTemplate:  "懒猫{{.Name}} 任务在{{ .Time }}}执行成功，灯已开启",
+			OffTemplate: "懒猫{{.Name}} 任务在{{ .Time }}} 执行成功，灯已关闭",
 		})
 		return
 	}
