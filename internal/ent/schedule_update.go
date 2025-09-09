@@ -138,6 +138,20 @@ func (su *ScheduleUpdate) SetNillableAllowEditByOthers(b *bool) *ScheduleUpdate 
 	return su
 }
 
+// SetNotifyViaServerChan sets the "notify_via_server_chan" field.
+func (su *ScheduleUpdate) SetNotifyViaServerChan(b bool) *ScheduleUpdate {
+	su.mutation.SetNotifyViaServerChan(b)
+	return su
+}
+
+// SetNillableNotifyViaServerChan sets the "notify_via_server_chan" field if the given value is not nil.
+func (su *ScheduleUpdate) SetNillableNotifyViaServerChan(b *bool) *ScheduleUpdate {
+	if b != nil {
+		su.SetNotifyViaServerChan(*b)
+	}
+	return su
+}
+
 // Mutation returns the ScheduleMutation object of the builder.
 func (su *ScheduleUpdate) Mutation() *ScheduleMutation {
 	return su.mutation
@@ -223,6 +237,9 @@ func (su *ScheduleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := su.mutation.AllowEditByOthers(); ok {
 		_spec.SetField(schedule.FieldAllowEditByOthers, field.TypeBool, value)
+	}
+	if value, ok := su.mutation.NotifyViaServerChan(); ok {
+		_spec.SetField(schedule.FieldNotifyViaServerChan, field.TypeBool, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, su.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -354,6 +371,20 @@ func (suo *ScheduleUpdateOne) SetNillableAllowEditByOthers(b *bool) *ScheduleUpd
 	return suo
 }
 
+// SetNotifyViaServerChan sets the "notify_via_server_chan" field.
+func (suo *ScheduleUpdateOne) SetNotifyViaServerChan(b bool) *ScheduleUpdateOne {
+	suo.mutation.SetNotifyViaServerChan(b)
+	return suo
+}
+
+// SetNillableNotifyViaServerChan sets the "notify_via_server_chan" field if the given value is not nil.
+func (suo *ScheduleUpdateOne) SetNillableNotifyViaServerChan(b *bool) *ScheduleUpdateOne {
+	if b != nil {
+		suo.SetNotifyViaServerChan(*b)
+	}
+	return suo
+}
+
 // Mutation returns the ScheduleMutation object of the builder.
 func (suo *ScheduleUpdateOne) Mutation() *ScheduleMutation {
 	return suo.mutation
@@ -469,6 +500,9 @@ func (suo *ScheduleUpdateOne) sqlSave(ctx context.Context) (_node *Schedule, err
 	}
 	if value, ok := suo.mutation.AllowEditByOthers(); ok {
 		_spec.SetField(schedule.FieldAllowEditByOthers, field.TypeBool, value)
+	}
+	if value, ok := suo.mutation.NotifyViaServerChan(); ok {
+		_spec.SetField(schedule.FieldNotifyViaServerChan, field.TypeBool, value)
 	}
 	_node = &Schedule{config: suo.config}
 	_spec.Assign = _node.assignValues

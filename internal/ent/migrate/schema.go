@@ -19,6 +19,7 @@ var (
 		{Name: "operation", Type: field.TypeEnum, Enums: []string{"on", "off", "shutdown", "reboot"}, Default: "on"},
 		{Name: "enabled", Type: field.TypeBool, Default: true},
 		{Name: "allow_edit_by_others", Type: field.TypeBool},
+		{Name: "notify_via_server_chan", Type: field.TypeBool, Default: false},
 	}
 	// SchedulesTable holds the schema information for the "schedules" table.
 	SchedulesTable = &schema.Table{
@@ -26,9 +27,24 @@ var (
 		Columns:    SchedulesColumns,
 		PrimaryKey: []*schema.Column{SchedulesColumns[0]},
 	}
+	// ServerChanConfigsColumns holds the columns for the "server_chan_configs" table.
+	ServerChanConfigsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "send_key", Type: field.TypeString},
+		{Name: "on_template", Type: field.TypeString, Default: "{{.Name}} 任务执行成功，灯已开启"},
+		{Name: "off_template", Type: field.TypeString, Default: "{{.Name}} 任务执行成功，灯已关闭"},
+		{Name: "enabled", Type: field.TypeBool, Default: false},
+	}
+	// ServerChanConfigsTable holds the schema information for the "server_chan_configs" table.
+	ServerChanConfigsTable = &schema.Table{
+		Name:       "server_chan_configs",
+		Columns:    ServerChanConfigsColumns,
+		PrimaryKey: []*schema.Column{ServerChanConfigsColumns[0]},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		SchedulesTable,
+		ServerChanConfigsTable,
 	}
 )
 

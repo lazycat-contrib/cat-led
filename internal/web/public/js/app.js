@@ -409,6 +409,10 @@ function renderSchedulesList() {
                 <i class="ri-user-line"></i>
                 <span>${schedule.creatorId || '未知'}</span>
             </div>
+            <div class="schedule-serverchan ${schedule.notifyViaServerChan ? 'enabled' : ''}" title="Server酱通知">
+                <i class="ri-notification-line"></i>
+                <span>${schedule.notifyViaServerChan ? '已启用通知' : '未启用通知'}</span>
+            </div>
             <div class="schedule-toggle">
                 <div class="toggle-switch small">
                     <input type="checkbox" id="toggle-${schedule.id}" ${schedule.enabled ? 'checked' : ''}>
@@ -496,6 +500,9 @@ function openEditScheduleModal(scheduleId) {
 
     // 设置启用状态
     document.getElementById('schedule-enabled').checked = schedule.enabled;
+    
+    // 设置Server酱通知选项
+    document.getElementById('notify-via-server-chan').checked = schedule.notifyViaServerChan || false;
 
     // 设置重复的星期几
     $daySelects.forEach(el => {
@@ -533,6 +540,7 @@ async function saveSchedule(e) {
     const operation = document.getElementById('operation').value;
     const allowEdit = document.getElementById('allow-edit').checked;
     const enabled = document.getElementById('schedule-enabled').checked;
+    const notifyViaServerChan = document.getElementById('notify-via-server-chan').checked;
 
     // 获取选中的星期
     const repeatDays = [];
@@ -553,6 +561,7 @@ async function saveSchedule(e) {
         repeatDays,
         allowEdit,
         enabled,
+        notifyViaServerChan,
         operation
     };
 

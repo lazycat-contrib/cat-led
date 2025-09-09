@@ -5,6 +5,7 @@ package ent
 import (
 	"cat-led/internal/ent/predicate"
 	"cat-led/internal/ent/schedule"
+	"cat-led/internal/ent/serverchanconfig"
 	"context"
 	"errors"
 	"fmt"
@@ -24,30 +25,32 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeSchedule = "Schedule"
+	TypeSchedule         = "Schedule"
+	TypeServerChanConfig = "ServerChanConfig"
 )
 
 // ScheduleMutation represents an operation that mutates the Schedule nodes in the graph.
 type ScheduleMutation struct {
 	config
-	op                   Op
-	typ                  string
-	id                   *uuid.UUID
-	name                 *string
-	creator              *string
-	week_days            *[]int
-	appendweek_days      []int
-	hour                 *int
-	addhour              *int
-	minute               *int
-	addminute            *int
-	operation            *schedule.Operation
-	enabled              *bool
-	allow_edit_by_others *bool
-	clearedFields        map[string]struct{}
-	done                 bool
-	oldValue             func(context.Context) (*Schedule, error)
-	predicates           []predicate.Schedule
+	op                     Op
+	typ                    string
+	id                     *uuid.UUID
+	name                   *string
+	creator                *string
+	week_days              *[]int
+	appendweek_days        []int
+	hour                   *int
+	addhour                *int
+	minute                 *int
+	addminute              *int
+	operation              *schedule.Operation
+	enabled                *bool
+	allow_edit_by_others   *bool
+	notify_via_server_chan *bool
+	clearedFields          map[string]struct{}
+	done                   bool
+	oldValue               func(context.Context) (*Schedule, error)
+	predicates             []predicate.Schedule
 }
 
 var _ ent.Mutation = (*ScheduleMutation)(nil)
@@ -497,6 +500,42 @@ func (m *ScheduleMutation) ResetAllowEditByOthers() {
 	m.allow_edit_by_others = nil
 }
 
+// SetNotifyViaServerChan sets the "notify_via_server_chan" field.
+func (m *ScheduleMutation) SetNotifyViaServerChan(b bool) {
+	m.notify_via_server_chan = &b
+}
+
+// NotifyViaServerChan returns the value of the "notify_via_server_chan" field in the mutation.
+func (m *ScheduleMutation) NotifyViaServerChan() (r bool, exists bool) {
+	v := m.notify_via_server_chan
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNotifyViaServerChan returns the old "notify_via_server_chan" field's value of the Schedule entity.
+// If the Schedule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScheduleMutation) OldNotifyViaServerChan(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNotifyViaServerChan is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNotifyViaServerChan requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNotifyViaServerChan: %w", err)
+	}
+	return oldValue.NotifyViaServerChan, nil
+}
+
+// ResetNotifyViaServerChan resets all changes to the "notify_via_server_chan" field.
+func (m *ScheduleMutation) ResetNotifyViaServerChan() {
+	m.notify_via_server_chan = nil
+}
+
 // Where appends a list predicates to the ScheduleMutation builder.
 func (m *ScheduleMutation) Where(ps ...predicate.Schedule) {
 	m.predicates = append(m.predicates, ps...)
@@ -531,7 +570,7 @@ func (m *ScheduleMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ScheduleMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.name != nil {
 		fields = append(fields, schedule.FieldName)
 	}
@@ -555,6 +594,9 @@ func (m *ScheduleMutation) Fields() []string {
 	}
 	if m.allow_edit_by_others != nil {
 		fields = append(fields, schedule.FieldAllowEditByOthers)
+	}
+	if m.notify_via_server_chan != nil {
+		fields = append(fields, schedule.FieldNotifyViaServerChan)
 	}
 	return fields
 }
@@ -580,6 +622,8 @@ func (m *ScheduleMutation) Field(name string) (ent.Value, bool) {
 		return m.Enabled()
 	case schedule.FieldAllowEditByOthers:
 		return m.AllowEditByOthers()
+	case schedule.FieldNotifyViaServerChan:
+		return m.NotifyViaServerChan()
 	}
 	return nil, false
 }
@@ -605,6 +649,8 @@ func (m *ScheduleMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldEnabled(ctx)
 	case schedule.FieldAllowEditByOthers:
 		return m.OldAllowEditByOthers(ctx)
+	case schedule.FieldNotifyViaServerChan:
+		return m.OldNotifyViaServerChan(ctx)
 	}
 	return nil, fmt.Errorf("unknown Schedule field %s", name)
 }
@@ -669,6 +715,13 @@ func (m *ScheduleMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAllowEditByOthers(v)
+		return nil
+	case schedule.FieldNotifyViaServerChan:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNotifyViaServerChan(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Schedule field %s", name)
@@ -770,6 +823,9 @@ func (m *ScheduleMutation) ResetField(name string) error {
 	case schedule.FieldAllowEditByOthers:
 		m.ResetAllowEditByOthers()
 		return nil
+	case schedule.FieldNotifyViaServerChan:
+		m.ResetNotifyViaServerChan()
+		return nil
 	}
 	return fmt.Errorf("unknown Schedule field %s", name)
 }
@@ -820,4 +876,492 @@ func (m *ScheduleMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *ScheduleMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Schedule edge %s", name)
+}
+
+// ServerChanConfigMutation represents an operation that mutates the ServerChanConfig nodes in the graph.
+type ServerChanConfigMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	send_key      *string
+	on_template   *string
+	off_template  *string
+	enabled       *bool
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*ServerChanConfig, error)
+	predicates    []predicate.ServerChanConfig
+}
+
+var _ ent.Mutation = (*ServerChanConfigMutation)(nil)
+
+// serverchanconfigOption allows management of the mutation configuration using functional options.
+type serverchanconfigOption func(*ServerChanConfigMutation)
+
+// newServerChanConfigMutation creates new mutation for the ServerChanConfig entity.
+func newServerChanConfigMutation(c config, op Op, opts ...serverchanconfigOption) *ServerChanConfigMutation {
+	m := &ServerChanConfigMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeServerChanConfig,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withServerChanConfigID sets the ID field of the mutation.
+func withServerChanConfigID(id int) serverchanconfigOption {
+	return func(m *ServerChanConfigMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ServerChanConfig
+		)
+		m.oldValue = func(ctx context.Context) (*ServerChanConfig, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ServerChanConfig.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withServerChanConfig sets the old ServerChanConfig of the mutation.
+func withServerChanConfig(node *ServerChanConfig) serverchanconfigOption {
+	return func(m *ServerChanConfigMutation) {
+		m.oldValue = func(context.Context) (*ServerChanConfig, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ServerChanConfigMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ServerChanConfigMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ServerChanConfigMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ServerChanConfigMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ServerChanConfig.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetSendKey sets the "send_key" field.
+func (m *ServerChanConfigMutation) SetSendKey(s string) {
+	m.send_key = &s
+}
+
+// SendKey returns the value of the "send_key" field in the mutation.
+func (m *ServerChanConfigMutation) SendKey() (r string, exists bool) {
+	v := m.send_key
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSendKey returns the old "send_key" field's value of the ServerChanConfig entity.
+// If the ServerChanConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ServerChanConfigMutation) OldSendKey(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSendKey is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSendKey requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSendKey: %w", err)
+	}
+	return oldValue.SendKey, nil
+}
+
+// ResetSendKey resets all changes to the "send_key" field.
+func (m *ServerChanConfigMutation) ResetSendKey() {
+	m.send_key = nil
+}
+
+// SetOnTemplate sets the "on_template" field.
+func (m *ServerChanConfigMutation) SetOnTemplate(s string) {
+	m.on_template = &s
+}
+
+// OnTemplate returns the value of the "on_template" field in the mutation.
+func (m *ServerChanConfigMutation) OnTemplate() (r string, exists bool) {
+	v := m.on_template
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOnTemplate returns the old "on_template" field's value of the ServerChanConfig entity.
+// If the ServerChanConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ServerChanConfigMutation) OldOnTemplate(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOnTemplate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOnTemplate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOnTemplate: %w", err)
+	}
+	return oldValue.OnTemplate, nil
+}
+
+// ResetOnTemplate resets all changes to the "on_template" field.
+func (m *ServerChanConfigMutation) ResetOnTemplate() {
+	m.on_template = nil
+}
+
+// SetOffTemplate sets the "off_template" field.
+func (m *ServerChanConfigMutation) SetOffTemplate(s string) {
+	m.off_template = &s
+}
+
+// OffTemplate returns the value of the "off_template" field in the mutation.
+func (m *ServerChanConfigMutation) OffTemplate() (r string, exists bool) {
+	v := m.off_template
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOffTemplate returns the old "off_template" field's value of the ServerChanConfig entity.
+// If the ServerChanConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ServerChanConfigMutation) OldOffTemplate(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOffTemplate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOffTemplate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOffTemplate: %w", err)
+	}
+	return oldValue.OffTemplate, nil
+}
+
+// ResetOffTemplate resets all changes to the "off_template" field.
+func (m *ServerChanConfigMutation) ResetOffTemplate() {
+	m.off_template = nil
+}
+
+// SetEnabled sets the "enabled" field.
+func (m *ServerChanConfigMutation) SetEnabled(b bool) {
+	m.enabled = &b
+}
+
+// Enabled returns the value of the "enabled" field in the mutation.
+func (m *ServerChanConfigMutation) Enabled() (r bool, exists bool) {
+	v := m.enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnabled returns the old "enabled" field's value of the ServerChanConfig entity.
+// If the ServerChanConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ServerChanConfigMutation) OldEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnabled: %w", err)
+	}
+	return oldValue.Enabled, nil
+}
+
+// ResetEnabled resets all changes to the "enabled" field.
+func (m *ServerChanConfigMutation) ResetEnabled() {
+	m.enabled = nil
+}
+
+// Where appends a list predicates to the ServerChanConfigMutation builder.
+func (m *ServerChanConfigMutation) Where(ps ...predicate.ServerChanConfig) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ServerChanConfigMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ServerChanConfigMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ServerChanConfig, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ServerChanConfigMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ServerChanConfigMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ServerChanConfig).
+func (m *ServerChanConfigMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ServerChanConfigMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.send_key != nil {
+		fields = append(fields, serverchanconfig.FieldSendKey)
+	}
+	if m.on_template != nil {
+		fields = append(fields, serverchanconfig.FieldOnTemplate)
+	}
+	if m.off_template != nil {
+		fields = append(fields, serverchanconfig.FieldOffTemplate)
+	}
+	if m.enabled != nil {
+		fields = append(fields, serverchanconfig.FieldEnabled)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ServerChanConfigMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case serverchanconfig.FieldSendKey:
+		return m.SendKey()
+	case serverchanconfig.FieldOnTemplate:
+		return m.OnTemplate()
+	case serverchanconfig.FieldOffTemplate:
+		return m.OffTemplate()
+	case serverchanconfig.FieldEnabled:
+		return m.Enabled()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ServerChanConfigMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case serverchanconfig.FieldSendKey:
+		return m.OldSendKey(ctx)
+	case serverchanconfig.FieldOnTemplate:
+		return m.OldOnTemplate(ctx)
+	case serverchanconfig.FieldOffTemplate:
+		return m.OldOffTemplate(ctx)
+	case serverchanconfig.FieldEnabled:
+		return m.OldEnabled(ctx)
+	}
+	return nil, fmt.Errorf("unknown ServerChanConfig field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ServerChanConfigMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case serverchanconfig.FieldSendKey:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSendKey(v)
+		return nil
+	case serverchanconfig.FieldOnTemplate:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOnTemplate(v)
+		return nil
+	case serverchanconfig.FieldOffTemplate:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOffTemplate(v)
+		return nil
+	case serverchanconfig.FieldEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnabled(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ServerChanConfig field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ServerChanConfigMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ServerChanConfigMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ServerChanConfigMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown ServerChanConfig numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ServerChanConfigMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ServerChanConfigMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ServerChanConfigMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown ServerChanConfig nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ServerChanConfigMutation) ResetField(name string) error {
+	switch name {
+	case serverchanconfig.FieldSendKey:
+		m.ResetSendKey()
+		return nil
+	case serverchanconfig.FieldOnTemplate:
+		m.ResetOnTemplate()
+		return nil
+	case serverchanconfig.FieldOffTemplate:
+		m.ResetOffTemplate()
+		return nil
+	case serverchanconfig.FieldEnabled:
+		m.ResetEnabled()
+		return nil
+	}
+	return fmt.Errorf("unknown ServerChanConfig field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ServerChanConfigMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ServerChanConfigMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ServerChanConfigMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ServerChanConfigMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ServerChanConfigMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ServerChanConfigMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ServerChanConfigMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown ServerChanConfig unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ServerChanConfigMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown ServerChanConfig edge %s", name)
 }

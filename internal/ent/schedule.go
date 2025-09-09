@@ -34,7 +34,9 @@ type Schedule struct {
 	Enabled bool `json:"enabled,omitempty"`
 	// AllowEditByOthers holds the value of the "allow_edit_by_others" field.
 	AllowEditByOthers bool `json:"allow_edit_by_others,omitempty"`
-	selectValues      sql.SelectValues
+	// 是否通过Server酱通知
+	NotifyViaServerChan bool `json:"notify_via_server_chan,omitempty"`
+	selectValues        sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -44,7 +46,7 @@ func (*Schedule) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case schedule.FieldWeekDays:
 			values[i] = new([]byte)
-		case schedule.FieldEnabled, schedule.FieldAllowEditByOthers:
+		case schedule.FieldEnabled, schedule.FieldAllowEditByOthers, schedule.FieldNotifyViaServerChan:
 			values[i] = new(sql.NullBool)
 		case schedule.FieldHour, schedule.FieldMinute:
 			values[i] = new(sql.NullInt64)
@@ -123,6 +125,12 @@ func (s *Schedule) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				s.AllowEditByOthers = value.Bool
 			}
+		case schedule.FieldNotifyViaServerChan:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field notify_via_server_chan", values[i])
+			} else if value.Valid {
+				s.NotifyViaServerChan = value.Bool
+			}
 		default:
 			s.selectValues.Set(columns[i], values[i])
 		}
@@ -182,6 +190,9 @@ func (s *Schedule) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("allow_edit_by_others=")
 	builder.WriteString(fmt.Sprintf("%v", s.AllowEditByOthers))
+	builder.WriteString(", ")
+	builder.WriteString("notify_via_server_chan=")
+	builder.WriteString(fmt.Sprintf("%v", s.NotifyViaServerChan))
 	builder.WriteByte(')')
 	return builder.String()
 }

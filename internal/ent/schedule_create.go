@@ -84,6 +84,20 @@ func (sc *ScheduleCreate) SetAllowEditByOthers(b bool) *ScheduleCreate {
 	return sc
 }
 
+// SetNotifyViaServerChan sets the "notify_via_server_chan" field.
+func (sc *ScheduleCreate) SetNotifyViaServerChan(b bool) *ScheduleCreate {
+	sc.mutation.SetNotifyViaServerChan(b)
+	return sc
+}
+
+// SetNillableNotifyViaServerChan sets the "notify_via_server_chan" field if the given value is not nil.
+func (sc *ScheduleCreate) SetNillableNotifyViaServerChan(b *bool) *ScheduleCreate {
+	if b != nil {
+		sc.SetNotifyViaServerChan(*b)
+	}
+	return sc
+}
+
 // SetID sets the "id" field.
 func (sc *ScheduleCreate) SetID(u uuid.UUID) *ScheduleCreate {
 	sc.mutation.SetID(u)
@@ -141,6 +155,10 @@ func (sc *ScheduleCreate) defaults() {
 		v := schedule.DefaultEnabled
 		sc.mutation.SetEnabled(v)
 	}
+	if _, ok := sc.mutation.NotifyViaServerChan(); !ok {
+		v := schedule.DefaultNotifyViaServerChan
+		sc.mutation.SetNotifyViaServerChan(v)
+	}
 	if _, ok := sc.mutation.ID(); !ok {
 		v := schedule.DefaultID()
 		sc.mutation.SetID(v)
@@ -177,6 +195,9 @@ func (sc *ScheduleCreate) check() error {
 	}
 	if _, ok := sc.mutation.AllowEditByOthers(); !ok {
 		return &ValidationError{Name: "allow_edit_by_others", err: errors.New(`ent: missing required field "Schedule.allow_edit_by_others"`)}
+	}
+	if _, ok := sc.mutation.NotifyViaServerChan(); !ok {
+		return &ValidationError{Name: "notify_via_server_chan", err: errors.New(`ent: missing required field "Schedule.notify_via_server_chan"`)}
 	}
 	return nil
 }
@@ -244,6 +265,10 @@ func (sc *ScheduleCreate) createSpec() (*Schedule, *sqlgraph.CreateSpec) {
 	if value, ok := sc.mutation.AllowEditByOthers(); ok {
 		_spec.SetField(schedule.FieldAllowEditByOthers, field.TypeBool, value)
 		_node.AllowEditByOthers = value
+	}
+	if value, ok := sc.mutation.NotifyViaServerChan(); ok {
+		_spec.SetField(schedule.FieldNotifyViaServerChan, field.TypeBool, value)
+		_node.NotifyViaServerChan = value
 	}
 	return _node, _spec
 }

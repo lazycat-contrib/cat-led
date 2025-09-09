@@ -23,6 +23,7 @@ func (Schedule) Fields() []ent.Field {
 		field.Enum("operation").Values("on", "off", "shutdown", "reboot").Default("on"),
 		field.Bool("enabled").Default(true),
 		field.Bool("allow_edit_by_others"),
+		field.Bool("notify_via_server_chan").Default(false).Comment("是否通过Server酱通知"),
 	}
 }
 
