@@ -63,7 +63,7 @@ func (*Schedule) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the Schedule fields.
-func (s *Schedule) assignValues(columns []string, values []any) error {
+func (_m *Schedule) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -73,25 +73,25 @@ func (s *Schedule) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
-				s.ID = *value
+				_m.ID = *value
 			}
 		case schedule.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				s.Name = value.String
+				_m.Name = value.String
 			}
 		case schedule.FieldCreator:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field creator", values[i])
 			} else if value.Valid {
-				s.Creator = value.String
+				_m.Creator = value.String
 			}
 		case schedule.FieldWeekDays:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field week_days", values[i])
 			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &s.WeekDays); err != nil {
+				if err := json.Unmarshal(*value, &_m.WeekDays); err != nil {
 					return fmt.Errorf("unmarshal field week_days: %w", err)
 				}
 			}
@@ -99,40 +99,40 @@ func (s *Schedule) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field hour", values[i])
 			} else if value.Valid {
-				s.Hour = int(value.Int64)
+				_m.Hour = int(value.Int64)
 			}
 		case schedule.FieldMinute:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field minute", values[i])
 			} else if value.Valid {
-				s.Minute = int(value.Int64)
+				_m.Minute = int(value.Int64)
 			}
 		case schedule.FieldOperation:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field operation", values[i])
 			} else if value.Valid {
-				s.Operation = schedule.Operation(value.String)
+				_m.Operation = schedule.Operation(value.String)
 			}
 		case schedule.FieldEnabled:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field enabled", values[i])
 			} else if value.Valid {
-				s.Enabled = value.Bool
+				_m.Enabled = value.Bool
 			}
 		case schedule.FieldAllowEditByOthers:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field allow_edit_by_others", values[i])
 			} else if value.Valid {
-				s.AllowEditByOthers = value.Bool
+				_m.AllowEditByOthers = value.Bool
 			}
 		case schedule.FieldNotifyViaServerChan:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field notify_via_server_chan", values[i])
 			} else if value.Valid {
-				s.NotifyViaServerChan = value.Bool
+				_m.NotifyViaServerChan = value.Bool
 			}
 		default:
-			s.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -140,59 +140,59 @@ func (s *Schedule) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the Schedule.
 // This includes values selected through modifiers, order, etc.
-func (s *Schedule) Value(name string) (ent.Value, error) {
-	return s.selectValues.Get(name)
+func (_m *Schedule) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // Update returns a builder for updating this Schedule.
 // Note that you need to call Schedule.Unwrap() before calling this method if this Schedule
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (s *Schedule) Update() *ScheduleUpdateOne {
-	return NewScheduleClient(s.config).UpdateOne(s)
+func (_m *Schedule) Update() *ScheduleUpdateOne {
+	return NewScheduleClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the Schedule entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (s *Schedule) Unwrap() *Schedule {
-	_tx, ok := s.config.driver.(*txDriver)
+func (_m *Schedule) Unwrap() *Schedule {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: Schedule is not a transactional entity")
 	}
-	s.config.driver = _tx.drv
-	return s
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (s *Schedule) String() string {
+func (_m *Schedule) String() string {
 	var builder strings.Builder
 	builder.WriteString("Schedule(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", s.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("name=")
-	builder.WriteString(s.Name)
+	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
 	builder.WriteString("creator=")
-	builder.WriteString(s.Creator)
+	builder.WriteString(_m.Creator)
 	builder.WriteString(", ")
 	builder.WriteString("week_days=")
-	builder.WriteString(fmt.Sprintf("%v", s.WeekDays))
+	builder.WriteString(fmt.Sprintf("%v", _m.WeekDays))
 	builder.WriteString(", ")
 	builder.WriteString("hour=")
-	builder.WriteString(fmt.Sprintf("%v", s.Hour))
+	builder.WriteString(fmt.Sprintf("%v", _m.Hour))
 	builder.WriteString(", ")
 	builder.WriteString("minute=")
-	builder.WriteString(fmt.Sprintf("%v", s.Minute))
+	builder.WriteString(fmt.Sprintf("%v", _m.Minute))
 	builder.WriteString(", ")
 	builder.WriteString("operation=")
-	builder.WriteString(fmt.Sprintf("%v", s.Operation))
+	builder.WriteString(fmt.Sprintf("%v", _m.Operation))
 	builder.WriteString(", ")
 	builder.WriteString("enabled=")
-	builder.WriteString(fmt.Sprintf("%v", s.Enabled))
+	builder.WriteString(fmt.Sprintf("%v", _m.Enabled))
 	builder.WriteString(", ")
 	builder.WriteString("allow_edit_by_others=")
-	builder.WriteString(fmt.Sprintf("%v", s.AllowEditByOthers))
+	builder.WriteString(fmt.Sprintf("%v", _m.AllowEditByOthers))
 	builder.WriteString(", ")
 	builder.WriteString("notify_via_server_chan=")
-	builder.WriteString(fmt.Sprintf("%v", s.NotifyViaServerChan))
+	builder.WriteString(fmt.Sprintf("%v", _m.NotifyViaServerChan))
 	builder.WriteByte(')')
 	return builder.String()
 }
