@@ -42,12 +42,4 @@ func init() {
 	serverchanconfigDescEnabled := serverchanconfigFields[3].Descriptor()
 	// serverchanconfig.DefaultEnabled holds the default value on creation for the enabled field.
 	serverchanconfig.DefaultEnabled = serverchanconfigDescEnabled.Default.(bool)
-	// serverchanconfigDescEmailEnabled is the schema descriptor for email_enabled field.
-	serverchanconfigDescEmailEnabled := serverchanconfigFields[4].Descriptor()
-	// serverchanconfig.DefaultEmailEnabled holds the default value on creation for the email_enabled field.
-	serverchanconfig.DefaultEmailEnabled = serverchanconfigDescEmailEnabled.Default.(bool)
-	// serverchanconfigDescEmailURL is the schema descriptor for email_url field.
-	serverchanconfigDescEmailURL := serverchanconfigFields[5].Descriptor()
-	// serverchanconfig.DefaultEmailURL holds the default value on creation for the email_url field.
-	serverchanconfig.DefaultEmailURL = serverchanconfigDescEmailURL.Default.(string)
 }

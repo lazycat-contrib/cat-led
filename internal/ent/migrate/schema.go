@@ -34,8 +34,6 @@ var (
 		{Name: "on_template", Type: field.TypeString, Default: "{{.Name}} 任务执行成功，灯已开启"},
 		{Name: "off_template", Type: field.TypeString, Default: "{{.Name}} 任务执行成功，灯已关闭"},
 		{Name: "enabled", Type: field.TypeBool, Default: false},
-		{Name: "email_enabled", Type: field.TypeBool, Default: false},
-		{Name: "email_url", Type: field.TypeString, Default: ""},
 	}
 	// ServerChanConfigsTable holds the schema information for the "server_chan_configs" table.
 	ServerChanConfigsTable = &schema.Table{

@@ -263,8 +263,8 @@ func (c *ScheduleClient) Update() *ScheduleUpdate {
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *ScheduleClient) UpdateOne(_m *Schedule) *ScheduleUpdateOne {
-	mutation := newScheduleMutation(c.config, OpUpdateOne, withSchedule(_m))
+func (c *ScheduleClient) UpdateOne(s *Schedule) *ScheduleUpdateOne {
+	mutation := newScheduleMutation(c.config, OpUpdateOne, withSchedule(s))
 	return &ScheduleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
@@ -281,8 +281,8 @@ func (c *ScheduleClient) Delete() *ScheduleDelete {
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *ScheduleClient) DeleteOne(_m *Schedule) *ScheduleDeleteOne {
-	return c.DeleteOneID(_m.ID)
+func (c *ScheduleClient) DeleteOne(s *Schedule) *ScheduleDeleteOne {
+	return c.DeleteOneID(s.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
@@ -396,8 +396,8 @@ func (c *ServerChanConfigClient) Update() *ServerChanConfigUpdate {
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *ServerChanConfigClient) UpdateOne(_m *ServerChanConfig) *ServerChanConfigUpdateOne {
-	mutation := newServerChanConfigMutation(c.config, OpUpdateOne, withServerChanConfig(_m))
+func (c *ServerChanConfigClient) UpdateOne(scc *ServerChanConfig) *ServerChanConfigUpdateOne {
+	mutation := newServerChanConfigMutation(c.config, OpUpdateOne, withServerChanConfig(scc))
 	return &ServerChanConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
@@ -414,8 +414,8 @@ func (c *ServerChanConfigClient) Delete() *ServerChanConfigDelete {
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *ServerChanConfigClient) DeleteOne(_m *ServerChanConfig) *ServerChanConfigDeleteOne {
-	return c.DeleteOneID(_m.ID)
+func (c *ServerChanConfigClient) DeleteOne(scc *ServerChanConfig) *ServerChanConfigDeleteOne {
+	return c.DeleteOneID(scc.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.

@@ -5,8 +5,6 @@ let currentTheme = 'dark'; // 默认使用暗色主题
 const $themeToggle = document.getElementById('theme-toggle');
 const $configForm = document.getElementById('serverchan-config-form');
 const $serverchanEnabled = document.getElementById('serverchan-enabled');
-const $emailEnabled = document.getElementById('email-enabled');
-const $emailUrl = document.getElementById('email-url');
 const $sendKey = document.getElementById('send-key');
 const $onTemplate = document.getElementById('on-template');
 const $offTemplate = document.getElementById('off-template');
@@ -50,8 +48,6 @@ async function fetchServerChanConfig() {
 function updateConfigForm(config) {
     $serverchanEnabled.checked = config.enabled || false;
     $sendKey.value = config.sendKey || '';
-    $emailEnabled.checked = config.emailEnabled || false;
-    $emailUrl.value = config.emailURL || '';
     $onTemplate.value = config.onTemplate || '{{.Name}} 任务执行成功，灯已开启';
     $offTemplate.value = config.offTemplate || '{{.Name}} 任务执行成功，灯已关闭';
 }
@@ -64,8 +60,6 @@ async function saveServerChanConfig(e) {
     const config = {
         enabled: $serverchanEnabled.checked,
         sendKey: $sendKey.value,
-        emailEnabled: $emailEnabled.checked,
-        emailUrl: $emailUrl.value,
         onTemplate: $onTemplate.value,
         offTemplate: $offTemplate.value
     };
@@ -86,7 +80,7 @@ async function saveServerChanConfig(e) {
         
         showNotification('配置已保存', 'success');
     } catch (error) {
-        console.error('保存配置错误:', error);
+        console.error('保存Server酱配置错误:', error);
         showNotification(`保存配置失败: ${error.message}`, 'error');
     }
 }

@@ -22,108 +22,80 @@ type ServerChanConfigUpdate struct {
 }
 
 // Where appends a list predicates to the ServerChanConfigUpdate builder.
-func (_u *ServerChanConfigUpdate) Where(ps ...predicate.ServerChanConfig) *ServerChanConfigUpdate {
-	_u.mutation.Where(ps...)
-	return _u
+func (sccu *ServerChanConfigUpdate) Where(ps ...predicate.ServerChanConfig) *ServerChanConfigUpdate {
+	sccu.mutation.Where(ps...)
+	return sccu
 }
 
 // SetSendKey sets the "send_key" field.
-func (_u *ServerChanConfigUpdate) SetSendKey(v string) *ServerChanConfigUpdate {
-	_u.mutation.SetSendKey(v)
-	return _u
+func (sccu *ServerChanConfigUpdate) SetSendKey(s string) *ServerChanConfigUpdate {
+	sccu.mutation.SetSendKey(s)
+	return sccu
 }
 
 // SetNillableSendKey sets the "send_key" field if the given value is not nil.
-func (_u *ServerChanConfigUpdate) SetNillableSendKey(v *string) *ServerChanConfigUpdate {
-	if v != nil {
-		_u.SetSendKey(*v)
+func (sccu *ServerChanConfigUpdate) SetNillableSendKey(s *string) *ServerChanConfigUpdate {
+	if s != nil {
+		sccu.SetSendKey(*s)
 	}
-	return _u
+	return sccu
 }
 
 // SetOnTemplate sets the "on_template" field.
-func (_u *ServerChanConfigUpdate) SetOnTemplate(v string) *ServerChanConfigUpdate {
-	_u.mutation.SetOnTemplate(v)
-	return _u
+func (sccu *ServerChanConfigUpdate) SetOnTemplate(s string) *ServerChanConfigUpdate {
+	sccu.mutation.SetOnTemplate(s)
+	return sccu
 }
 
 // SetNillableOnTemplate sets the "on_template" field if the given value is not nil.
-func (_u *ServerChanConfigUpdate) SetNillableOnTemplate(v *string) *ServerChanConfigUpdate {
-	if v != nil {
-		_u.SetOnTemplate(*v)
+func (sccu *ServerChanConfigUpdate) SetNillableOnTemplate(s *string) *ServerChanConfigUpdate {
+	if s != nil {
+		sccu.SetOnTemplate(*s)
 	}
-	return _u
+	return sccu
 }
 
 // SetOffTemplate sets the "off_template" field.
-func (_u *ServerChanConfigUpdate) SetOffTemplate(v string) *ServerChanConfigUpdate {
-	_u.mutation.SetOffTemplate(v)
-	return _u
+func (sccu *ServerChanConfigUpdate) SetOffTemplate(s string) *ServerChanConfigUpdate {
+	sccu.mutation.SetOffTemplate(s)
+	return sccu
 }
 
 // SetNillableOffTemplate sets the "off_template" field if the given value is not nil.
-func (_u *ServerChanConfigUpdate) SetNillableOffTemplate(v *string) *ServerChanConfigUpdate {
-	if v != nil {
-		_u.SetOffTemplate(*v)
+func (sccu *ServerChanConfigUpdate) SetNillableOffTemplate(s *string) *ServerChanConfigUpdate {
+	if s != nil {
+		sccu.SetOffTemplate(*s)
 	}
-	return _u
+	return sccu
 }
 
 // SetEnabled sets the "enabled" field.
-func (_u *ServerChanConfigUpdate) SetEnabled(v bool) *ServerChanConfigUpdate {
-	_u.mutation.SetEnabled(v)
-	return _u
+func (sccu *ServerChanConfigUpdate) SetEnabled(b bool) *ServerChanConfigUpdate {
+	sccu.mutation.SetEnabled(b)
+	return sccu
 }
 
 // SetNillableEnabled sets the "enabled" field if the given value is not nil.
-func (_u *ServerChanConfigUpdate) SetNillableEnabled(v *bool) *ServerChanConfigUpdate {
-	if v != nil {
-		_u.SetEnabled(*v)
+func (sccu *ServerChanConfigUpdate) SetNillableEnabled(b *bool) *ServerChanConfigUpdate {
+	if b != nil {
+		sccu.SetEnabled(*b)
 	}
-	return _u
-}
-
-// SetEmailEnabled sets the "email_enabled" field.
-func (_u *ServerChanConfigUpdate) SetEmailEnabled(v bool) *ServerChanConfigUpdate {
-	_u.mutation.SetEmailEnabled(v)
-	return _u
-}
-
-// SetNillableEmailEnabled sets the "email_enabled" field if the given value is not nil.
-func (_u *ServerChanConfigUpdate) SetNillableEmailEnabled(v *bool) *ServerChanConfigUpdate {
-	if v != nil {
-		_u.SetEmailEnabled(*v)
-	}
-	return _u
-}
-
-// SetEmailURL sets the "email_url" field.
-func (_u *ServerChanConfigUpdate) SetEmailURL(v string) *ServerChanConfigUpdate {
-	_u.mutation.SetEmailURL(v)
-	return _u
-}
-
-// SetNillableEmailURL sets the "email_url" field if the given value is not nil.
-func (_u *ServerChanConfigUpdate) SetNillableEmailURL(v *string) *ServerChanConfigUpdate {
-	if v != nil {
-		_u.SetEmailURL(*v)
-	}
-	return _u
+	return sccu
 }
 
 // Mutation returns the ServerChanConfigMutation object of the builder.
-func (_u *ServerChanConfigUpdate) Mutation() *ServerChanConfigMutation {
-	return _u.mutation
+func (sccu *ServerChanConfigUpdate) Mutation() *ServerChanConfigMutation {
+	return sccu.mutation
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (_u *ServerChanConfigUpdate) Save(ctx context.Context) (int, error) {
-	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
+func (sccu *ServerChanConfigUpdate) Save(ctx context.Context) (int, error) {
+	return withHooks(ctx, sccu.sqlSave, sccu.mutation, sccu.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_u *ServerChanConfigUpdate) SaveX(ctx context.Context) int {
-	affected, err := _u.Save(ctx)
+func (sccu *ServerChanConfigUpdate) SaveX(ctx context.Context) int {
+	affected, err := sccu.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -131,46 +103,40 @@ func (_u *ServerChanConfigUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (_u *ServerChanConfigUpdate) Exec(ctx context.Context) error {
-	_, err := _u.Save(ctx)
+func (sccu *ServerChanConfigUpdate) Exec(ctx context.Context) error {
+	_, err := sccu.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_u *ServerChanConfigUpdate) ExecX(ctx context.Context) {
-	if err := _u.Exec(ctx); err != nil {
+func (sccu *ServerChanConfigUpdate) ExecX(ctx context.Context) {
+	if err := sccu.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-func (_u *ServerChanConfigUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+func (sccu *ServerChanConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(serverchanconfig.Table, serverchanconfig.Columns, sqlgraph.NewFieldSpec(serverchanconfig.FieldID, field.TypeInt))
-	if ps := _u.mutation.predicates; len(ps) > 0 {
+	if ps := sccu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := _u.mutation.SendKey(); ok {
+	if value, ok := sccu.mutation.SendKey(); ok {
 		_spec.SetField(serverchanconfig.FieldSendKey, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.OnTemplate(); ok {
+	if value, ok := sccu.mutation.OnTemplate(); ok {
 		_spec.SetField(serverchanconfig.FieldOnTemplate, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.OffTemplate(); ok {
+	if value, ok := sccu.mutation.OffTemplate(); ok {
 		_spec.SetField(serverchanconfig.FieldOffTemplate, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.Enabled(); ok {
+	if value, ok := sccu.mutation.Enabled(); ok {
 		_spec.SetField(serverchanconfig.FieldEnabled, field.TypeBool, value)
 	}
-	if value, ok := _u.mutation.EmailEnabled(); ok {
-		_spec.SetField(serverchanconfig.FieldEmailEnabled, field.TypeBool, value)
-	}
-	if value, ok := _u.mutation.EmailURL(); ok {
-		_spec.SetField(serverchanconfig.FieldEmailURL, field.TypeString, value)
-	}
-	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
+	if n, err = sqlgraph.UpdateNodes(ctx, sccu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{serverchanconfig.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -178,8 +144,8 @@ func (_u *ServerChanConfigUpdate) sqlSave(ctx context.Context) (_node int, err e
 		}
 		return 0, err
 	}
-	_u.mutation.done = true
-	return _node, nil
+	sccu.mutation.done = true
+	return n, nil
 }
 
 // ServerChanConfigUpdateOne is the builder for updating a single ServerChanConfig entity.
@@ -191,115 +157,87 @@ type ServerChanConfigUpdateOne struct {
 }
 
 // SetSendKey sets the "send_key" field.
-func (_u *ServerChanConfigUpdateOne) SetSendKey(v string) *ServerChanConfigUpdateOne {
-	_u.mutation.SetSendKey(v)
-	return _u
+func (sccuo *ServerChanConfigUpdateOne) SetSendKey(s string) *ServerChanConfigUpdateOne {
+	sccuo.mutation.SetSendKey(s)
+	return sccuo
 }
 
 // SetNillableSendKey sets the "send_key" field if the given value is not nil.
-func (_u *ServerChanConfigUpdateOne) SetNillableSendKey(v *string) *ServerChanConfigUpdateOne {
-	if v != nil {
-		_u.SetSendKey(*v)
+func (sccuo *ServerChanConfigUpdateOne) SetNillableSendKey(s *string) *ServerChanConfigUpdateOne {
+	if s != nil {
+		sccuo.SetSendKey(*s)
 	}
-	return _u
+	return sccuo
 }
 
 // SetOnTemplate sets the "on_template" field.
-func (_u *ServerChanConfigUpdateOne) SetOnTemplate(v string) *ServerChanConfigUpdateOne {
-	_u.mutation.SetOnTemplate(v)
-	return _u
+func (sccuo *ServerChanConfigUpdateOne) SetOnTemplate(s string) *ServerChanConfigUpdateOne {
+	sccuo.mutation.SetOnTemplate(s)
+	return sccuo
 }
 
 // SetNillableOnTemplate sets the "on_template" field if the given value is not nil.
-func (_u *ServerChanConfigUpdateOne) SetNillableOnTemplate(v *string) *ServerChanConfigUpdateOne {
-	if v != nil {
-		_u.SetOnTemplate(*v)
+func (sccuo *ServerChanConfigUpdateOne) SetNillableOnTemplate(s *string) *ServerChanConfigUpdateOne {
+	if s != nil {
+		sccuo.SetOnTemplate(*s)
 	}
-	return _u
+	return sccuo
 }
 
 // SetOffTemplate sets the "off_template" field.
-func (_u *ServerChanConfigUpdateOne) SetOffTemplate(v string) *ServerChanConfigUpdateOne {
-	_u.mutation.SetOffTemplate(v)
-	return _u
+func (sccuo *ServerChanConfigUpdateOne) SetOffTemplate(s string) *ServerChanConfigUpdateOne {
+	sccuo.mutation.SetOffTemplate(s)
+	return sccuo
 }
 
 // SetNillableOffTemplate sets the "off_template" field if the given value is not nil.
-func (_u *ServerChanConfigUpdateOne) SetNillableOffTemplate(v *string) *ServerChanConfigUpdateOne {
-	if v != nil {
-		_u.SetOffTemplate(*v)
+func (sccuo *ServerChanConfigUpdateOne) SetNillableOffTemplate(s *string) *ServerChanConfigUpdateOne {
+	if s != nil {
+		sccuo.SetOffTemplate(*s)
 	}
-	return _u
+	return sccuo
 }
 
 // SetEnabled sets the "enabled" field.
-func (_u *ServerChanConfigUpdateOne) SetEnabled(v bool) *ServerChanConfigUpdateOne {
-	_u.mutation.SetEnabled(v)
-	return _u
+func (sccuo *ServerChanConfigUpdateOne) SetEnabled(b bool) *ServerChanConfigUpdateOne {
+	sccuo.mutation.SetEnabled(b)
+	return sccuo
 }
 
 // SetNillableEnabled sets the "enabled" field if the given value is not nil.
-func (_u *ServerChanConfigUpdateOne) SetNillableEnabled(v *bool) *ServerChanConfigUpdateOne {
-	if v != nil {
-		_u.SetEnabled(*v)
+func (sccuo *ServerChanConfigUpdateOne) SetNillableEnabled(b *bool) *ServerChanConfigUpdateOne {
+	if b != nil {
+		sccuo.SetEnabled(*b)
 	}
-	return _u
-}
-
-// SetEmailEnabled sets the "email_enabled" field.
-func (_u *ServerChanConfigUpdateOne) SetEmailEnabled(v bool) *ServerChanConfigUpdateOne {
-	_u.mutation.SetEmailEnabled(v)
-	return _u
-}
-
-// SetNillableEmailEnabled sets the "email_enabled" field if the given value is not nil.
-func (_u *ServerChanConfigUpdateOne) SetNillableEmailEnabled(v *bool) *ServerChanConfigUpdateOne {
-	if v != nil {
-		_u.SetEmailEnabled(*v)
-	}
-	return _u
-}
-
-// SetEmailURL sets the "email_url" field.
-func (_u *ServerChanConfigUpdateOne) SetEmailURL(v string) *ServerChanConfigUpdateOne {
-	_u.mutation.SetEmailURL(v)
-	return _u
-}
-
-// SetNillableEmailURL sets the "email_url" field if the given value is not nil.
-func (_u *ServerChanConfigUpdateOne) SetNillableEmailURL(v *string) *ServerChanConfigUpdateOne {
-	if v != nil {
-		_u.SetEmailURL(*v)
-	}
-	return _u
+	return sccuo
 }
 
 // Mutation returns the ServerChanConfigMutation object of the builder.
-func (_u *ServerChanConfigUpdateOne) Mutation() *ServerChanConfigMutation {
-	return _u.mutation
+func (sccuo *ServerChanConfigUpdateOne) Mutation() *ServerChanConfigMutation {
+	return sccuo.mutation
 }
 
 // Where appends a list predicates to the ServerChanConfigUpdate builder.
-func (_u *ServerChanConfigUpdateOne) Where(ps ...predicate.ServerChanConfig) *ServerChanConfigUpdateOne {
-	_u.mutation.Where(ps...)
-	return _u
+func (sccuo *ServerChanConfigUpdateOne) Where(ps ...predicate.ServerChanConfig) *ServerChanConfigUpdateOne {
+	sccuo.mutation.Where(ps...)
+	return sccuo
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (_u *ServerChanConfigUpdateOne) Select(field string, fields ...string) *ServerChanConfigUpdateOne {
-	_u.fields = append([]string{field}, fields...)
-	return _u
+func (sccuo *ServerChanConfigUpdateOne) Select(field string, fields ...string) *ServerChanConfigUpdateOne {
+	sccuo.fields = append([]string{field}, fields...)
+	return sccuo
 }
 
 // Save executes the query and returns the updated ServerChanConfig entity.
-func (_u *ServerChanConfigUpdateOne) Save(ctx context.Context) (*ServerChanConfig, error) {
-	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
+func (sccuo *ServerChanConfigUpdateOne) Save(ctx context.Context) (*ServerChanConfig, error) {
+	return withHooks(ctx, sccuo.sqlSave, sccuo.mutation, sccuo.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_u *ServerChanConfigUpdateOne) SaveX(ctx context.Context) *ServerChanConfig {
-	node, err := _u.Save(ctx)
+func (sccuo *ServerChanConfigUpdateOne) SaveX(ctx context.Context) *ServerChanConfig {
+	node, err := sccuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -307,26 +245,26 @@ func (_u *ServerChanConfigUpdateOne) SaveX(ctx context.Context) *ServerChanConfi
 }
 
 // Exec executes the query on the entity.
-func (_u *ServerChanConfigUpdateOne) Exec(ctx context.Context) error {
-	_, err := _u.Save(ctx)
+func (sccuo *ServerChanConfigUpdateOne) Exec(ctx context.Context) error {
+	_, err := sccuo.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_u *ServerChanConfigUpdateOne) ExecX(ctx context.Context) {
-	if err := _u.Exec(ctx); err != nil {
+func (sccuo *ServerChanConfigUpdateOne) ExecX(ctx context.Context) {
+	if err := sccuo.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-func (_u *ServerChanConfigUpdateOne) sqlSave(ctx context.Context) (_node *ServerChanConfig, err error) {
+func (sccuo *ServerChanConfigUpdateOne) sqlSave(ctx context.Context) (_node *ServerChanConfig, err error) {
 	_spec := sqlgraph.NewUpdateSpec(serverchanconfig.Table, serverchanconfig.Columns, sqlgraph.NewFieldSpec(serverchanconfig.FieldID, field.TypeInt))
-	id, ok := _u.mutation.ID()
+	id, ok := sccuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ServerChanConfig.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := _u.fields; len(fields) > 0 {
+	if fields := sccuo.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, serverchanconfig.FieldID)
 		for _, f := range fields {
@@ -338,35 +276,29 @@ func (_u *ServerChanConfigUpdateOne) sqlSave(ctx context.Context) (_node *Server
 			}
 		}
 	}
-	if ps := _u.mutation.predicates; len(ps) > 0 {
+	if ps := sccuo.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := _u.mutation.SendKey(); ok {
+	if value, ok := sccuo.mutation.SendKey(); ok {
 		_spec.SetField(serverchanconfig.FieldSendKey, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.OnTemplate(); ok {
+	if value, ok := sccuo.mutation.OnTemplate(); ok {
 		_spec.SetField(serverchanconfig.FieldOnTemplate, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.OffTemplate(); ok {
+	if value, ok := sccuo.mutation.OffTemplate(); ok {
 		_spec.SetField(serverchanconfig.FieldOffTemplate, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.Enabled(); ok {
+	if value, ok := sccuo.mutation.Enabled(); ok {
 		_spec.SetField(serverchanconfig.FieldEnabled, field.TypeBool, value)
 	}
-	if value, ok := _u.mutation.EmailEnabled(); ok {
-		_spec.SetField(serverchanconfig.FieldEmailEnabled, field.TypeBool, value)
-	}
-	if value, ok := _u.mutation.EmailURL(); ok {
-		_spec.SetField(serverchanconfig.FieldEmailURL, field.TypeString, value)
-	}
-	_node = &ServerChanConfig{config: _u.config}
+	_node = &ServerChanConfig{config: sccuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, sccuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{serverchanconfig.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -374,6 +306,6 @@ func (_u *ServerChanConfigUpdateOne) sqlSave(ctx context.Context) (_node *Server
 		}
 		return nil, err
 	}
-	_u.mutation.done = true
+	sccuo.mutation.done = true
 	return _node, nil
 }
