@@ -8,13 +8,14 @@ import (
 	"cat-led/internal/pkg/zlog"
 	"context"
 	"fmt"
+	"log"
+	"sync"
+	"time"
+
 	gohelper "gitee.com/linakesi/lzc-sdk/lang/go"
 	users "gitee.com/linakesi/lzc-sdk/lang/go/common"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"log"
-	"sync"
-	"time"
 )
 
 var (
@@ -513,20 +514,17 @@ func sendServerChanNotification(ctx context.Context, logger *zlog.Logger, taskNa
 	if err != nil {
 		// 如果没有配置，使用默认配置
 		config = &ent.ServerChanConfig{
-			SendKey:     "",
-			OnTemplate:  "{{.Name}} 任务执行成功，灯已开启",
-			OffTemplate: "{{.Name}} 任务执行成功，灯已关闭",
-			Enabled:     false,
+			SendKey:      "",
+			OnTemplate:   "{{.Name}} 任务执行成功，灯已开启",
+			OffTemplate:  "{{.Name}} 任务执行成功，灯已关闭",
+			Enabled:      false,
+			EmailEnabled: false,
+			EmailURL:     "",
 		}
 	}
 
-	// 检查是否启用通知
-	if !config.Enabled || config.SendKey == "" {
-		return
-	}
-
-	// 创建Server酱推送器
-	pusher := serverchan.NewPusher(config.SendKey, config.OnTemplate, config.OffTemplate)
+	// 创建推送器
+	pusher := serverchan.NewPusher(config, logger)
 
 	// 准备上下文数据
 	ledContext := serverchan.LEDContext{
@@ -537,15 +535,8 @@ func sendServerChanNotification(ctx context.Context, logger *zlog.Logger, taskNa
 
 	// 发送通知
 	if status {
-		err = pusher.PushLedOpenNotify(ledContext)
+		pusher.PushLedOpenNotify(ledContext)
 	} else {
-		err = pusher.PushLedCloseNotify(ledContext)
+		pusher.PushLedCloseNotify(ledContext)
 	}
-
-	if err != nil {
-		logger.Error().Err(err).Msg("发送Server酱通知失败")
-		return
-	}
-
-	logger.Info().Str("任务名称", taskName).Bool("状态", status).Msg("发送Server酱通知成功")
 }

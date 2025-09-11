@@ -73,6 +73,16 @@ func Enabled(v bool) predicate.ServerChanConfig {
 	return predicate.ServerChanConfig(sql.FieldEQ(FieldEnabled, v))
 }
 
+// EmailEnabled applies equality check predicate on the "email_enabled" field. It's identical to EmailEnabledEQ.
+func EmailEnabled(v bool) predicate.ServerChanConfig {
+	return predicate.ServerChanConfig(sql.FieldEQ(FieldEmailEnabled, v))
+}
+
+// EmailURL applies equality check predicate on the "email_url" field. It's identical to EmailURLEQ.
+func EmailURL(v string) predicate.ServerChanConfig {
+	return predicate.ServerChanConfig(sql.FieldEQ(FieldEmailURL, v))
+}
+
 // SendKeyEQ applies the EQ predicate on the "send_key" field.
 func SendKeyEQ(v string) predicate.ServerChanConfig {
 	return predicate.ServerChanConfig(sql.FieldEQ(FieldSendKey, v))
@@ -276,6 +286,81 @@ func EnabledEQ(v bool) predicate.ServerChanConfig {
 // EnabledNEQ applies the NEQ predicate on the "enabled" field.
 func EnabledNEQ(v bool) predicate.ServerChanConfig {
 	return predicate.ServerChanConfig(sql.FieldNEQ(FieldEnabled, v))
+}
+
+// EmailEnabledEQ applies the EQ predicate on the "email_enabled" field.
+func EmailEnabledEQ(v bool) predicate.ServerChanConfig {
+	return predicate.ServerChanConfig(sql.FieldEQ(FieldEmailEnabled, v))
+}
+
+// EmailEnabledNEQ applies the NEQ predicate on the "email_enabled" field.
+func EmailEnabledNEQ(v bool) predicate.ServerChanConfig {
+	return predicate.ServerChanConfig(sql.FieldNEQ(FieldEmailEnabled, v))
+}
+
+// EmailURLEQ applies the EQ predicate on the "email_url" field.
+func EmailURLEQ(v string) predicate.ServerChanConfig {
+	return predicate.ServerChanConfig(sql.FieldEQ(FieldEmailURL, v))
+}
+
+// EmailURLNEQ applies the NEQ predicate on the "email_url" field.
+func EmailURLNEQ(v string) predicate.ServerChanConfig {
+	return predicate.ServerChanConfig(sql.FieldNEQ(FieldEmailURL, v))
+}
+
+// EmailURLIn applies the In predicate on the "email_url" field.
+func EmailURLIn(vs ...string) predicate.ServerChanConfig {
+	return predicate.ServerChanConfig(sql.FieldIn(FieldEmailURL, vs...))
+}
+
+// EmailURLNotIn applies the NotIn predicate on the "email_url" field.
+func EmailURLNotIn(vs ...string) predicate.ServerChanConfig {
+	return predicate.ServerChanConfig(sql.FieldNotIn(FieldEmailURL, vs...))
+}
+
+// EmailURLGT applies the GT predicate on the "email_url" field.
+func EmailURLGT(v string) predicate.ServerChanConfig {
+	return predicate.ServerChanConfig(sql.FieldGT(FieldEmailURL, v))
+}
+
+// EmailURLGTE applies the GTE predicate on the "email_url" field.
+func EmailURLGTE(v string) predicate.ServerChanConfig {
+	return predicate.ServerChanConfig(sql.FieldGTE(FieldEmailURL, v))
+}
+
+// EmailURLLT applies the LT predicate on the "email_url" field.
+func EmailURLLT(v string) predicate.ServerChanConfig {
+	return predicate.ServerChanConfig(sql.FieldLT(FieldEmailURL, v))
+}
+
+// EmailURLLTE applies the LTE predicate on the "email_url" field.
+func EmailURLLTE(v string) predicate.ServerChanConfig {
+	return predicate.ServerChanConfig(sql.FieldLTE(FieldEmailURL, v))
+}
+
+// EmailURLContains applies the Contains predicate on the "email_url" field.
+func EmailURLContains(v string) predicate.ServerChanConfig {
+	return predicate.ServerChanConfig(sql.FieldContains(FieldEmailURL, v))
+}
+
+// EmailURLHasPrefix applies the HasPrefix predicate on the "email_url" field.
+func EmailURLHasPrefix(v string) predicate.ServerChanConfig {
+	return predicate.ServerChanConfig(sql.FieldHasPrefix(FieldEmailURL, v))
+}
+
+// EmailURLHasSuffix applies the HasSuffix predicate on the "email_url" field.
+func EmailURLHasSuffix(v string) predicate.ServerChanConfig {
+	return predicate.ServerChanConfig(sql.FieldHasSuffix(FieldEmailURL, v))
+}
+
+// EmailURLEqualFold applies the EqualFold predicate on the "email_url" field.
+func EmailURLEqualFold(v string) predicate.ServerChanConfig {
+	return predicate.ServerChanConfig(sql.FieldEqualFold(FieldEmailURL, v))
+}
+
+// EmailURLContainsFold applies the ContainsFold predicate on the "email_url" field.
+func EmailURLContainsFold(v string) predicate.ServerChanConfig {
+	return predicate.ServerChanConfig(sql.FieldContainsFold(FieldEmailURL, v))
 }
 
 // And groups predicates with the AND operator between them.
