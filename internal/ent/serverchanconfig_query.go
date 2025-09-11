@@ -28,40 +28,40 @@ type ServerChanConfigQuery struct {
 }
 
 // Where adds a new predicate for the ServerChanConfigQuery builder.
-func (sccq *ServerChanConfigQuery) Where(ps ...predicate.ServerChanConfig) *ServerChanConfigQuery {
-	sccq.predicates = append(sccq.predicates, ps...)
-	return sccq
+func (_q *ServerChanConfigQuery) Where(ps ...predicate.ServerChanConfig) *ServerChanConfigQuery {
+	_q.predicates = append(_q.predicates, ps...)
+	return _q
 }
 
 // Limit the number of records to be returned by this query.
-func (sccq *ServerChanConfigQuery) Limit(limit int) *ServerChanConfigQuery {
-	sccq.ctx.Limit = &limit
-	return sccq
+func (_q *ServerChanConfigQuery) Limit(limit int) *ServerChanConfigQuery {
+	_q.ctx.Limit = &limit
+	return _q
 }
 
 // Offset to start from.
-func (sccq *ServerChanConfigQuery) Offset(offset int) *ServerChanConfigQuery {
-	sccq.ctx.Offset = &offset
-	return sccq
+func (_q *ServerChanConfigQuery) Offset(offset int) *ServerChanConfigQuery {
+	_q.ctx.Offset = &offset
+	return _q
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (sccq *ServerChanConfigQuery) Unique(unique bool) *ServerChanConfigQuery {
-	sccq.ctx.Unique = &unique
-	return sccq
+func (_q *ServerChanConfigQuery) Unique(unique bool) *ServerChanConfigQuery {
+	_q.ctx.Unique = &unique
+	return _q
 }
 
 // Order specifies how the records should be ordered.
-func (sccq *ServerChanConfigQuery) Order(o ...serverchanconfig.OrderOption) *ServerChanConfigQuery {
-	sccq.order = append(sccq.order, o...)
-	return sccq
+func (_q *ServerChanConfigQuery) Order(o ...serverchanconfig.OrderOption) *ServerChanConfigQuery {
+	_q.order = append(_q.order, o...)
+	return _q
 }
 
 // First returns the first ServerChanConfig entity from the query.
 // Returns a *NotFoundError when no ServerChanConfig was found.
-func (sccq *ServerChanConfigQuery) First(ctx context.Context) (*ServerChanConfig, error) {
-	nodes, err := sccq.Limit(1).All(setContextOp(ctx, sccq.ctx, ent.OpQueryFirst))
+func (_q *ServerChanConfigQuery) First(ctx context.Context) (*ServerChanConfig, error) {
+	nodes, err := _q.Limit(1).All(setContextOp(ctx, _q.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -72,8 +72,8 @@ func (sccq *ServerChanConfigQuery) First(ctx context.Context) (*ServerChanConfig
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (sccq *ServerChanConfigQuery) FirstX(ctx context.Context) *ServerChanConfig {
-	node, err := sccq.First(ctx)
+func (_q *ServerChanConfigQuery) FirstX(ctx context.Context) *ServerChanConfig {
+	node, err := _q.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
@@ -82,9 +82,9 @@ func (sccq *ServerChanConfigQuery) FirstX(ctx context.Context) *ServerChanConfig
 
 // FirstID returns the first ServerChanConfig ID from the query.
 // Returns a *NotFoundError when no ServerChanConfig ID was found.
-func (sccq *ServerChanConfigQuery) FirstID(ctx context.Context) (id int, err error) {
+func (_q *ServerChanConfigQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = sccq.Limit(1).IDs(setContextOp(ctx, sccq.ctx, ent.OpQueryFirstID)); err != nil {
+	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -95,8 +95,8 @@ func (sccq *ServerChanConfigQuery) FirstID(ctx context.Context) (id int, err err
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (sccq *ServerChanConfigQuery) FirstIDX(ctx context.Context) int {
-	id, err := sccq.FirstID(ctx)
+func (_q *ServerChanConfigQuery) FirstIDX(ctx context.Context) int {
+	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
@@ -106,8 +106,8 @@ func (sccq *ServerChanConfigQuery) FirstIDX(ctx context.Context) int {
 // Only returns a single ServerChanConfig entity found by the query, ensuring it only returns one.
 // Returns a *NotSingularError when more than one ServerChanConfig entity is found.
 // Returns a *NotFoundError when no ServerChanConfig entities are found.
-func (sccq *ServerChanConfigQuery) Only(ctx context.Context) (*ServerChanConfig, error) {
-	nodes, err := sccq.Limit(2).All(setContextOp(ctx, sccq.ctx, ent.OpQueryOnly))
+func (_q *ServerChanConfigQuery) Only(ctx context.Context) (*ServerChanConfig, error) {
+	nodes, err := _q.Limit(2).All(setContextOp(ctx, _q.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -122,8 +122,8 @@ func (sccq *ServerChanConfigQuery) Only(ctx context.Context) (*ServerChanConfig,
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (sccq *ServerChanConfigQuery) OnlyX(ctx context.Context) *ServerChanConfig {
-	node, err := sccq.Only(ctx)
+func (_q *ServerChanConfigQuery) OnlyX(ctx context.Context) *ServerChanConfig {
+	node, err := _q.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -133,9 +133,9 @@ func (sccq *ServerChanConfigQuery) OnlyX(ctx context.Context) *ServerChanConfig 
 // OnlyID is like Only, but returns the only ServerChanConfig ID in the query.
 // Returns a *NotSingularError when more than one ServerChanConfig ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (sccq *ServerChanConfigQuery) OnlyID(ctx context.Context) (id int, err error) {
+func (_q *ServerChanConfigQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = sccq.Limit(2).IDs(setContextOp(ctx, sccq.ctx, ent.OpQueryOnlyID)); err != nil {
+	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -150,8 +150,8 @@ func (sccq *ServerChanConfigQuery) OnlyID(ctx context.Context) (id int, err erro
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (sccq *ServerChanConfigQuery) OnlyIDX(ctx context.Context) int {
-	id, err := sccq.OnlyID(ctx)
+func (_q *ServerChanConfigQuery) OnlyIDX(ctx context.Context) int {
+	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -159,18 +159,18 @@ func (sccq *ServerChanConfigQuery) OnlyIDX(ctx context.Context) int {
 }
 
 // All executes the query and returns a list of ServerChanConfigs.
-func (sccq *ServerChanConfigQuery) All(ctx context.Context) ([]*ServerChanConfig, error) {
-	ctx = setContextOp(ctx, sccq.ctx, ent.OpQueryAll)
-	if err := sccq.prepareQuery(ctx); err != nil {
+func (_q *ServerChanConfigQuery) All(ctx context.Context) ([]*ServerChanConfig, error) {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryAll)
+	if err := _q.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
 	qr := querierAll[[]*ServerChanConfig, *ServerChanConfigQuery]()
-	return withInterceptors[[]*ServerChanConfig](ctx, sccq, qr, sccq.inters)
+	return withInterceptors[[]*ServerChanConfig](ctx, _q, qr, _q.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (sccq *ServerChanConfigQuery) AllX(ctx context.Context) []*ServerChanConfig {
-	nodes, err := sccq.All(ctx)
+func (_q *ServerChanConfigQuery) AllX(ctx context.Context) []*ServerChanConfig {
+	nodes, err := _q.All(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -178,20 +178,20 @@ func (sccq *ServerChanConfigQuery) AllX(ctx context.Context) []*ServerChanConfig
 }
 
 // IDs executes the query and returns a list of ServerChanConfig IDs.
-func (sccq *ServerChanConfigQuery) IDs(ctx context.Context) (ids []int, err error) {
-	if sccq.ctx.Unique == nil && sccq.path != nil {
-		sccq.Unique(true)
+func (_q *ServerChanConfigQuery) IDs(ctx context.Context) (ids []int, err error) {
+	if _q.ctx.Unique == nil && _q.path != nil {
+		_q.Unique(true)
 	}
-	ctx = setContextOp(ctx, sccq.ctx, ent.OpQueryIDs)
-	if err = sccq.Select(serverchanconfig.FieldID).Scan(ctx, &ids); err != nil {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryIDs)
+	if err = _q.Select(serverchanconfig.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (sccq *ServerChanConfigQuery) IDsX(ctx context.Context) []int {
-	ids, err := sccq.IDs(ctx)
+func (_q *ServerChanConfigQuery) IDsX(ctx context.Context) []int {
+	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -199,17 +199,17 @@ func (sccq *ServerChanConfigQuery) IDsX(ctx context.Context) []int {
 }
 
 // Count returns the count of the given query.
-func (sccq *ServerChanConfigQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, sccq.ctx, ent.OpQueryCount)
-	if err := sccq.prepareQuery(ctx); err != nil {
+func (_q *ServerChanConfigQuery) Count(ctx context.Context) (int, error) {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryCount)
+	if err := _q.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, sccq, querierCount[*ServerChanConfigQuery](), sccq.inters)
+	return withInterceptors[int](ctx, _q, querierCount[*ServerChanConfigQuery](), _q.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (sccq *ServerChanConfigQuery) CountX(ctx context.Context) int {
-	count, err := sccq.Count(ctx)
+func (_q *ServerChanConfigQuery) CountX(ctx context.Context) int {
+	count, err := _q.Count(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -217,9 +217,9 @@ func (sccq *ServerChanConfigQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (sccq *ServerChanConfigQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, sccq.ctx, ent.OpQueryExist)
-	switch _, err := sccq.FirstID(ctx); {
+func (_q *ServerChanConfigQuery) Exist(ctx context.Context) (bool, error) {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryExist)
+	switch _, err := _q.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
 	case err != nil:
@@ -230,8 +230,8 @@ func (sccq *ServerChanConfigQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (sccq *ServerChanConfigQuery) ExistX(ctx context.Context) bool {
-	exist, err := sccq.Exist(ctx)
+func (_q *ServerChanConfigQuery) ExistX(ctx context.Context) bool {
+	exist, err := _q.Exist(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -240,19 +240,19 @@ func (sccq *ServerChanConfigQuery) ExistX(ctx context.Context) bool {
 
 // Clone returns a duplicate of the ServerChanConfigQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (sccq *ServerChanConfigQuery) Clone() *ServerChanConfigQuery {
-	if sccq == nil {
+func (_q *ServerChanConfigQuery) Clone() *ServerChanConfigQuery {
+	if _q == nil {
 		return nil
 	}
 	return &ServerChanConfigQuery{
-		config:     sccq.config,
-		ctx:        sccq.ctx.Clone(),
-		order:      append([]serverchanconfig.OrderOption{}, sccq.order...),
-		inters:     append([]Interceptor{}, sccq.inters...),
-		predicates: append([]predicate.ServerChanConfig{}, sccq.predicates...),
+		config:     _q.config,
+		ctx:        _q.ctx.Clone(),
+		order:      append([]serverchanconfig.OrderOption{}, _q.order...),
+		inters:     append([]Interceptor{}, _q.inters...),
+		predicates: append([]predicate.ServerChanConfig{}, _q.predicates...),
 		// clone intermediate query.
-		sql:  sccq.sql.Clone(),
-		path: sccq.path,
+		sql:  _q.sql.Clone(),
+		path: _q.path,
 	}
 }
 
@@ -270,10 +270,10 @@ func (sccq *ServerChanConfigQuery) Clone() *ServerChanConfigQuery {
 //		GroupBy(serverchanconfig.FieldSendKey).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-func (sccq *ServerChanConfigQuery) GroupBy(field string, fields ...string) *ServerChanConfigGroupBy {
-	sccq.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &ServerChanConfigGroupBy{build: sccq}
-	grbuild.flds = &sccq.ctx.Fields
+func (_q *ServerChanConfigQuery) GroupBy(field string, fields ...string) *ServerChanConfigGroupBy {
+	_q.ctx.Fields = append([]string{field}, fields...)
+	grbuild := &ServerChanConfigGroupBy{build: _q}
+	grbuild.flds = &_q.ctx.Fields
 	grbuild.label = serverchanconfig.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
@@ -291,62 +291,62 @@ func (sccq *ServerChanConfigQuery) GroupBy(field string, fields ...string) *Serv
 //	client.ServerChanConfig.Query().
 //		Select(serverchanconfig.FieldSendKey).
 //		Scan(ctx, &v)
-func (sccq *ServerChanConfigQuery) Select(fields ...string) *ServerChanConfigSelect {
-	sccq.ctx.Fields = append(sccq.ctx.Fields, fields...)
-	sbuild := &ServerChanConfigSelect{ServerChanConfigQuery: sccq}
+func (_q *ServerChanConfigQuery) Select(fields ...string) *ServerChanConfigSelect {
+	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
+	sbuild := &ServerChanConfigSelect{ServerChanConfigQuery: _q}
 	sbuild.label = serverchanconfig.Label
-	sbuild.flds, sbuild.scan = &sccq.ctx.Fields, sbuild.Scan
+	sbuild.flds, sbuild.scan = &_q.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
 // Aggregate returns a ServerChanConfigSelect configured with the given aggregations.
-func (sccq *ServerChanConfigQuery) Aggregate(fns ...AggregateFunc) *ServerChanConfigSelect {
-	return sccq.Select().Aggregate(fns...)
+func (_q *ServerChanConfigQuery) Aggregate(fns ...AggregateFunc) *ServerChanConfigSelect {
+	return _q.Select().Aggregate(fns...)
 }
 
-func (sccq *ServerChanConfigQuery) prepareQuery(ctx context.Context) error {
-	for _, inter := range sccq.inters {
+func (_q *ServerChanConfigQuery) prepareQuery(ctx context.Context) error {
+	for _, inter := range _q.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
 		}
 		if trv, ok := inter.(Traverser); ok {
-			if err := trv.Traverse(ctx, sccq); err != nil {
+			if err := trv.Traverse(ctx, _q); err != nil {
 				return err
 			}
 		}
 	}
-	for _, f := range sccq.ctx.Fields {
+	for _, f := range _q.ctx.Fields {
 		if !serverchanconfig.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
-	if sccq.path != nil {
-		prev, err := sccq.path(ctx)
+	if _q.path != nil {
+		prev, err := _q.path(ctx)
 		if err != nil {
 			return err
 		}
-		sccq.sql = prev
+		_q.sql = prev
 	}
 	return nil
 }
 
-func (sccq *ServerChanConfigQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*ServerChanConfig, error) {
+func (_q *ServerChanConfigQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*ServerChanConfig, error) {
 	var (
 		nodes = []*ServerChanConfig{}
-		_spec = sccq.querySpec()
+		_spec = _q.querySpec()
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*ServerChanConfig).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &ServerChanConfig{config: sccq.config}
+		node := &ServerChanConfig{config: _q.config}
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
-	if err := sqlgraph.QueryNodes(ctx, sccq.driver, _spec); err != nil {
+	if err := sqlgraph.QueryNodes(ctx, _q.driver, _spec); err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
@@ -355,24 +355,24 @@ func (sccq *ServerChanConfigQuery) sqlAll(ctx context.Context, hooks ...queryHoo
 	return nodes, nil
 }
 
-func (sccq *ServerChanConfigQuery) sqlCount(ctx context.Context) (int, error) {
-	_spec := sccq.querySpec()
-	_spec.Node.Columns = sccq.ctx.Fields
-	if len(sccq.ctx.Fields) > 0 {
-		_spec.Unique = sccq.ctx.Unique != nil && *sccq.ctx.Unique
+func (_q *ServerChanConfigQuery) sqlCount(ctx context.Context) (int, error) {
+	_spec := _q.querySpec()
+	_spec.Node.Columns = _q.ctx.Fields
+	if len(_q.ctx.Fields) > 0 {
+		_spec.Unique = _q.ctx.Unique != nil && *_q.ctx.Unique
 	}
-	return sqlgraph.CountNodes(ctx, sccq.driver, _spec)
+	return sqlgraph.CountNodes(ctx, _q.driver, _spec)
 }
 
-func (sccq *ServerChanConfigQuery) querySpec() *sqlgraph.QuerySpec {
+func (_q *ServerChanConfigQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := sqlgraph.NewQuerySpec(serverchanconfig.Table, serverchanconfig.Columns, sqlgraph.NewFieldSpec(serverchanconfig.FieldID, field.TypeInt))
-	_spec.From = sccq.sql
-	if unique := sccq.ctx.Unique; unique != nil {
+	_spec.From = _q.sql
+	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
-	} else if sccq.path != nil {
+	} else if _q.path != nil {
 		_spec.Unique = true
 	}
-	if fields := sccq.ctx.Fields; len(fields) > 0 {
+	if fields := _q.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, serverchanconfig.FieldID)
 		for i := range fields {
@@ -381,20 +381,20 @@ func (sccq *ServerChanConfigQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if ps := sccq.predicates; len(ps) > 0 {
+	if ps := _q.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if limit := sccq.ctx.Limit; limit != nil {
+	if limit := _q.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := sccq.ctx.Offset; offset != nil {
+	if offset := _q.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
-	if ps := sccq.order; len(ps) > 0 {
+	if ps := _q.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
@@ -404,33 +404,33 @@ func (sccq *ServerChanConfigQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (sccq *ServerChanConfigQuery) sqlQuery(ctx context.Context) *sql.Selector {
-	builder := sql.Dialect(sccq.driver.Dialect())
+func (_q *ServerChanConfigQuery) sqlQuery(ctx context.Context) *sql.Selector {
+	builder := sql.Dialect(_q.driver.Dialect())
 	t1 := builder.Table(serverchanconfig.Table)
-	columns := sccq.ctx.Fields
+	columns := _q.ctx.Fields
 	if len(columns) == 0 {
 		columns = serverchanconfig.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
-	if sccq.sql != nil {
-		selector = sccq.sql
+	if _q.sql != nil {
+		selector = _q.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if sccq.ctx.Unique != nil && *sccq.ctx.Unique {
+	if _q.ctx.Unique != nil && *_q.ctx.Unique {
 		selector.Distinct()
 	}
-	for _, p := range sccq.predicates {
+	for _, p := range _q.predicates {
 		p(selector)
 	}
-	for _, p := range sccq.order {
+	for _, p := range _q.order {
 		p(selector)
 	}
-	if offset := sccq.ctx.Offset; offset != nil {
+	if offset := _q.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := sccq.ctx.Limit; limit != nil {
+	if limit := _q.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
@@ -443,41 +443,41 @@ type ServerChanConfigGroupBy struct {
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (sccgb *ServerChanConfigGroupBy) Aggregate(fns ...AggregateFunc) *ServerChanConfigGroupBy {
-	sccgb.fns = append(sccgb.fns, fns...)
-	return sccgb
+func (_g *ServerChanConfigGroupBy) Aggregate(fns ...AggregateFunc) *ServerChanConfigGroupBy {
+	_g.fns = append(_g.fns, fns...)
+	return _g
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (sccgb *ServerChanConfigGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, sccgb.build.ctx, ent.OpQueryGroupBy)
-	if err := sccgb.build.prepareQuery(ctx); err != nil {
+func (_g *ServerChanConfigGroupBy) Scan(ctx context.Context, v any) error {
+	ctx = setContextOp(ctx, _g.build.ctx, ent.OpQueryGroupBy)
+	if err := _g.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*ServerChanConfigQuery, *ServerChanConfigGroupBy](ctx, sccgb.build, sccgb, sccgb.build.inters, v)
+	return scanWithInterceptors[*ServerChanConfigQuery, *ServerChanConfigGroupBy](ctx, _g.build, _g, _g.build.inters, v)
 }
 
-func (sccgb *ServerChanConfigGroupBy) sqlScan(ctx context.Context, root *ServerChanConfigQuery, v any) error {
+func (_g *ServerChanConfigGroupBy) sqlScan(ctx context.Context, root *ServerChanConfigQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
-	aggregation := make([]string, 0, len(sccgb.fns))
-	for _, fn := range sccgb.fns {
+	aggregation := make([]string, 0, len(_g.fns))
+	for _, fn := range _g.fns {
 		aggregation = append(aggregation, fn(selector))
 	}
 	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(*sccgb.flds)+len(sccgb.fns))
-		for _, f := range *sccgb.flds {
+		columns := make([]string, 0, len(*_g.flds)+len(_g.fns))
+		for _, f := range *_g.flds {
 			columns = append(columns, selector.C(f))
 		}
 		columns = append(columns, aggregation...)
 		selector.Select(columns...)
 	}
-	selector.GroupBy(selector.Columns(*sccgb.flds...)...)
+	selector.GroupBy(selector.Columns(*_g.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := sccgb.build.driver.Query(ctx, query, args, rows); err != nil {
+	if err := _g.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
@@ -491,27 +491,27 @@ type ServerChanConfigSelect struct {
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (sccs *ServerChanConfigSelect) Aggregate(fns ...AggregateFunc) *ServerChanConfigSelect {
-	sccs.fns = append(sccs.fns, fns...)
-	return sccs
+func (_s *ServerChanConfigSelect) Aggregate(fns ...AggregateFunc) *ServerChanConfigSelect {
+	_s.fns = append(_s.fns, fns...)
+	return _s
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (sccs *ServerChanConfigSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, sccs.ctx, ent.OpQuerySelect)
-	if err := sccs.prepareQuery(ctx); err != nil {
+func (_s *ServerChanConfigSelect) Scan(ctx context.Context, v any) error {
+	ctx = setContextOp(ctx, _s.ctx, ent.OpQuerySelect)
+	if err := _s.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*ServerChanConfigQuery, *ServerChanConfigSelect](ctx, sccs.ServerChanConfigQuery, sccs, sccs.inters, v)
+	return scanWithInterceptors[*ServerChanConfigQuery, *ServerChanConfigSelect](ctx, _s.ServerChanConfigQuery, _s, _s.inters, v)
 }
 
-func (sccs *ServerChanConfigSelect) sqlScan(ctx context.Context, root *ServerChanConfigQuery, v any) error {
+func (_s *ServerChanConfigSelect) sqlScan(ctx context.Context, root *ServerChanConfigQuery, v any) error {
 	selector := root.sqlQuery(ctx)
-	aggregation := make([]string, 0, len(sccs.fns))
-	for _, fn := range sccs.fns {
+	aggregation := make([]string, 0, len(_s.fns))
+	for _, fn := range _s.fns {
 		aggregation = append(aggregation, fn(selector))
 	}
-	switch n := len(*sccs.selector.flds); {
+	switch n := len(*_s.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
 		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
@@ -519,7 +519,7 @@ func (sccs *ServerChanConfigSelect) sqlScan(ctx context.Context, root *ServerCha
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := sccs.driver.Query(ctx, query, args, rows); err != nil {
+	if err := _s.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()

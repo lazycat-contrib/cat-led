@@ -19,6 +19,10 @@ const (
 	FieldOffTemplate = "off_template"
 	// FieldEnabled holds the string denoting the enabled field in the database.
 	FieldEnabled = "enabled"
+	// FieldEmailEnabled holds the string denoting the email_enabled field in the database.
+	FieldEmailEnabled = "email_enabled"
+	// FieldEmailURL holds the string denoting the email_url field in the database.
+	FieldEmailURL = "email_url"
 	// Table holds the table name of the serverchanconfig in the database.
 	Table = "server_chan_configs"
 )
@@ -30,6 +34,8 @@ var Columns = []string{
 	FieldOnTemplate,
 	FieldOffTemplate,
 	FieldEnabled,
+	FieldEmailEnabled,
+	FieldEmailURL,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -49,6 +55,10 @@ var (
 	DefaultOffTemplate string
 	// DefaultEnabled holds the default value on creation for the "enabled" field.
 	DefaultEnabled bool
+	// DefaultEmailEnabled holds the default value on creation for the "email_enabled" field.
+	DefaultEmailEnabled bool
+	// DefaultEmailURL holds the default value on creation for the "email_url" field.
+	DefaultEmailURL string
 )
 
 // OrderOption defines the ordering options for the ServerChanConfig queries.
@@ -77,4 +87,14 @@ func ByOffTemplate(opts ...sql.OrderTermOption) OrderOption {
 // ByEnabled orders the results by the enabled field.
 func ByEnabled(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEnabled, opts...).ToFunc()
+}
+
+// ByEmailEnabled orders the results by the email_enabled field.
+func ByEmailEnabled(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEmailEnabled, opts...).ToFunc()
+}
+
+// ByEmailURL orders the results by the email_url field.
+func ByEmailURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEmailURL, opts...).ToFunc()
 }
