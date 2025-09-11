@@ -24,12 +24,6 @@ func (ServerChanConfig) Fields() []ent.Field {
 		field.Bool("enabled").
 			Comment("是否启用Server酱通知").
 			Default(false),
-		field.Bool("email_enabled").
-			Comment("是否启用电子邮件通知").
-			Default(false),
-		field.String("email_url").
-			Comment("电子邮件通知URL").
-			Default(""),
 	}
 }
 

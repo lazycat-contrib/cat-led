@@ -71,14 +71,14 @@ var (
 )
 
 // checkColumn checks if the column exists in the given table.
-func checkColumn(t, c string) error {
+func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			schedule.Table:         schedule.ValidColumn,
 			serverchanconfig.Table: serverchanconfig.ValidColumn,
 		})
 	})
-	return columnCheck(t, c)
+	return columnCheck(table, column)
 }
 
 // Asc applies the given fields in ASC order.
