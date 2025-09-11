@@ -888,6 +888,8 @@ type ServerChanConfigMutation struct {
 	on_template   *string
 	off_template  *string
 	enabled       *bool
+	email_enabled *bool
+	email_url     *string
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*ServerChanConfig, error)
@@ -1136,6 +1138,78 @@ func (m *ServerChanConfigMutation) ResetEnabled() {
 	m.enabled = nil
 }
 
+// SetEmailEnabled sets the "email_enabled" field.
+func (m *ServerChanConfigMutation) SetEmailEnabled(b bool) {
+	m.email_enabled = &b
+}
+
+// EmailEnabled returns the value of the "email_enabled" field in the mutation.
+func (m *ServerChanConfigMutation) EmailEnabled() (r bool, exists bool) {
+	v := m.email_enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEmailEnabled returns the old "email_enabled" field's value of the ServerChanConfig entity.
+// If the ServerChanConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ServerChanConfigMutation) OldEmailEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEmailEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEmailEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEmailEnabled: %w", err)
+	}
+	return oldValue.EmailEnabled, nil
+}
+
+// ResetEmailEnabled resets all changes to the "email_enabled" field.
+func (m *ServerChanConfigMutation) ResetEmailEnabled() {
+	m.email_enabled = nil
+}
+
+// SetEmailURL sets the "email_url" field.
+func (m *ServerChanConfigMutation) SetEmailURL(s string) {
+	m.email_url = &s
+}
+
+// EmailURL returns the value of the "email_url" field in the mutation.
+func (m *ServerChanConfigMutation) EmailURL() (r string, exists bool) {
+	v := m.email_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEmailURL returns the old "email_url" field's value of the ServerChanConfig entity.
+// If the ServerChanConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ServerChanConfigMutation) OldEmailURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEmailURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEmailURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEmailURL: %w", err)
+	}
+	return oldValue.EmailURL, nil
+}
+
+// ResetEmailURL resets all changes to the "email_url" field.
+func (m *ServerChanConfigMutation) ResetEmailURL() {
+	m.email_url = nil
+}
+
 // Where appends a list predicates to the ServerChanConfigMutation builder.
 func (m *ServerChanConfigMutation) Where(ps ...predicate.ServerChanConfig) {
 	m.predicates = append(m.predicates, ps...)
@@ -1170,7 +1244,7 @@ func (m *ServerChanConfigMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ServerChanConfigMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 6)
 	if m.send_key != nil {
 		fields = append(fields, serverchanconfig.FieldSendKey)
 	}
@@ -1182,6 +1256,12 @@ func (m *ServerChanConfigMutation) Fields() []string {
 	}
 	if m.enabled != nil {
 		fields = append(fields, serverchanconfig.FieldEnabled)
+	}
+	if m.email_enabled != nil {
+		fields = append(fields, serverchanconfig.FieldEmailEnabled)
+	}
+	if m.email_url != nil {
+		fields = append(fields, serverchanconfig.FieldEmailURL)
 	}
 	return fields
 }
@@ -1199,6 +1279,10 @@ func (m *ServerChanConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.OffTemplate()
 	case serverchanconfig.FieldEnabled:
 		return m.Enabled()
+	case serverchanconfig.FieldEmailEnabled:
+		return m.EmailEnabled()
+	case serverchanconfig.FieldEmailURL:
+		return m.EmailURL()
 	}
 	return nil, false
 }
@@ -1216,6 +1300,10 @@ func (m *ServerChanConfigMutation) OldField(ctx context.Context, name string) (e
 		return m.OldOffTemplate(ctx)
 	case serverchanconfig.FieldEnabled:
 		return m.OldEnabled(ctx)
+	case serverchanconfig.FieldEmailEnabled:
+		return m.OldEmailEnabled(ctx)
+	case serverchanconfig.FieldEmailURL:
+		return m.OldEmailURL(ctx)
 	}
 	return nil, fmt.Errorf("unknown ServerChanConfig field %s", name)
 }
@@ -1252,6 +1340,20 @@ func (m *ServerChanConfigMutation) SetField(name string, value ent.Value) error 
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEnabled(v)
+		return nil
+	case serverchanconfig.FieldEmailEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEmailEnabled(v)
+		return nil
+	case serverchanconfig.FieldEmailURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEmailURL(v)
 		return nil
 	}
 	return fmt.Errorf("unknown ServerChanConfig field %s", name)
@@ -1313,6 +1415,12 @@ func (m *ServerChanConfigMutation) ResetField(name string) error {
 		return nil
 	case serverchanconfig.FieldEnabled:
 		m.ResetEnabled()
+		return nil
+	case serverchanconfig.FieldEmailEnabled:
+		m.ResetEmailEnabled()
+		return nil
+	case serverchanconfig.FieldEmailURL:
+		m.ResetEmailURL()
 		return nil
 	}
 	return fmt.Errorf("unknown ServerChanConfig field %s", name)

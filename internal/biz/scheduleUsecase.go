@@ -162,10 +162,12 @@ func (s *ScheduleUsecase) GetServerChanConfig(ctx context.Context) (*ent.ServerC
 	if err != nil {
 		// 如果没有配置，返回默认配置
 		return &ent.ServerChanConfig{
-			SendKey:     "",
-			OnTemplate:  "{{.Name}} 任务执行成功，灯已开启",
-			OffTemplate: "{{.Name}} 任务执行成功，灯已关闭",
-			Enabled:     false,
+			SendKey:      "",
+			OnTemplate:   "{{.Name}} 任务执行成功，灯已开启",
+			OffTemplate:  "{{.Name}} 任务执行成功，灯已关闭",
+			Enabled:      false,
+			EmailEnabled: false,
+			EmailURL:     "",
 		}, nil
 	}
 	return config, nil
@@ -182,6 +184,8 @@ func (s *ScheduleUsecase) SaveServerChanConfig(ctx context.Context, config *ent.
 			SetSendKey(config.SendKey).
 			SetOnTemplate(config.OnTemplate).
 			SetOffTemplate(config.OffTemplate).
+			SetEmailEnabled(config.EmailEnabled).
+			SetEmailURL(config.EmailURL).
 			Save(ctx)
 
 		if err != nil {
@@ -194,6 +198,8 @@ func (s *ScheduleUsecase) SaveServerChanConfig(ctx context.Context, config *ent.
 			SetSendKey(config.SendKey).
 			SetOnTemplate(config.OnTemplate).
 			SetOffTemplate(config.OffTemplate).
+			SetEmailEnabled(config.EmailEnabled).
+			SetEmailURL(config.EmailURL).
 			Save(ctx)
 
 		if err != nil {

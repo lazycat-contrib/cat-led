@@ -941,6 +941,7 @@ body {
 }
 
 .form-group input[type="text"],
+.form-group input[type="url"],
 .form-group input[type="time"] {
   width: 100%;
   padding: 12px;
@@ -978,6 +979,7 @@ body {
 }
 
 .form-group input[type="text"]:focus,
+.form-group input[type="url"]:focus,
 .form-group input[type="time"]:focus {
   outline: none;
   border-color: rgba(255, 255, 255, 0.4);
@@ -986,6 +988,7 @@ body {
 
 /* 明亮主题下的表单样式 */
 [data-theme="light"] .form-group input[type="text"],
+[data-theme="light"] .form-group input[type="url"],
 [data-theme="light"] .form-group input[type="time"] {
   background-color: var(--card-background);
   border: 1px solid var(--border-color);
@@ -1504,6 +1507,21 @@ input:checked + .toggle-label:before {
 [data-theme="light"] .back-link {
   color: var(--primary-color);
   background-color: rgba(0, 122, 255, 0.1);
+}
+
+.link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  transition: var(--transition);
+}
+
+.link:hover {
+  text-decoration: underline;
 }
 
 /* Server酱图标样式 */

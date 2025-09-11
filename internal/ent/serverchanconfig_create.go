@@ -20,67 +20,95 @@ type ServerChanConfigCreate struct {
 }
 
 // SetSendKey sets the "send_key" field.
-func (sccc *ServerChanConfigCreate) SetSendKey(s string) *ServerChanConfigCreate {
-	sccc.mutation.SetSendKey(s)
-	return sccc
+func (_c *ServerChanConfigCreate) SetSendKey(v string) *ServerChanConfigCreate {
+	_c.mutation.SetSendKey(v)
+	return _c
 }
 
 // SetOnTemplate sets the "on_template" field.
-func (sccc *ServerChanConfigCreate) SetOnTemplate(s string) *ServerChanConfigCreate {
-	sccc.mutation.SetOnTemplate(s)
-	return sccc
+func (_c *ServerChanConfigCreate) SetOnTemplate(v string) *ServerChanConfigCreate {
+	_c.mutation.SetOnTemplate(v)
+	return _c
 }
 
 // SetNillableOnTemplate sets the "on_template" field if the given value is not nil.
-func (sccc *ServerChanConfigCreate) SetNillableOnTemplate(s *string) *ServerChanConfigCreate {
-	if s != nil {
-		sccc.SetOnTemplate(*s)
+func (_c *ServerChanConfigCreate) SetNillableOnTemplate(v *string) *ServerChanConfigCreate {
+	if v != nil {
+		_c.SetOnTemplate(*v)
 	}
-	return sccc
+	return _c
 }
 
 // SetOffTemplate sets the "off_template" field.
-func (sccc *ServerChanConfigCreate) SetOffTemplate(s string) *ServerChanConfigCreate {
-	sccc.mutation.SetOffTemplate(s)
-	return sccc
+func (_c *ServerChanConfigCreate) SetOffTemplate(v string) *ServerChanConfigCreate {
+	_c.mutation.SetOffTemplate(v)
+	return _c
 }
 
 // SetNillableOffTemplate sets the "off_template" field if the given value is not nil.
-func (sccc *ServerChanConfigCreate) SetNillableOffTemplate(s *string) *ServerChanConfigCreate {
-	if s != nil {
-		sccc.SetOffTemplate(*s)
+func (_c *ServerChanConfigCreate) SetNillableOffTemplate(v *string) *ServerChanConfigCreate {
+	if v != nil {
+		_c.SetOffTemplate(*v)
 	}
-	return sccc
+	return _c
 }
 
 // SetEnabled sets the "enabled" field.
-func (sccc *ServerChanConfigCreate) SetEnabled(b bool) *ServerChanConfigCreate {
-	sccc.mutation.SetEnabled(b)
-	return sccc
+func (_c *ServerChanConfigCreate) SetEnabled(v bool) *ServerChanConfigCreate {
+	_c.mutation.SetEnabled(v)
+	return _c
 }
 
 // SetNillableEnabled sets the "enabled" field if the given value is not nil.
-func (sccc *ServerChanConfigCreate) SetNillableEnabled(b *bool) *ServerChanConfigCreate {
-	if b != nil {
-		sccc.SetEnabled(*b)
+func (_c *ServerChanConfigCreate) SetNillableEnabled(v *bool) *ServerChanConfigCreate {
+	if v != nil {
+		_c.SetEnabled(*v)
 	}
-	return sccc
+	return _c
+}
+
+// SetEmailEnabled sets the "email_enabled" field.
+func (_c *ServerChanConfigCreate) SetEmailEnabled(v bool) *ServerChanConfigCreate {
+	_c.mutation.SetEmailEnabled(v)
+	return _c
+}
+
+// SetNillableEmailEnabled sets the "email_enabled" field if the given value is not nil.
+func (_c *ServerChanConfigCreate) SetNillableEmailEnabled(v *bool) *ServerChanConfigCreate {
+	if v != nil {
+		_c.SetEmailEnabled(*v)
+	}
+	return _c
+}
+
+// SetEmailURL sets the "email_url" field.
+func (_c *ServerChanConfigCreate) SetEmailURL(v string) *ServerChanConfigCreate {
+	_c.mutation.SetEmailURL(v)
+	return _c
+}
+
+// SetNillableEmailURL sets the "email_url" field if the given value is not nil.
+func (_c *ServerChanConfigCreate) SetNillableEmailURL(v *string) *ServerChanConfigCreate {
+	if v != nil {
+		_c.SetEmailURL(*v)
+	}
+	return _c
 }
 
 // Mutation returns the ServerChanConfigMutation object of the builder.
-func (sccc *ServerChanConfigCreate) Mutation() *ServerChanConfigMutation {
-	return sccc.mutation
+func (_c *ServerChanConfigCreate) Mutation() *ServerChanConfigMutation {
+	return _c.mutation
 }
 
 // Save creates the ServerChanConfig in the database.
-func (sccc *ServerChanConfigCreate) Save(ctx context.Context) (*ServerChanConfig, error) {
-	sccc.defaults()
-	return withHooks(ctx, sccc.sqlSave, sccc.mutation, sccc.hooks)
+func (_c *ServerChanConfigCreate) Save(ctx context.Context) (*ServerChanConfig, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (sccc *ServerChanConfigCreate) SaveX(ctx context.Context) *ServerChanConfig {
-	v, err := sccc.Save(ctx)
+func (_c *ServerChanConfigCreate) SaveX(ctx context.Context) *ServerChanConfig {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -88,57 +116,71 @@ func (sccc *ServerChanConfigCreate) SaveX(ctx context.Context) *ServerChanConfig
 }
 
 // Exec executes the query.
-func (sccc *ServerChanConfigCreate) Exec(ctx context.Context) error {
-	_, err := sccc.Save(ctx)
+func (_c *ServerChanConfigCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (sccc *ServerChanConfigCreate) ExecX(ctx context.Context) {
-	if err := sccc.Exec(ctx); err != nil {
+func (_c *ServerChanConfigCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (sccc *ServerChanConfigCreate) defaults() {
-	if _, ok := sccc.mutation.OnTemplate(); !ok {
+func (_c *ServerChanConfigCreate) defaults() {
+	if _, ok := _c.mutation.OnTemplate(); !ok {
 		v := serverchanconfig.DefaultOnTemplate
-		sccc.mutation.SetOnTemplate(v)
+		_c.mutation.SetOnTemplate(v)
 	}
-	if _, ok := sccc.mutation.OffTemplate(); !ok {
+	if _, ok := _c.mutation.OffTemplate(); !ok {
 		v := serverchanconfig.DefaultOffTemplate
-		sccc.mutation.SetOffTemplate(v)
+		_c.mutation.SetOffTemplate(v)
 	}
-	if _, ok := sccc.mutation.Enabled(); !ok {
+	if _, ok := _c.mutation.Enabled(); !ok {
 		v := serverchanconfig.DefaultEnabled
-		sccc.mutation.SetEnabled(v)
+		_c.mutation.SetEnabled(v)
+	}
+	if _, ok := _c.mutation.EmailEnabled(); !ok {
+		v := serverchanconfig.DefaultEmailEnabled
+		_c.mutation.SetEmailEnabled(v)
+	}
+	if _, ok := _c.mutation.EmailURL(); !ok {
+		v := serverchanconfig.DefaultEmailURL
+		_c.mutation.SetEmailURL(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (sccc *ServerChanConfigCreate) check() error {
-	if _, ok := sccc.mutation.SendKey(); !ok {
+func (_c *ServerChanConfigCreate) check() error {
+	if _, ok := _c.mutation.SendKey(); !ok {
 		return &ValidationError{Name: "send_key", err: errors.New(`ent: missing required field "ServerChanConfig.send_key"`)}
 	}
-	if _, ok := sccc.mutation.OnTemplate(); !ok {
+	if _, ok := _c.mutation.OnTemplate(); !ok {
 		return &ValidationError{Name: "on_template", err: errors.New(`ent: missing required field "ServerChanConfig.on_template"`)}
 	}
-	if _, ok := sccc.mutation.OffTemplate(); !ok {
+	if _, ok := _c.mutation.OffTemplate(); !ok {
 		return &ValidationError{Name: "off_template", err: errors.New(`ent: missing required field "ServerChanConfig.off_template"`)}
 	}
-	if _, ok := sccc.mutation.Enabled(); !ok {
+	if _, ok := _c.mutation.Enabled(); !ok {
 		return &ValidationError{Name: "enabled", err: errors.New(`ent: missing required field "ServerChanConfig.enabled"`)}
+	}
+	if _, ok := _c.mutation.EmailEnabled(); !ok {
+		return &ValidationError{Name: "email_enabled", err: errors.New(`ent: missing required field "ServerChanConfig.email_enabled"`)}
+	}
+	if _, ok := _c.mutation.EmailURL(); !ok {
+		return &ValidationError{Name: "email_url", err: errors.New(`ent: missing required field "ServerChanConfig.email_url"`)}
 	}
 	return nil
 }
 
-func (sccc *ServerChanConfigCreate) sqlSave(ctx context.Context) (*ServerChanConfig, error) {
-	if err := sccc.check(); err != nil {
+func (_c *ServerChanConfigCreate) sqlSave(ctx context.Context) (*ServerChanConfig, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := sccc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, sccc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -146,31 +188,39 @@ func (sccc *ServerChanConfigCreate) sqlSave(ctx context.Context) (*ServerChanCon
 	}
 	id := _spec.ID.Value.(int64)
 	_node.ID = int(id)
-	sccc.mutation.id = &_node.ID
-	sccc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (sccc *ServerChanConfigCreate) createSpec() (*ServerChanConfig, *sqlgraph.CreateSpec) {
+func (_c *ServerChanConfigCreate) createSpec() (*ServerChanConfig, *sqlgraph.CreateSpec) {
 	var (
-		_node = &ServerChanConfig{config: sccc.config}
+		_node = &ServerChanConfig{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(serverchanconfig.Table, sqlgraph.NewFieldSpec(serverchanconfig.FieldID, field.TypeInt))
 	)
-	if value, ok := sccc.mutation.SendKey(); ok {
+	if value, ok := _c.mutation.SendKey(); ok {
 		_spec.SetField(serverchanconfig.FieldSendKey, field.TypeString, value)
 		_node.SendKey = value
 	}
-	if value, ok := sccc.mutation.OnTemplate(); ok {
+	if value, ok := _c.mutation.OnTemplate(); ok {
 		_spec.SetField(serverchanconfig.FieldOnTemplate, field.TypeString, value)
 		_node.OnTemplate = value
 	}
-	if value, ok := sccc.mutation.OffTemplate(); ok {
+	if value, ok := _c.mutation.OffTemplate(); ok {
 		_spec.SetField(serverchanconfig.FieldOffTemplate, field.TypeString, value)
 		_node.OffTemplate = value
 	}
-	if value, ok := sccc.mutation.Enabled(); ok {
+	if value, ok := _c.mutation.Enabled(); ok {
 		_spec.SetField(serverchanconfig.FieldEnabled, field.TypeBool, value)
 		_node.Enabled = value
+	}
+	if value, ok := _c.mutation.EmailEnabled(); ok {
+		_spec.SetField(serverchanconfig.FieldEmailEnabled, field.TypeBool, value)
+		_node.EmailEnabled = value
+	}
+	if value, ok := _c.mutation.EmailURL(); ok {
+		_spec.SetField(serverchanconfig.FieldEmailURL, field.TypeString, value)
+		_node.EmailURL = value
 	}
 	return _node, _spec
 }
@@ -183,16 +233,16 @@ type ServerChanConfigCreateBulk struct {
 }
 
 // Save creates the ServerChanConfig entities in the database.
-func (scccb *ServerChanConfigCreateBulk) Save(ctx context.Context) ([]*ServerChanConfig, error) {
-	if scccb.err != nil {
-		return nil, scccb.err
+func (_c *ServerChanConfigCreateBulk) Save(ctx context.Context) ([]*ServerChanConfig, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(scccb.builders))
-	nodes := make([]*ServerChanConfig, len(scccb.builders))
-	mutators := make([]Mutator, len(scccb.builders))
-	for i := range scccb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*ServerChanConfig, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := scccb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*ServerChanConfigMutation)
@@ -206,11 +256,11 @@ func (scccb *ServerChanConfigCreateBulk) Save(ctx context.Context) ([]*ServerCha
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, scccb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, scccb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -234,7 +284,7 @@ func (scccb *ServerChanConfigCreateBulk) Save(ctx context.Context) ([]*ServerCha
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, scccb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -242,8 +292,8 @@ func (scccb *ServerChanConfigCreateBulk) Save(ctx context.Context) ([]*ServerCha
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (scccb *ServerChanConfigCreateBulk) SaveX(ctx context.Context) []*ServerChanConfig {
-	v, err := scccb.Save(ctx)
+func (_c *ServerChanConfigCreateBulk) SaveX(ctx context.Context) []*ServerChanConfig {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -251,14 +301,14 @@ func (scccb *ServerChanConfigCreateBulk) SaveX(ctx context.Context) []*ServerCha
 }
 
 // Exec executes the query.
-func (scccb *ServerChanConfigCreateBulk) Exec(ctx context.Context) error {
-	_, err := scccb.Save(ctx)
+func (_c *ServerChanConfigCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (scccb *ServerChanConfigCreateBulk) ExecX(ctx context.Context) {
-	if err := scccb.Exec(ctx); err != nil {
+func (_c *ServerChanConfigCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
