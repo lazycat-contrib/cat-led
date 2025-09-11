@@ -20,56 +20,56 @@ type ScheduleDelete struct {
 }
 
 // Where appends a list predicates to the ScheduleDelete builder.
-func (_d *ScheduleDelete) Where(ps ...predicate.Schedule) *ScheduleDelete {
-	_d.mutation.Where(ps...)
-	return _d
+func (sd *ScheduleDelete) Where(ps ...predicate.Schedule) *ScheduleDelete {
+	sd.mutation.Where(ps...)
+	return sd
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (_d *ScheduleDelete) Exec(ctx context.Context) (int, error) {
-	return withHooks(ctx, _d.sqlExec, _d.mutation, _d.hooks)
+func (sd *ScheduleDelete) Exec(ctx context.Context) (int, error) {
+	return withHooks(ctx, sd.sqlExec, sd.mutation, sd.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *ScheduleDelete) ExecX(ctx context.Context) int {
-	n, err := _d.Exec(ctx)
+func (sd *ScheduleDelete) ExecX(ctx context.Context) int {
+	n, err := sd.Exec(ctx)
 	if err != nil {
 		panic(err)
 	}
 	return n
 }
 
-func (_d *ScheduleDelete) sqlExec(ctx context.Context) (int, error) {
+func (sd *ScheduleDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := sqlgraph.NewDeleteSpec(schedule.Table, sqlgraph.NewFieldSpec(schedule.FieldID, field.TypeUUID))
-	if ps := _d.mutation.predicates; len(ps) > 0 {
+	if ps := sd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	affected, err := sqlgraph.DeleteNodes(ctx, _d.driver, _spec)
+	affected, err := sqlgraph.DeleteNodes(ctx, sd.driver, _spec)
 	if err != nil && sqlgraph.IsConstraintError(err) {
 		err = &ConstraintError{msg: err.Error(), wrap: err}
 	}
-	_d.mutation.done = true
+	sd.mutation.done = true
 	return affected, err
 }
 
 // ScheduleDeleteOne is the builder for deleting a single Schedule entity.
 type ScheduleDeleteOne struct {
-	_d *ScheduleDelete
+	sd *ScheduleDelete
 }
 
 // Where appends a list predicates to the ScheduleDelete builder.
-func (_d *ScheduleDeleteOne) Where(ps ...predicate.Schedule) *ScheduleDeleteOne {
-	_d._d.mutation.Where(ps...)
-	return _d
+func (sdo *ScheduleDeleteOne) Where(ps ...predicate.Schedule) *ScheduleDeleteOne {
+	sdo.sd.mutation.Where(ps...)
+	return sdo
 }
 
 // Exec executes the deletion query.
-func (_d *ScheduleDeleteOne) Exec(ctx context.Context) error {
-	n, err := _d._d.Exec(ctx)
+func (sdo *ScheduleDeleteOne) Exec(ctx context.Context) error {
+	n, err := sdo.sd.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
@@ -81,8 +81,8 @@ func (_d *ScheduleDeleteOne) Exec(ctx context.Context) error {
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *ScheduleDeleteOne) ExecX(ctx context.Context) {
-	if err := _d.Exec(ctx); err != nil {
+func (sdo *ScheduleDeleteOne) ExecX(ctx context.Context) {
+	if err := sdo.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
