@@ -20,56 +20,56 @@ type ServerChanConfigDelete struct {
 }
 
 // Where appends a list predicates to the ServerChanConfigDelete builder.
-func (_d *ServerChanConfigDelete) Where(ps ...predicate.ServerChanConfig) *ServerChanConfigDelete {
-	_d.mutation.Where(ps...)
-	return _d
+func (sccd *ServerChanConfigDelete) Where(ps ...predicate.ServerChanConfig) *ServerChanConfigDelete {
+	sccd.mutation.Where(ps...)
+	return sccd
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (_d *ServerChanConfigDelete) Exec(ctx context.Context) (int, error) {
-	return withHooks(ctx, _d.sqlExec, _d.mutation, _d.hooks)
+func (sccd *ServerChanConfigDelete) Exec(ctx context.Context) (int, error) {
+	return withHooks(ctx, sccd.sqlExec, sccd.mutation, sccd.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *ServerChanConfigDelete) ExecX(ctx context.Context) int {
-	n, err := _d.Exec(ctx)
+func (sccd *ServerChanConfigDelete) ExecX(ctx context.Context) int {
+	n, err := sccd.Exec(ctx)
 	if err != nil {
 		panic(err)
 	}
 	return n
 }
 
-func (_d *ServerChanConfigDelete) sqlExec(ctx context.Context) (int, error) {
+func (sccd *ServerChanConfigDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := sqlgraph.NewDeleteSpec(serverchanconfig.Table, sqlgraph.NewFieldSpec(serverchanconfig.FieldID, field.TypeInt))
-	if ps := _d.mutation.predicates; len(ps) > 0 {
+	if ps := sccd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	affected, err := sqlgraph.DeleteNodes(ctx, _d.driver, _spec)
+	affected, err := sqlgraph.DeleteNodes(ctx, sccd.driver, _spec)
 	if err != nil && sqlgraph.IsConstraintError(err) {
 		err = &ConstraintError{msg: err.Error(), wrap: err}
 	}
-	_d.mutation.done = true
+	sccd.mutation.done = true
 	return affected, err
 }
 
 // ServerChanConfigDeleteOne is the builder for deleting a single ServerChanConfig entity.
 type ServerChanConfigDeleteOne struct {
-	_d *ServerChanConfigDelete
+	sccd *ServerChanConfigDelete
 }
 
 // Where appends a list predicates to the ServerChanConfigDelete builder.
-func (_d *ServerChanConfigDeleteOne) Where(ps ...predicate.ServerChanConfig) *ServerChanConfigDeleteOne {
-	_d._d.mutation.Where(ps...)
-	return _d
+func (sccdo *ServerChanConfigDeleteOne) Where(ps ...predicate.ServerChanConfig) *ServerChanConfigDeleteOne {
+	sccdo.sccd.mutation.Where(ps...)
+	return sccdo
 }
 
 // Exec executes the deletion query.
-func (_d *ServerChanConfigDeleteOne) Exec(ctx context.Context) error {
-	n, err := _d._d.Exec(ctx)
+func (sccdo *ServerChanConfigDeleteOne) Exec(ctx context.Context) error {
+	n, err := sccdo.sccd.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
@@ -81,8 +81,8 @@ func (_d *ServerChanConfigDeleteOne) Exec(ctx context.Context) error {
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *ServerChanConfigDeleteOne) ExecX(ctx context.Context) {
-	if err := _d.Exec(ctx); err != nil {
+func (sccdo *ServerChanConfigDeleteOne) ExecX(ctx context.Context) {
+	if err := sccdo.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

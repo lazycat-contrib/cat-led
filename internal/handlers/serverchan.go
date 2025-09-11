@@ -4,18 +4,15 @@ import (
 	"cat-led/internal/ent"
 	"context"
 	"fmt"
-
 	"github.com/gin-gonic/gin"
 )
 
 // ServerChanConfig 包含Server酱的配置信息
 type ServerChanConfig struct {
-	Enabled      bool   `json:"enabled"`
-	SendKey      string `json:"sendKey"`
-	OnTemplate   string `json:"onTemplate"`
-	OffTemplate  string `json:"offTemplate"`
-	EmailEnabled bool   `json:"emailEnabled"`
-	EmailURL     string `json:"emailURL"`
+	Enabled     bool   `json:"enabled"`
+	SendKey     string `json:"sendKey"`
+	OnTemplate  string `json:"onTemplate"`
+	OffTemplate string `json:"offTemplate"`
 }
 
 // GetServerChanConfig 获取Server酱配置
@@ -36,24 +33,20 @@ func GetServerChanConfig(c *gin.Context) {
 	// 如果没有配置，返回默认配置
 	if err != nil {
 		c.JSON(200, ServerChanConfig{
-			Enabled:      false,
-			SendKey:      "",
-			OnTemplate:   "懒猫{{.Name}} 任务于{{ .Time }}执行成功，灯已开启",
-			OffTemplate:  "懒猫{{.Name}} 任务于{{ .Time }}执行成功，灯已关闭",
-			EmailEnabled: false,
-			EmailURL:     "",
+			Enabled:     false,
+			SendKey:     "",
+			OnTemplate:  "懒猫{{.Name}} 任务于{{ .Time }}}执行成功，灯已开启",
+			OffTemplate: "懒猫{{.Name}} 任务于{{ .Time }}}执行成功，灯已关闭",
 		})
 		return
 	}
 
 	// 返回配置
 	c.JSON(200, ServerChanConfig{
-		Enabled:      config.Enabled,
-		SendKey:      config.SendKey,
-		OnTemplate:   config.OnTemplate,
-		OffTemplate:  config.OffTemplate,
-		EmailEnabled: config.EmailEnabled,
-		EmailURL:     config.EmailURL,
+		Enabled:     config.Enabled,
+		SendKey:     config.SendKey,
+		OnTemplate:  config.OnTemplate,
+		OffTemplate: config.OffTemplate,
 	})
 }
 
@@ -74,12 +67,10 @@ func SaveServerChanConfig(c *gin.Context) {
 
 	// 创建ent.ServerChanConfig对象
 	entConfig := &ent.ServerChanConfig{
-		Enabled:      config.Enabled,
-		SendKey:      config.SendKey,
-		OnTemplate:   config.OnTemplate,
-		OffTemplate:  config.OffTemplate,
-		EmailEnabled: config.EmailEnabled,
-		EmailURL:     config.EmailURL,
+		Enabled:     config.Enabled,
+		SendKey:     config.SendKey,
+		OnTemplate:  config.OnTemplate,
+		OffTemplate: config.OffTemplate,
 	}
 
 	// 保存配置

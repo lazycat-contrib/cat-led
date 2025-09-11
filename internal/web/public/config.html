@@ -34,72 +34,48 @@
         </header>
 
         <!-- 配置表单 -->
-
         <section class="config-section">
+            <h2 class="section-title">Server酱配置</h2>
             <div class="config-form-container">
-            <form id="serverchan-config-form">
-            <details class="config-toggle">
-                <summary class="section-title">
-                    <span>Server酱配置</span>
-                </summary>
-                <div class="form-group toggle-group">
-                    <label for="serverchan-enabled">启用Server酱通知</label>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="serverchan-enabled">
-                        <label for="serverchan-enabled" class="toggle-label"></label>
+                <form id="serverchan-config-form">
+                    <div class="form-group toggle-group">
+                        <label for="serverchan-enabled">启用Server酱通知</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="serverchan-enabled">
+                            <label for="serverchan-enabled" class="toggle-label"></label>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="send-key">SendKey</label>
-                    <input type="text" id="send-key" placeholder="请输入Server酱的SendKey">
-                </div>
-            </details>
-
-            <details class="config-toggle">
-                <summary class="section-title">
-                    <span>电子邮件通知</span>
-                </summary>
-                <div>
-                    <a class="link" href="https://github.com/gutenye/email-notification">项目地址</a>
-                </div>
-                <div class="form-group toggle-group">
-                    <label for="serverchan-enabled">启用电子邮件通知</label>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="email-enabled">
-                        <label for="email-enabled" class="toggle-label"></label>
+                    
+                    <div class="form-group">
+                        <label for="send-key">SendKey</label>
+                        <input type="text" id="send-key" placeholder="请输入Server酱的SendKey" required>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="email-url">URL</label>
-                    <input type="url" id="email-url" placeholder="请输入电子邮件通知网址">
-                </div>
-            </details>
-            
-            <div class="form-group">
-                <label for="on-template">开灯通知模板</label>
-                <textarea id="on-template" placeholder="请输入开灯通知模板" rows="3"></textarea>
+                    
+                    <div class="form-group">
+                        <label for="on-template">开灯通知模板</label>
+                        <textarea id="on-template" placeholder="请输入开灯通知模板" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="off-template">关灯通知模板</label>
+                        <textarea id="off-template" placeholder="请输入关灯通知模板" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="primary-button" id="save-config-btn">保存配置</button>
+                    </div>
+                </form>
             </div>
-            
-            <div class="form-group">
-                <label for="off-template">关灯通知模板</label>
-                <textarea id="off-template" placeholder="请输入关灯通知模板" rows="3"></textarea>
-            </div>
+        </section>
 
-            <div class="form-actions">
-                <button type="submit" class="primary-button" id="save-config-btn">保存配置</button>
-            </div>
-        </form>
-        </div>
-    </section>
-
-    <!-- 返回主页链接 -->
-    <section class="back-section">
-        <a href="/" class="back-link">
-            <i class="ri-arrow-left-line"></i>
-            返回主页
-        </a>
-    </section>
-</div>
+        <!-- 返回主页链接 -->
+        <section class="back-section">
+            <a href="/" class="back-link">
+                <i class="ri-arrow-left-line"></i>
+                返回主页
+            </a>
+        </section>
+    </div>
 
     <!-- Toast通知容器 -->
     <div class="toast-container" id="toast-container"></div>

@@ -21,111 +21,111 @@ type ScheduleCreate struct {
 }
 
 // SetName sets the "name" field.
-func (_c *ScheduleCreate) SetName(v string) *ScheduleCreate {
-	_c.mutation.SetName(v)
-	return _c
+func (sc *ScheduleCreate) SetName(s string) *ScheduleCreate {
+	sc.mutation.SetName(s)
+	return sc
 }
 
 // SetCreator sets the "creator" field.
-func (_c *ScheduleCreate) SetCreator(v string) *ScheduleCreate {
-	_c.mutation.SetCreator(v)
-	return _c
+func (sc *ScheduleCreate) SetCreator(s string) *ScheduleCreate {
+	sc.mutation.SetCreator(s)
+	return sc
 }
 
 // SetWeekDays sets the "week_days" field.
-func (_c *ScheduleCreate) SetWeekDays(v []int) *ScheduleCreate {
-	_c.mutation.SetWeekDays(v)
-	return _c
+func (sc *ScheduleCreate) SetWeekDays(i []int) *ScheduleCreate {
+	sc.mutation.SetWeekDays(i)
+	return sc
 }
 
 // SetHour sets the "hour" field.
-func (_c *ScheduleCreate) SetHour(v int) *ScheduleCreate {
-	_c.mutation.SetHour(v)
-	return _c
+func (sc *ScheduleCreate) SetHour(i int) *ScheduleCreate {
+	sc.mutation.SetHour(i)
+	return sc
 }
 
 // SetMinute sets the "minute" field.
-func (_c *ScheduleCreate) SetMinute(v int) *ScheduleCreate {
-	_c.mutation.SetMinute(v)
-	return _c
+func (sc *ScheduleCreate) SetMinute(i int) *ScheduleCreate {
+	sc.mutation.SetMinute(i)
+	return sc
 }
 
 // SetOperation sets the "operation" field.
-func (_c *ScheduleCreate) SetOperation(v schedule.Operation) *ScheduleCreate {
-	_c.mutation.SetOperation(v)
-	return _c
+func (sc *ScheduleCreate) SetOperation(s schedule.Operation) *ScheduleCreate {
+	sc.mutation.SetOperation(s)
+	return sc
 }
 
 // SetNillableOperation sets the "operation" field if the given value is not nil.
-func (_c *ScheduleCreate) SetNillableOperation(v *schedule.Operation) *ScheduleCreate {
-	if v != nil {
-		_c.SetOperation(*v)
+func (sc *ScheduleCreate) SetNillableOperation(s *schedule.Operation) *ScheduleCreate {
+	if s != nil {
+		sc.SetOperation(*s)
 	}
-	return _c
+	return sc
 }
 
 // SetEnabled sets the "enabled" field.
-func (_c *ScheduleCreate) SetEnabled(v bool) *ScheduleCreate {
-	_c.mutation.SetEnabled(v)
-	return _c
+func (sc *ScheduleCreate) SetEnabled(b bool) *ScheduleCreate {
+	sc.mutation.SetEnabled(b)
+	return sc
 }
 
 // SetNillableEnabled sets the "enabled" field if the given value is not nil.
-func (_c *ScheduleCreate) SetNillableEnabled(v *bool) *ScheduleCreate {
-	if v != nil {
-		_c.SetEnabled(*v)
+func (sc *ScheduleCreate) SetNillableEnabled(b *bool) *ScheduleCreate {
+	if b != nil {
+		sc.SetEnabled(*b)
 	}
-	return _c
+	return sc
 }
 
 // SetAllowEditByOthers sets the "allow_edit_by_others" field.
-func (_c *ScheduleCreate) SetAllowEditByOthers(v bool) *ScheduleCreate {
-	_c.mutation.SetAllowEditByOthers(v)
-	return _c
+func (sc *ScheduleCreate) SetAllowEditByOthers(b bool) *ScheduleCreate {
+	sc.mutation.SetAllowEditByOthers(b)
+	return sc
 }
 
 // SetNotifyViaServerChan sets the "notify_via_server_chan" field.
-func (_c *ScheduleCreate) SetNotifyViaServerChan(v bool) *ScheduleCreate {
-	_c.mutation.SetNotifyViaServerChan(v)
-	return _c
+func (sc *ScheduleCreate) SetNotifyViaServerChan(b bool) *ScheduleCreate {
+	sc.mutation.SetNotifyViaServerChan(b)
+	return sc
 }
 
 // SetNillableNotifyViaServerChan sets the "notify_via_server_chan" field if the given value is not nil.
-func (_c *ScheduleCreate) SetNillableNotifyViaServerChan(v *bool) *ScheduleCreate {
-	if v != nil {
-		_c.SetNotifyViaServerChan(*v)
+func (sc *ScheduleCreate) SetNillableNotifyViaServerChan(b *bool) *ScheduleCreate {
+	if b != nil {
+		sc.SetNotifyViaServerChan(*b)
 	}
-	return _c
+	return sc
 }
 
 // SetID sets the "id" field.
-func (_c *ScheduleCreate) SetID(v uuid.UUID) *ScheduleCreate {
-	_c.mutation.SetID(v)
-	return _c
+func (sc *ScheduleCreate) SetID(u uuid.UUID) *ScheduleCreate {
+	sc.mutation.SetID(u)
+	return sc
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (_c *ScheduleCreate) SetNillableID(v *uuid.UUID) *ScheduleCreate {
-	if v != nil {
-		_c.SetID(*v)
+func (sc *ScheduleCreate) SetNillableID(u *uuid.UUID) *ScheduleCreate {
+	if u != nil {
+		sc.SetID(*u)
 	}
-	return _c
+	return sc
 }
 
 // Mutation returns the ScheduleMutation object of the builder.
-func (_c *ScheduleCreate) Mutation() *ScheduleMutation {
-	return _c.mutation
+func (sc *ScheduleCreate) Mutation() *ScheduleMutation {
+	return sc.mutation
 }
 
 // Save creates the Schedule in the database.
-func (_c *ScheduleCreate) Save(ctx context.Context) (*Schedule, error) {
-	_c.defaults()
-	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
+func (sc *ScheduleCreate) Save(ctx context.Context) (*Schedule, error) {
+	sc.defaults()
+	return withHooks(ctx, sc.sqlSave, sc.mutation, sc.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (_c *ScheduleCreate) SaveX(ctx context.Context) *Schedule {
-	v, err := _c.Save(ctx)
+func (sc *ScheduleCreate) SaveX(ctx context.Context) *Schedule {
+	v, err := sc.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -133,81 +133,81 @@ func (_c *ScheduleCreate) SaveX(ctx context.Context) *Schedule {
 }
 
 // Exec executes the query.
-func (_c *ScheduleCreate) Exec(ctx context.Context) error {
-	_, err := _c.Save(ctx)
+func (sc *ScheduleCreate) Exec(ctx context.Context) error {
+	_, err := sc.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_c *ScheduleCreate) ExecX(ctx context.Context) {
-	if err := _c.Exec(ctx); err != nil {
+func (sc *ScheduleCreate) ExecX(ctx context.Context) {
+	if err := sc.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *ScheduleCreate) defaults() {
-	if _, ok := _c.mutation.Operation(); !ok {
+func (sc *ScheduleCreate) defaults() {
+	if _, ok := sc.mutation.Operation(); !ok {
 		v := schedule.DefaultOperation
-		_c.mutation.SetOperation(v)
+		sc.mutation.SetOperation(v)
 	}
-	if _, ok := _c.mutation.Enabled(); !ok {
+	if _, ok := sc.mutation.Enabled(); !ok {
 		v := schedule.DefaultEnabled
-		_c.mutation.SetEnabled(v)
+		sc.mutation.SetEnabled(v)
 	}
-	if _, ok := _c.mutation.NotifyViaServerChan(); !ok {
+	if _, ok := sc.mutation.NotifyViaServerChan(); !ok {
 		v := schedule.DefaultNotifyViaServerChan
-		_c.mutation.SetNotifyViaServerChan(v)
+		sc.mutation.SetNotifyViaServerChan(v)
 	}
-	if _, ok := _c.mutation.ID(); !ok {
+	if _, ok := sc.mutation.ID(); !ok {
 		v := schedule.DefaultID()
-		_c.mutation.SetID(v)
+		sc.mutation.SetID(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (_c *ScheduleCreate) check() error {
-	if _, ok := _c.mutation.Name(); !ok {
+func (sc *ScheduleCreate) check() error {
+	if _, ok := sc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Schedule.name"`)}
 	}
-	if _, ok := _c.mutation.Creator(); !ok {
+	if _, ok := sc.mutation.Creator(); !ok {
 		return &ValidationError{Name: "creator", err: errors.New(`ent: missing required field "Schedule.creator"`)}
 	}
-	if _, ok := _c.mutation.WeekDays(); !ok {
+	if _, ok := sc.mutation.WeekDays(); !ok {
 		return &ValidationError{Name: "week_days", err: errors.New(`ent: missing required field "Schedule.week_days"`)}
 	}
-	if _, ok := _c.mutation.Hour(); !ok {
+	if _, ok := sc.mutation.Hour(); !ok {
 		return &ValidationError{Name: "hour", err: errors.New(`ent: missing required field "Schedule.hour"`)}
 	}
-	if _, ok := _c.mutation.Minute(); !ok {
+	if _, ok := sc.mutation.Minute(); !ok {
 		return &ValidationError{Name: "minute", err: errors.New(`ent: missing required field "Schedule.minute"`)}
 	}
-	if _, ok := _c.mutation.Operation(); !ok {
+	if _, ok := sc.mutation.Operation(); !ok {
 		return &ValidationError{Name: "operation", err: errors.New(`ent: missing required field "Schedule.operation"`)}
 	}
-	if v, ok := _c.mutation.Operation(); ok {
+	if v, ok := sc.mutation.Operation(); ok {
 		if err := schedule.OperationValidator(v); err != nil {
 			return &ValidationError{Name: "operation", err: fmt.Errorf(`ent: validator failed for field "Schedule.operation": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.Enabled(); !ok {
+	if _, ok := sc.mutation.Enabled(); !ok {
 		return &ValidationError{Name: "enabled", err: errors.New(`ent: missing required field "Schedule.enabled"`)}
 	}
-	if _, ok := _c.mutation.AllowEditByOthers(); !ok {
+	if _, ok := sc.mutation.AllowEditByOthers(); !ok {
 		return &ValidationError{Name: "allow_edit_by_others", err: errors.New(`ent: missing required field "Schedule.allow_edit_by_others"`)}
 	}
-	if _, ok := _c.mutation.NotifyViaServerChan(); !ok {
+	if _, ok := sc.mutation.NotifyViaServerChan(); !ok {
 		return &ValidationError{Name: "notify_via_server_chan", err: errors.New(`ent: missing required field "Schedule.notify_via_server_chan"`)}
 	}
 	return nil
 }
 
-func (_c *ScheduleCreate) sqlSave(ctx context.Context) (*Schedule, error) {
-	if err := _c.check(); err != nil {
+func (sc *ScheduleCreate) sqlSave(ctx context.Context) (*Schedule, error) {
+	if err := sc.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := _c.createSpec()
-	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
+	_node, _spec := sc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, sc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -220,53 +220,53 @@ func (_c *ScheduleCreate) sqlSave(ctx context.Context) (*Schedule, error) {
 			return nil, err
 		}
 	}
-	_c.mutation.id = &_node.ID
-	_c.mutation.done = true
+	sc.mutation.id = &_node.ID
+	sc.mutation.done = true
 	return _node, nil
 }
 
-func (_c *ScheduleCreate) createSpec() (*Schedule, *sqlgraph.CreateSpec) {
+func (sc *ScheduleCreate) createSpec() (*Schedule, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Schedule{config: _c.config}
+		_node = &Schedule{config: sc.config}
 		_spec = sqlgraph.NewCreateSpec(schedule.Table, sqlgraph.NewFieldSpec(schedule.FieldID, field.TypeUUID))
 	)
-	if id, ok := _c.mutation.ID(); ok {
+	if id, ok := sc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
-	if value, ok := _c.mutation.Name(); ok {
+	if value, ok := sc.mutation.Name(); ok {
 		_spec.SetField(schedule.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := _c.mutation.Creator(); ok {
+	if value, ok := sc.mutation.Creator(); ok {
 		_spec.SetField(schedule.FieldCreator, field.TypeString, value)
 		_node.Creator = value
 	}
-	if value, ok := _c.mutation.WeekDays(); ok {
+	if value, ok := sc.mutation.WeekDays(); ok {
 		_spec.SetField(schedule.FieldWeekDays, field.TypeJSON, value)
 		_node.WeekDays = value
 	}
-	if value, ok := _c.mutation.Hour(); ok {
+	if value, ok := sc.mutation.Hour(); ok {
 		_spec.SetField(schedule.FieldHour, field.TypeInt, value)
 		_node.Hour = value
 	}
-	if value, ok := _c.mutation.Minute(); ok {
+	if value, ok := sc.mutation.Minute(); ok {
 		_spec.SetField(schedule.FieldMinute, field.TypeInt, value)
 		_node.Minute = value
 	}
-	if value, ok := _c.mutation.Operation(); ok {
+	if value, ok := sc.mutation.Operation(); ok {
 		_spec.SetField(schedule.FieldOperation, field.TypeEnum, value)
 		_node.Operation = value
 	}
-	if value, ok := _c.mutation.Enabled(); ok {
+	if value, ok := sc.mutation.Enabled(); ok {
 		_spec.SetField(schedule.FieldEnabled, field.TypeBool, value)
 		_node.Enabled = value
 	}
-	if value, ok := _c.mutation.AllowEditByOthers(); ok {
+	if value, ok := sc.mutation.AllowEditByOthers(); ok {
 		_spec.SetField(schedule.FieldAllowEditByOthers, field.TypeBool, value)
 		_node.AllowEditByOthers = value
 	}
-	if value, ok := _c.mutation.NotifyViaServerChan(); ok {
+	if value, ok := sc.mutation.NotifyViaServerChan(); ok {
 		_spec.SetField(schedule.FieldNotifyViaServerChan, field.TypeBool, value)
 		_node.NotifyViaServerChan = value
 	}
@@ -281,16 +281,16 @@ type ScheduleCreateBulk struct {
 }
 
 // Save creates the Schedule entities in the database.
-func (_c *ScheduleCreateBulk) Save(ctx context.Context) ([]*Schedule, error) {
-	if _c.err != nil {
-		return nil, _c.err
+func (scb *ScheduleCreateBulk) Save(ctx context.Context) ([]*Schedule, error) {
+	if scb.err != nil {
+		return nil, scb.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
-	nodes := make([]*Schedule, len(_c.builders))
-	mutators := make([]Mutator, len(_c.builders))
-	for i := range _c.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(scb.builders))
+	nodes := make([]*Schedule, len(scb.builders))
+	mutators := make([]Mutator, len(scb.builders))
+	for i := range scb.builders {
 		func(i int, root context.Context) {
-			builder := _c.builders[i]
+			builder := scb.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*ScheduleMutation)
@@ -304,11 +304,11 @@ func (_c *ScheduleCreateBulk) Save(ctx context.Context) ([]*Schedule, error) {
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, scb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, scb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -328,7 +328,7 @@ func (_c *ScheduleCreateBulk) Save(ctx context.Context) ([]*Schedule, error) {
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, scb.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -336,8 +336,8 @@ func (_c *ScheduleCreateBulk) Save(ctx context.Context) ([]*Schedule, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_c *ScheduleCreateBulk) SaveX(ctx context.Context) []*Schedule {
-	v, err := _c.Save(ctx)
+func (scb *ScheduleCreateBulk) SaveX(ctx context.Context) []*Schedule {
+	v, err := scb.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -345,14 +345,14 @@ func (_c *ScheduleCreateBulk) SaveX(ctx context.Context) []*Schedule {
 }
 
 // Exec executes the query.
-func (_c *ScheduleCreateBulk) Exec(ctx context.Context) error {
-	_, err := _c.Save(ctx)
+func (scb *ScheduleCreateBulk) Exec(ctx context.Context) error {
+	_, err := scb.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_c *ScheduleCreateBulk) ExecX(ctx context.Context) {
-	if err := _c.Exec(ctx); err != nil {
+func (scb *ScheduleCreateBulk) ExecX(ctx context.Context) {
+	if err := scb.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
