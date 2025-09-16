@@ -137,13 +137,19 @@ body {
   height: 24px;
 }
 
-/* 用户信息区域 */
+/* 用户信息区域 - 磨砂玻璃效果 */
 .user-info-section {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
   margin: 16px;
   padding: 16px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .user-profile {
@@ -198,17 +204,23 @@ body {
   padding-top: 12px;
 }
 
-/* LED状态区域 */
+/* LED状态区域 - 磨砂玻璃效果 */
 .led-status-section {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
   margin: 16px;
   padding: 30px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .led-status-text {
@@ -783,10 +795,17 @@ body {
   color: var(--header-text-color);
 }
 
+/* 定时任务列表 - 磨砂玻璃效果 */
 .schedules-list {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
   overflow: hidden;
 }
 
@@ -1354,9 +1373,38 @@ input:checked + .toggle-label:before {
 }
 
 /* 明亮主题特定样式 */
+/* 明亮主题下的磨砂玻璃效果 */
 [data-theme="light"] .user-info-section {
-  background-color: var(--card-background);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.04),
+    0 2px 8px rgba(0, 0, 0, 0.02),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="light"] .led-status-section {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.04),
+    0 2px 8px rgba(0, 0, 0, 0.02),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="light"] .schedules-list {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.04),
+    0 2px 8px rgba(0, 0, 0, 0.02),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 [data-theme="light"] .user-name {
@@ -1369,12 +1417,7 @@ input:checked + .toggle-label:before {
 
 [data-theme="light"] .device-info {
   color: var(--text-secondary);
-  border-top: 1px solid var(--border-color);
-}
-
-[data-theme="light"] .led-status-section {
-  background-color: var(--card-background);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 [data-theme="light"] .led-status-text {
@@ -1392,6 +1435,10 @@ input:checked + .toggle-label:before {
 
 [data-theme="light"] .schedule-name {
   color: var(--text-primary);
+}
+
+[data-theme="light"] .schedule-item {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 [data-theme="light"] .schedule-times {
