@@ -32,7 +32,10 @@ func main() {
 	handlers.InitScheduler(logger)
 
 	// 创建Web服务器
-	server := web.NewServer()
+	server, err := web.NewServer()
+	if err != nil {
+		logger.Fatal().Err(err).Msg("创建Web服务器失败")
+	}
 
 	// 设置路由和静态文件
 	if err := server.SetupRoutes(); err != nil {

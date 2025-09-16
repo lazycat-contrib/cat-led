@@ -8,6 +8,7 @@ homepage:
 author: 
 application:
   subdomain: lazy-cat-led-helper
+  oidc_redirect_path: /auth/oidc/callback
   public_path:
     - /
 

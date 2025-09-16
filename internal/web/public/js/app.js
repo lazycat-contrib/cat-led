@@ -19,6 +19,7 @@ const $closeModalBtn = document.getElementById('close-modal-btn');
 const $cancelScheduleBtn = document.getElementById('cancel-schedule-btn');
 const $daySelects = document.querySelectorAll('.day-select');
 const $themeToggle = document.getElementById('theme-toggle'); // 主题切换按钮
+const $logoutBtn = document.getElementById('logout-btn'); // 登出按钮
 
 // 初始化应用
 document.addEventListener('DOMContentLoaded', () => {
@@ -787,6 +788,11 @@ function initEventListeners() {
     
     // 主题切换按钮
     $themeToggle.addEventListener('click', toggleTheme);
+    
+    // 登出按钮
+    if ($logoutBtn) {
+        $logoutBtn.addEventListener('click', handleLogout);
+    }
 }
 
 // 初始化主题
@@ -834,6 +840,20 @@ function applyTheme(theme) {
     } else {
         darkIcon.style.display = 'none';
         lightIcon.style.display = 'block';
+    }
+}
+
+// 处理登出
+function handleLogout() {
+    if (confirm('确定要退出登录吗？')) {
+        // 显示加载状态
+        if ($logoutBtn) {
+            $logoutBtn.innerHTML = '<i class="ri-loader-4-line" style="animation: spin 1s linear infinite;"></i><span>退出中...</span>';
+            $logoutBtn.disabled = true;
+        }
+        
+        // 跳转到登出页面
+        window.location.href = '/logout';
     }
 }
 
