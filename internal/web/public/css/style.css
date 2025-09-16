@@ -313,6 +313,12 @@ body {
   height: 24px;
 }
 
+/* 首页图标样式 */
+.header-actions a svg {
+  width: 24px !important;
+  height: 24px !important;
+}
+
 /* 用户信息区域 - 磨砂玻璃效果 */
 .user-info-section {
   background: rgba(255, 255, 255, 0.08);

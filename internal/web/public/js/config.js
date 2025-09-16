@@ -78,10 +78,11 @@ async function saveServerChanConfig(e) {
             throw new Error(errorData.error || '保存配置失败');
         }
         
-        showNotification('配置已保存', 'success');
+        showNotification('配置保存成功', 'success');
+        
     } catch (error) {
         console.error('保存Server酱配置错误:', error);
-        showNotification(`保存配置失败: ${error.message}`, 'error');
+        showNotification(`配置保存失败: ${error.message}`, 'error');
     }
 }
 
