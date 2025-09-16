@@ -19,7 +19,7 @@ var staticFS embed.FS
 // Server 表示Web服务器
 type Server struct {
 	engine       *gin.Engine
-	oidcProvider *auth.LazyOIDCProvider
+	oidcProvider *auth.OIDCProvider
 }
 
 // NewServer 创建一个新的Web服务器
@@ -32,6 +32,7 @@ func NewServer() (*Server, error) {
 	if err != nil {
 		log.Printf("Warning: Failed to initialize OIDC provider: %v", err)
 		// OIDC不可用时仍然可以启动服务器，但需要依赖Header认证
+		oidcProvider = nil
 	}
 
 	return &Server{
@@ -68,18 +69,14 @@ func (s *Server) SetupRoutes() error {
 
 		// 检查OIDC是否可用
 		if s.oidcProvider != nil {
-			host := c.Request.Host
-			_, err := s.oidcProvider.GetProvider(host)
-			if err == nil {
-				data["OIDCAvailable"] = true
+			data["OIDCAvailable"] = true
 
-				// 构建登录URL
-				oidcBasePath := os.Getenv("LAZYCAT_AUTH_OIDC_BASE_PATH")
-				if oidcBasePath == "" {
-					oidcBasePath = "/auth/oidc"
-				}
-				data["OIDCLoginURL"] = oidcBasePath + "/login"
+			// 构建登录URL
+			oidcBasePath := os.Getenv("LAZYCAT_AUTH_OIDC_BASE_PATH")
+			if oidcBasePath == "" {
+				oidcBasePath = "/auth/oidc"
 			}
+			data["OIDCLoginURL"] = oidcBasePath + "/login"
 		}
 
 		c.HTML(200, "login.html", data)
