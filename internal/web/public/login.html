@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 懒猫关灯</title>
+    <link rel="stylesheet" href="/static/css/normalize-5.0.0.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/remixicon.css">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.12),
+                0 2px 8px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .login-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .login-button i {
+            font-size: 20px;
+        }
+
+        .login-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* 暗色主题适配 */
+        [data-theme="dark"] .login-container {
+            background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
+        }
+
+        /* 明亮主题适配 */
+        [data-theme="light"] .login-container {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+        }
+
+        [data-theme="light"] .login-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        [data-theme="light"] .login-title {
+            color: #2d3436;
+        }
+
+        [data-theme="light"] .login-subtitle {
+            color: #636e72;
+        }
+
+        [data-theme="light"] .login-button {
+            color: #2d3436;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="light"] .login-button:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="light"] .login-footer {
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            color: #636e72;
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: none;
+        }
+
+        .loading.show {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 错误提示 */
+        .error-message {
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            color: #e74c3c;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-logo">
+                <i class="ri-lightbulb-flash-line"></i>
+            </div>
+            
+            <h1 class="login-title">懒猫关灯</h1>
+            <p class="login-subtitle">请使用您的账户登录以继续</p>
+            
+            <div id="error-message" class="error-message">
+                <i class="ri-error-warning-line"></i>
+                <span id="error-text">登录失败，请重试</span>
+            </div>
+            
+            {{if .OIDCAvailable}}
+            <a href="{{.OIDCLoginURL}}" class="login-button" id="login-btn">
+                <i class="ri-login-circle-line"></i>
+                <span id="login-text">使用 OIDC 登录</span>
+                <i class="ri-loader-4-line loading" id="loading-icon"></i>
+            </a>
+            {{else}}
+            <div class="login-button" style="background: rgba(231, 76, 60, 0.2); border-color: rgba(231, 76, 60, 0.3); cursor: not-allowed;">
+                <i class="ri-error-warning-line"></i>
+                <span>OIDC 未配置</span>
+            </div>
+            {{end}}
+            
+            <div class="login-footer">
+                {{if .OIDCAvailable}}
+                <p>通过 OIDC 统一身份认证系统登录</p>
+                <p>安全、便捷、统一管理</p>
+                {{else}}
+                <p>OIDC 认证未配置</p>
+                <p>请联系管理员配置认证系统或使用 Header 认证</p>
+                {{end}}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 主题管理
+        let currentTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+
+        // 登录按钮点击处理
+        const loginBtn = document.getElementById('login-btn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', function(e) {
+                const loginText = document.getElementById('login-text');
+                const loadingIcon = document.getElementById('loading-icon');
+                const errorMessage = document.getElementById('error-message');
+                
+                // 隐藏错误信息
+                errorMessage.classList.remove('show');
+                
+                // 显示加载状态
+                loginText.textContent = '正在跳转...';
+                loadingIcon.classList.add('show');
+                loginBtn.style.pointerEvents = 'none';
+                
+                // 如果5秒后还没跳转，显示错误信息
+                setTimeout(() => {
+                    if (loginBtn.style.pointerEvents === 'none') {
+                        loginText.textContent = '使用 OIDC 登录';
+                        loadingIcon.classList.remove('show');
+                        loginBtn.style.pointerEvents = 'auto';
+                        
+                        document.getElementById('error-text').textContent = '登录超时，请检查网络连接或重试';
+                        errorMessage.classList.add('show');
+                    }
+                }, 5000);
+            });
+        }
+
+        // 检查URL参数中的错误信息
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        if (error) {
+            const errorMessage = document.getElementById('error-message');
+            const errorText = document.getElementById('error-text');
+            
+            switch (error) {
+                case 'access_denied':
+                    errorText.textContent = '访问被拒绝，请检查您的权限';
+                    break;
+                case 'invalid_request':
+                    errorText.textContent = '请求无效，请重试';
+                    break;
+                case 'server_error':
+                    errorText.textContent = '服务器错误，请稍后重试';
+                    break;
+                case 'oidc_not_configured':
+                    errorText.textContent = 'OIDC认证未配置，请联系管理员或使用Header认证';
+                    // 隐藏登录按钮（如果存在）
+                    const loginButton = document.getElementById('login-btn');
+                    if (loginButton) {
+                        loginButton.style.display = 'none';
+                    }
+                    break;
+                default:
+                    errorText.textContent = '登录失败: ' + error;
+            }
+            
+            errorMessage.classList.add('show');
+        }
+
+        // 禁用右键和F12（可选的安全措施）
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

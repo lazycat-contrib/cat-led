@@ -194,6 +194,42 @@ body {
   font-size: 14px;
 }
 
+.user-actions {
+  margin-left: 12px;
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.logout-button:hover {
+  background: rgba(231, 76, 60, 0.3);
+  border-color: rgba(231, 76, 60, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.25);
+}
+
+.logout-button:active {
+  transform: translateY(0);
+}
+
+.logout-button i {
+  font-size: 16px;
+}
+
 .device-info {
   display: flex;
   flex-direction: column;
@@ -1383,6 +1419,18 @@ input:checked + .toggle-label:before {
     0 8px 32px rgba(0, 0, 0, 0.04),
     0 2px 8px rgba(0, 0, 0, 0.02),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="light"] .logout-button {
+  background: rgba(231, 76, 60, 0.1);
+  color: #c0392b;
+  border: 1px solid rgba(231, 76, 60, 0.2);
+}
+
+[data-theme="light"] .logout-button:hover {
+  background: rgba(231, 76, 60, 0.2);
+  border-color: rgba(231, 76, 60, 0.3);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.15);
 }
 
 [data-theme="light"] .led-status-section {
