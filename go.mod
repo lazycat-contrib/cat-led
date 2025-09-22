@@ -1,6 +1,6 @@
 module cat-led
 
-go 1.24
+go 1.24.0
 
 require (
 	entgo.io/ent v0.14.5
@@ -11,7 +11,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/lib-x/entsqlite v0.1.4
 	github.com/rs/zerolog v1.34.0
-	golang.org/x/oauth2 v0.28.0
+	golang.org/x/oauth2 v0.31.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
