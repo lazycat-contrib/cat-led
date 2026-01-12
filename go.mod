@@ -9,7 +9,7 @@ require (
 	github.com/easychen/serverchan-sdk-golang v1.0.0
 	github.com/gin-gonic/gin v1.11.0
 	github.com/google/uuid v1.6.0
-	github.com/lib-x/entsqlite v0.1.6
+	github.com/lib-x/entsqlite v0.1.7
 	github.com/rs/zerolog v1.34.0
 	golang.org/x/oauth2 v0.34.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
@@ -71,5 +71,5 @@ require (
 	modernc.org/libc v1.66.10 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
-	modernc.org/sqlite v1.40.1 // indirect
+	modernc.org/sqlite v1.42.2 // indirect
 )
