@@ -1,30 +1,50 @@
 package biz
 
 import (
+	"context"
+	"errors"
+	"fmt"
+
 	"cat-led/internal/ent"
 	"cat-led/internal/ent/schedule"
 	"cat-led/internal/pkg/zlog"
-	"context"
-	"fmt"
 
 	"github.com/google/uuid"
 	_ "github.com/lib-x/entsqlite"
 )
 
+// Error messages for schedule operations.
+var (
+	ErrCreatorRequired     = errors.New("creator is required")
+	ErrPermissionDenied    = errors.New("you don't have permission to edit this schedule")
+	ErrOnlyCreatorCanDelete = errors.New("only the creator can delete this schedule")
+)
+
+// Default templates for ServerChan notifications.
+const (
+	defaultOnTemplate  = "{{.Name}} 任务执行成功，灯已开启"
+	defaultOffTemplate = "{{.Name}} 任务执行成功，灯已关闭"
+)
+
+// ScheduleUsecase provides business logic for schedule management.
 type ScheduleUsecase struct {
 	client *ent.Client
 	logger *zlog.Logger
 }
 
+// NewScheduleUseCase creates a new ScheduleUsecase with the given database path.
 func NewScheduleUseCase(dbPath string, logger *zlog.Logger) *ScheduleUsecase {
-	dataSourceName := fmt.Sprintf("file:%s?cache=shared&_pragma=foreign_keys(1)&_pragma=journal_mode(WAL)&_pragma=synchronous(NORMAL)&_pragma=busy_timeout(10000)", dbPath)
+	dataSourceName := fmt.Sprintf(
+		"file:%s?cache=shared&_pragma=foreign_keys(1)&_pragma=journal_mode(WAL)&_pragma=synchronous(NORMAL)&_pragma=busy_timeout(10000)",
+		dbPath,
+	)
+
 	entClient, err := ent.Open("sqlite3", dataSourceName)
 	if err != nil {
 		logger.Error().Err(err).Msg("无法连接到数据库")
 		return nil
 	}
 
-	// 自动创建数据库表
 	ctx := context.Background()
 	if err := entClient.Schema.Create(ctx); err != nil {
 		logger.Error().Err(err).Msg("无法创建数据库表")
@@ -39,30 +59,28 @@ func NewScheduleUseCase(dbPath string, logger *zlog.Logger) *ScheduleUsecase {
 	}
 }
 
-// GetClient 返回数据库客户端
+// GetClient returns the underlying database client.
 func (s *ScheduleUsecase) GetClient() *ent.Client {
 	return s.client
 }
 
-// CreateSchedule creates a new schedule with the given parameters
-func (s *ScheduleUsecase) CreateSchedule(ctx context.Context, schedule *ent.Schedule) (*ent.Schedule, error) {
-	creator := schedule.Creator
-	if creator == "" {
-		return nil, fmt.Errorf("creator is required")
+// CreateSchedule creates a new schedule with the given parameters.
+func (s *ScheduleUsecase) CreateSchedule(ctx context.Context, sched *ent.Schedule) (*ent.Schedule, error) {
+	if sched.Creator == "" {
+		return nil, ErrCreatorRequired
 	}
 
 	result, err := s.client.Schedule.Create().
-		SetName(schedule.Name).
-		SetCreator(creator).
-		SetWeekDays(schedule.WeekDays).
-		SetHour(schedule.Hour).
-		SetMinute(schedule.Minute).
-		SetOperation(schedule.Operation).
-		SetEnabled(schedule.Enabled).
-		SetAllowEditByOthers(schedule.AllowEditByOthers).
-		SetNotifyViaServerChan(schedule.NotifyViaServerChan).
+		SetName(sched.Name).
+		SetCreator(sched.Creator).
+		SetWeekDays(sched.WeekDays).
+		SetHour(sched.Hour).
+		SetMinute(sched.Minute).
+		SetOperation(sched.Operation).
+		SetEnabled(sched.Enabled).
+		SetAllowEditByOthers(sched.AllowEditByOthers).
+		SetNotifyViaServerChan(sched.NotifyViaServerChan).
 		Save(ctx)
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to create schedule: %w", err)
 	}
@@ -70,7 +88,7 @@ func (s *ScheduleUsecase) CreateSchedule(ctx context.Context, schedule *ent.Sche
 	return result, nil
 }
 
-// GetSchedule retrieves a schedule by ID
+// GetSchedule retrieves a schedule by ID.
 func (s *ScheduleUsecase) GetSchedule(ctx context.Context, id uuid.UUID) (*ent.Schedule, error) {
 	result, err := s.client.Schedule.Get(ctx, id)
 	if err != nil {
@@ -79,7 +97,7 @@ func (s *ScheduleUsecase) GetSchedule(ctx context.Context, id uuid.UUID) (*ent.S
 	return result, nil
 }
 
-// GetAllSchedules retrieves all schedules
+// GetAllSchedules retrieves all schedules.
 func (s *ScheduleUsecase) GetAllSchedules(ctx context.Context) ([]*ent.Schedule, error) {
 	result, err := s.client.Schedule.Query().All(ctx)
 	if err != nil {
@@ -88,7 +106,7 @@ func (s *ScheduleUsecase) GetAllSchedules(ctx context.Context) ([]*ent.Schedule,
 	return result, nil
 }
 
-// GetSchedulesByCreator retrieves all schedules created by a specific user
+// GetSchedulesByCreator retrieves all schedules created by a specific user.
 func (s *ScheduleUsecase) GetSchedulesByCreator(ctx context.Context, creator string) ([]*ent.Schedule, error) {
 	result, err := s.client.Schedule.Query().
 		Where(schedule.Creator(creator)).
@@ -99,32 +117,29 @@ func (s *ScheduleUsecase) GetSchedulesByCreator(ctx context.Context, creator str
 	return result, nil
 }
 
-// UpdateSchedule updates an existing schedule
-func (s *ScheduleUsecase) UpdateSchedule(ctx context.Context, schedule *ent.Schedule, currentUser string) (*ent.Schedule, error) {
-	// First, check if the user is allowed to edit this schedule
-	existingSchedule, err := s.GetSchedule(ctx, schedule.ID)
+// UpdateSchedule updates an existing schedule if the user has permission.
+func (s *ScheduleUsecase) UpdateSchedule(ctx context.Context, sched *ent.Schedule, currentUser string) (*ent.Schedule, error) {
+	existing, err := s.GetSchedule(ctx, sched.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	// Check if the current user is the creator or if editing by others is allowed
-	if existingSchedule.Creator != currentUser && !existingSchedule.AllowEditByOthers {
-		return nil, fmt.Errorf("you don't have permission to edit this schedule")
+	if !s.canEdit(existing, currentUser) {
+		return nil, ErrPermissionDenied
 	}
 
-	// Start building the update query
-	updateQuery := s.client.Schedule.UpdateOneID(schedule.ID).
-		SetName(schedule.Name).
-		SetWeekDays(schedule.WeekDays).
-		SetHour(schedule.Hour).
-		SetMinute(schedule.Minute).
-		SetOperation(schedule.Operation).
-		SetEnabled(schedule.Enabled).
-		SetNotifyViaServerChan(schedule.NotifyViaServerChan)
+	updateQuery := s.client.Schedule.UpdateOneID(sched.ID).
+		SetName(sched.Name).
+		SetWeekDays(sched.WeekDays).
+		SetHour(sched.Hour).
+		SetMinute(sched.Minute).
+		SetOperation(sched.Operation).
+		SetEnabled(sched.Enabled).
+		SetNotifyViaServerChan(sched.NotifyViaServerChan)
 
-	// Only the creator can change this setting
-	if existingSchedule.Creator == currentUser {
-		updateQuery = updateQuery.SetAllowEditByOthers(schedule.AllowEditByOthers)
+	// Only the creator can change the AllowEditByOthers setting
+	if existing.Creator == currentUser {
+		updateQuery = updateQuery.SetAllowEditByOthers(sched.AllowEditByOthers)
 	}
 
 	result, err := updateQuery.Save(ctx)
@@ -135,76 +150,86 @@ func (s *ScheduleUsecase) UpdateSchedule(ctx context.Context, schedule *ent.Sche
 	return result, nil
 }
 
-// DeleteSchedule deletes a schedule by ID
+// canEdit checks if the user can edit the schedule.
+func (s *ScheduleUsecase) canEdit(sched *ent.Schedule, currentUser string) bool {
+	return sched.Creator == currentUser || sched.AllowEditByOthers
+}
+
+// DeleteSchedule deletes a schedule by ID if the user is the creator.
 func (s *ScheduleUsecase) DeleteSchedule(ctx context.Context, id uuid.UUID, currentUser string) error {
-	// First, check if the user is allowed to delete this schedule
-	existingSchedule, err := s.GetSchedule(ctx, id)
+	existing, err := s.GetSchedule(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	// Only the creator can delete the schedule
-	if existingSchedule.Creator != currentUser {
-		return fmt.Errorf("only the creator can delete this schedule")
+	if existing.Creator != currentUser {
+		return ErrOnlyCreatorCanDelete
 	}
 
-	err = s.client.Schedule.DeleteOneID(id).Exec(ctx)
-	if err != nil {
+	if err := s.client.Schedule.DeleteOneID(id).Exec(ctx); err != nil {
 		return fmt.Errorf("failed to delete schedule: %w", err)
 	}
 
 	return nil
 }
 
-// GetServerChanConfig 获取Server酱配置
+// GetServerChanConfig retrieves the ServerChan configuration.
 func (s *ScheduleUsecase) GetServerChanConfig(ctx context.Context) (*ent.ServerChanConfig, error) {
 	config, err := s.client.ServerChanConfig.Query().First(ctx)
 	if err != nil {
-		// 如果没有配置，返回默认配置
-		return &ent.ServerChanConfig{
-			SendKey:     "",
-			OnTemplate:  "{{.Name}} 任务执行成功，灯已开启",
-			OffTemplate: "{{.Name}} 任务执行成功，灯已关闭",
-			Enabled:     false,
-		}, nil
+		return s.defaultServerChanConfig(), nil
 	}
 	return config, nil
 }
 
-// SaveServerChanConfig 保存Server酱配置
-func (s *ScheduleUsecase) SaveServerChanConfig(ctx context.Context, config *ent.ServerChanConfig) error {
-	existingConfig, err := s.client.ServerChanConfig.Query().First(ctx)
-
-	if err != nil {
-		// 如果没有现有配置，创建新配置
-		_, err = s.client.ServerChanConfig.Create().
-			SetEnabled(config.Enabled).
-			SetSendKey(config.SendKey).
-			SetOnTemplate(config.OnTemplate).
-			SetOffTemplate(config.OffTemplate).
-			Save(ctx)
-
-		if err != nil {
-			return fmt.Errorf("failed to create serverchan config: %w", err)
-		}
-	} else {
-		// 更新现有配置
-		_, err = s.client.ServerChanConfig.UpdateOneID(existingConfig.ID).
-			SetEnabled(config.Enabled).
-			SetSendKey(config.SendKey).
-			SetOnTemplate(config.OnTemplate).
-			SetOffTemplate(config.OffTemplate).
-			Save(ctx)
-
-		if err != nil {
-			return fmt.Errorf("failed to update serverchan config: %w", err)
-		}
+// defaultServerChanConfig returns the default ServerChan configuration.
+func (s *ScheduleUsecase) defaultServerChanConfig() *ent.ServerChanConfig {
+	return &ent.ServerChanConfig{
+		SendKey:     "",
+		OnTemplate:  defaultOnTemplate,
+		OffTemplate: defaultOffTemplate,
+		Enabled:     false,
 	}
+}
 
+// SaveServerChanConfig saves the ServerChan configuration (creates or updates).
+func (s *ScheduleUsecase) SaveServerChanConfig(ctx context.Context, config *ent.ServerChanConfig) error {
+	existing, err := s.client.ServerChanConfig.Query().First(ctx)
+	if err != nil {
+		return s.createServerChanConfig(ctx, config)
+	}
+	return s.updateServerChanConfig(ctx, existing.ID, config)
+}
+
+// createServerChanConfig creates a new ServerChan configuration.
+func (s *ScheduleUsecase) createServerChanConfig(ctx context.Context, config *ent.ServerChanConfig) error {
+	_, err := s.client.ServerChanConfig.Create().
+		SetEnabled(config.Enabled).
+		SetSendKey(config.SendKey).
+		SetOnTemplate(config.OnTemplate).
+		SetOffTemplate(config.OffTemplate).
+		Save(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to create serverchan config: %w", err)
+	}
 	return nil
 }
 
-// Close closes the database client
+// updateServerChanConfig updates an existing ServerChan configuration.
+func (s *ScheduleUsecase) updateServerChanConfig(ctx context.Context, id int, config *ent.ServerChanConfig) error {
+	_, err := s.client.ServerChanConfig.UpdateOneID(id).
+		SetEnabled(config.Enabled).
+		SetSendKey(config.SendKey).
+		SetOnTemplate(config.OnTemplate).
+		SetOffTemplate(config.OffTemplate).
+		Save(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to update serverchan config: %w", err)
+	}
+	return nil
+}
+
+// Close closes the database client.
 func (s *ScheduleUsecase) Close() error {
 	if s.client != nil {
 		return s.client.Close()

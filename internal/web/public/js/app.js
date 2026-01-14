@@ -275,7 +275,7 @@ async function toggleLedStatus() {
     try {
         // 更新UI以显示加载状态
         $ledToggle.disabled = true;
-        $ledStatus.textContent = '更新中...';
+        $ledStatus.textContent = '更新中…';
 
         // 构建请求URL
         const url = `/ledcontrol?turn=${newStatus ? 'on' : 'off'}`;
@@ -464,7 +464,10 @@ function openAddScheduleModal() {
     currentEditingScheduleId = null;
 
     // 重置选择的星期几
-    $daySelects.forEach(el => el.classList.remove('selected'));
+    $daySelects.forEach(el => {
+        el.classList.remove('selected');
+        el.setAttribute('aria-checked', 'false');
+    });
 
     // 设置默认时间 (格式: HH:MM)
     document.getElementById('start-time').value = '22:00';
@@ -510,8 +513,10 @@ function openEditScheduleModal(scheduleId) {
         const day = parseInt(el.dataset.day);
         if (schedule.repeatDays && schedule.repeatDays.includes(day)) {
             el.classList.add('selected');
+            el.setAttribute('aria-checked', 'true');
         } else {
             el.classList.remove('selected');
+            el.setAttribute('aria-checked', 'false');
         }
     });
 
@@ -765,7 +770,15 @@ function initEventListeners() {
     // 重复日期选择
     $daySelects.forEach(el => {
         el.addEventListener('click', () => {
-            el.classList.toggle('selected');
+            toggleDaySelect(el);
+        });
+
+        // Keyboard support for day selection
+        el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleDaySelect(el);
+            }
         });
     });
 
@@ -845,16 +858,23 @@ function applyTheme(theme) {
 
 // 处理登出
 function handleLogout() {
-    if (confirm('确定要退出登录吗？')) {
+    if (confirm('确定要退出登录吗?')) {
         // 显示加载状态
         if ($logoutBtn) {
-            $logoutBtn.innerHTML = '<i class="ri-loader-4-line" style="animation: spin 1s linear infinite;"></i><span>退出中...</span>';
+            $logoutBtn.innerHTML = '<i class="ri-loader-4-line" style="animation: spin 1s linear infinite;"></i><span>退出中…</span>';
             $logoutBtn.disabled = true;
         }
         
         // 跳转到登出页面
         window.location.href = '/logout';
     }
+}
+
+// 切换周几选择
+function toggleDaySelect(el) {
+    const isSelected = el.classList.contains('selected');
+    el.classList.toggle('selected');
+    el.setAttribute('aria-checked', !isSelected);
 }
 
 // 处理页面可见性变化

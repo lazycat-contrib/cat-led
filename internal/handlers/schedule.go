@@ -1,29 +1,31 @@
 package handlers
 
 import (
+	"context"
+	"fmt"
+	"log"
+	"slices"
+	"sync"
+	"time"
+
 	"cat-led/internal/biz"
 	"cat-led/internal/ent"
 	"cat-led/internal/ent/schedule"
 	"cat-led/internal/pkg/serverchan"
 	"cat-led/internal/pkg/zlog"
-	"context"
-	"fmt"
+
 	gohelper "gitee.com/linakesi/lzc-sdk/lang/go"
 	users "gitee.com/linakesi/lzc-sdk/lang/go/common"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"log"
-	"sync"
-	"time"
 )
 
 var (
-	// 全局的scheduleUseCase实例
 	scheduleUseCase *biz.ScheduleUsecase
 	schOnce         sync.Once
 )
 
-// InitScheduleUseCase 初始化scheduleUseCase
+// InitScheduleUseCase initializes the global scheduleUseCase instance.
 func InitScheduleUseCase(dbPath string, logger *zlog.Logger) {
 	schOnce.Do(func() {
 		scheduleUseCase = biz.NewScheduleUseCase(dbPath, logger)
@@ -35,51 +37,61 @@ func InitScheduleUseCase(dbPath string, logger *zlog.Logger) {
 	})
 }
 
-// 将前端Schedule转换为ent.Schedule
+// getUserID extracts the user ID from the request context.
+// It first checks the x-hc-user-id header, then falls back to querying the API gateway.
+// Returns an empty string if the user cannot be identified.
+func getUserID(c *gin.Context) string {
+	userID := c.GetHeader("x-hc-user-id")
+	if userID != "" {
+		return userID
+	}
+
+	gw, err := gohelper.NewAPIGateway(c.Request.Context())
+	if err != nil {
+		return ""
+	}
+	defer gw.Close()
+
+	userInfo, err := gw.Users.QueryUserInfo(c.Request.Context(), &users.UserID{Uid: userID})
+	if err == nil && userInfo != nil && userInfo.Uid != "" {
+		return userInfo.Uid
+	}
+	return ""
+}
+
+// requireUserID extracts the user ID and sends an unauthorized response if not found.
+// Returns the user ID and true if successful, or empty string and false if unauthorized.
+func requireUserID(c *gin.Context) (string, bool) {
+	userID := getUserID(c)
+	if userID == "" {
+		c.JSON(401, gin.H{"error": "未授权"})
+		return "", false
+	}
+	return userID, true
+}
+
+// requireScheduleUseCase checks if scheduleUseCase is initialized and sends an error response if not.
+// Returns true if initialized, false otherwise.
+func requireScheduleUseCase(c *gin.Context) bool {
+	if scheduleUseCase == nil {
+		c.JSON(500, gin.H{"error": "定时任务服务未初始化"})
+		return false
+	}
+	return true
+}
+
+// convertToEntSchedule transforms a frontend schedule map into an ent.Schedule entity.
 func convertToEntSchedule(frontendSchedule map[string]interface{}, creatorID string) (*ent.Schedule, error) {
 	name, _ := frontendSchedule["name"].(string)
 	enabled, _ := frontendSchedule["enabled"].(bool)
 	allowEdit, _ := frontendSchedule["allowEdit"].(bool)
 	notifyViaServerChan, _ := frontendSchedule["notifyViaServerChan"].(bool)
 
-	// 处理重复日期
-	var weekDays []int
-	if repeatDaysInterface, ok := frontendSchedule["repeatDays"].([]interface{}); ok {
-		for _, day := range repeatDaysInterface {
-			if dayInt, ok := day.(float64); ok {
-				weekDays = append(weekDays, int(dayInt))
-			}
-		}
-	}
+	weekDays := extractWeekDays(frontendSchedule)
+	hour, minute := extractTime(frontendSchedule)
+	operation := parseOperation(frontendSchedule)
 
-	// 处理时间 - 直接使用小时和分钟
-	hour, minute := 0, 0
-	if hourFloat, ok := frontendSchedule["hour"].(float64); ok {
-		hour = int(hourFloat)
-	}
-	if minuteFloat, ok := frontendSchedule["minute"].(float64); ok {
-		minute = int(minuteFloat)
-	}
-
-	// 确定操作类型 (on/off)
-	operation := schedule.OperationOn
-	if opStr, ok := frontendSchedule["operation"].(string); ok {
-		switch opStr {
-		case "on":
-			operation = schedule.OperationOn
-		case "off":
-			operation = schedule.OperationOff
-		case "shutdown":
-			operation = schedule.OperationShutdown
-		case "reboot":
-			operation = schedule.OperationReboot
-		default:
-			operation = schedule.OperationOn
-		}
-	}
-
-	// 创建Schedule实体
-	s := &ent.Schedule{
+	return &ent.Schedule{
 		Name:                name,
 		Creator:             creatorID,
 		WeekDays:            weekDays,
@@ -89,14 +101,57 @@ func convertToEntSchedule(frontendSchedule map[string]interface{}, creatorID str
 		Enabled:             enabled,
 		AllowEditByOthers:   allowEdit,
 		NotifyViaServerChan: notifyViaServerChan,
-	}
-
-	return s, nil
+	}, nil
 }
 
-// 将ent.Schedule转换为前端Schedule格式
+// extractWeekDays parses the repeatDays field from the frontend schedule.
+func extractWeekDays(frontendSchedule map[string]interface{}) []int {
+	var weekDays []int
+	repeatDaysInterface, ok := frontendSchedule["repeatDays"].([]interface{})
+	if !ok {
+		return weekDays
+	}
+	for _, day := range repeatDaysInterface {
+		if dayInt, ok := day.(float64); ok {
+			weekDays = append(weekDays, int(dayInt))
+		}
+	}
+	return weekDays
+}
+
+// extractTime parses hour and minute from the frontend schedule.
+func extractTime(frontendSchedule map[string]interface{}) (hour, minute int) {
+	if hourFloat, ok := frontendSchedule["hour"].(float64); ok {
+		hour = int(hourFloat)
+	}
+	if minuteFloat, ok := frontendSchedule["minute"].(float64); ok {
+		minute = int(minuteFloat)
+	}
+	return hour, minute
+}
+
+// parseOperation converts the operation string to schedule.Operation enum.
+func parseOperation(frontendSchedule map[string]interface{}) schedule.Operation {
+	opStr, ok := frontendSchedule["operation"].(string)
+	if !ok {
+		return schedule.OperationOn
+	}
+
+	switch opStr {
+	case "off":
+		return schedule.OperationOff
+	case "shutdown":
+		return schedule.OperationShutdown
+	case "reboot":
+		return schedule.OperationReboot
+	default:
+		return schedule.OperationOn
+	}
+}
+
+// convertToFrontendSchedule transforms an ent.Schedule entity into the frontend format.
 func convertToFrontendSchedule(entSchedule *ent.Schedule) map[string]interface{} {
-	// 前端Schedule格式
+	now := time.Now().Format(time.RFC3339)
 	return map[string]interface{}{
 		"id":                  entSchedule.ID.String(),
 		"name":                entSchedule.Name,
@@ -108,124 +163,84 @@ func convertToFrontendSchedule(entSchedule *ent.Schedule) map[string]interface{}
 		"allowEdit":           entSchedule.AllowEditByOthers,
 		"operation":           string(entSchedule.Operation),
 		"notifyViaServerChan": entSchedule.NotifyViaServerChan,
-		"createdAt":           time.Now().Format(time.RFC3339),
-		"lastModified":        time.Now().Format(time.RFC3339),
+		"createdAt":           now,
+		"lastModified":        now,
 	}
 }
 
-// GetSchedules 获取所有定时任务
+// GetSchedules returns all schedules visible to the current user.
+// This includes the user's own schedules and other schedules marked as editable by others.
 func GetSchedules(c *gin.Context) {
-	if scheduleUseCase == nil {
-		c.JSON(500, gin.H{"error": "定时任务服务未初始化"})
+	if !requireScheduleUseCase(c) {
 		return
 	}
 
-	userID := c.GetHeader("x-hc-user-id")
-	if userID == "" {
-		// 使用正确的方式获取用户信息
-		gw, err := gohelper.NewAPIGateway(c.Request.Context())
-		if err != nil {
-			c.JSON(401, gin.H{"error": "未授权"})
-			return
-		}
-		defer gw.Close()
-
-		userInfo, err := gw.Users.QueryUserInfo(c.Request.Context(), &users.UserID{Uid: userID})
-		if err == nil && userInfo != nil && userInfo.Uid != "" {
-			userID = userInfo.Uid
-		}
-	}
-
-	if userID == "" {
-		c.JSON(401, gin.H{"error": "未授权"})
+	userID, ok := requireUserID(c)
+	if !ok {
 		return
 	}
 
-	// 使用context进行数据库操作
 	ctx := context.Background()
 
-	// 获取用户创建的任务
 	userSchedules, err := scheduleUseCase.GetSchedulesByCreator(ctx, userID)
 	if err != nil {
 		c.JSON(500, gin.H{"error": fmt.Sprintf("获取任务失败: %v", err)})
 		return
 	}
 
-	// 获取所有允许编辑的任务
 	allSchedules, err := scheduleUseCase.GetAllSchedules(ctx)
 	if err != nil {
 		c.JSON(500, gin.H{"error": fmt.Sprintf("获取任务失败: %v", err)})
 		return
 	}
 
-	// 组合结果
-	result := make([]map[string]interface{}, 0)
+	result := buildScheduleList(userSchedules, allSchedules, userID)
+	c.JSON(200, result)
+}
 
-	// 添加用户的任务
+// buildScheduleList combines user schedules with other editable schedules.
+func buildScheduleList(userSchedules, allSchedules []*ent.Schedule, userID string) []map[string]interface{} {
+	result := make([]map[string]interface{}, 0, len(userSchedules))
+
 	for _, s := range userSchedules {
 		result = append(result, convertToFrontendSchedule(s))
 	}
 
-	// 添加允许编辑的其他任务
 	for _, s := range allSchedules {
-		// 跳过已添加的用户任务
 		if s.Creator == userID {
 			continue
 		}
-
-		// 只添加允许编辑的任务
 		if s.AllowEditByOthers {
 			result = append(result, convertToFrontendSchedule(s))
 		}
 	}
 
-	c.JSON(200, result)
+	return result
 }
 
-// CreateSchedule 创建LED定时任务
+// CreateSchedule creates a new LED schedule.
 func CreateSchedule(c *gin.Context) {
-	if scheduleUseCase == nil {
-		c.JSON(500, gin.H{"error": "定时任务服务未初始化"})
+	if !requireScheduleUseCase(c) {
 		return
 	}
 
-	// 获取用户ID
-	userID := c.GetHeader("x-hc-user-id")
-	if userID == "" {
-		// 使用正确的方式获取用户信息
-		gw, err := gohelper.NewAPIGateway(c.Request.Context())
-		if err != nil {
-			c.JSON(401, gin.H{"error": "未授权"})
-			return
-		}
-		defer gw.Close()
-
-		userInfo, err := gw.Users.QueryUserInfo(c.Request.Context(), &users.UserID{Uid: userID})
-		if err == nil && userInfo != nil && userInfo.Uid != "" {
-			userID = userInfo.Uid
-		}
-	}
-
-	if userID == "" {
-		c.JSON(401, gin.H{"error": "未授权"})
+	userID, ok := requireUserID(c)
+	if !ok {
 		return
 	}
 
-	// 解析请求体
 	var frontendSchedule map[string]interface{}
 	if err := c.ShouldBindJSON(&frontendSchedule); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
-	// 转换为ent.Schedule
 	entSchedule, err := convertToEntSchedule(frontendSchedule, userID)
 	if err != nil {
 		c.JSON(400, gin.H{"error": fmt.Sprintf("解析任务数据失败: %v", err)})
 		return
 	}
 
-	// 创建任务
 	ctx := context.Background()
 	createdSchedule, err := scheduleUseCase.CreateSchedule(ctx, entSchedule)
 	if err != nil {
@@ -233,65 +248,39 @@ func CreateSchedule(c *gin.Context) {
 		return
 	}
 
-	// 返回创建的任务
 	c.JSON(201, convertToFrontendSchedule(createdSchedule))
 }
 
-// UpdateSchedule 更新LED定时任务
+// UpdateSchedule updates an existing LED schedule.
 func UpdateSchedule(c *gin.Context) {
-	if scheduleUseCase == nil {
-		c.JSON(500, gin.H{"error": "定时任务服务未初始化"})
+	if !requireScheduleUseCase(c) {
 		return
 	}
 
-	// 获取用户ID
-	userID := c.GetHeader("x-hc-user-id")
-	if userID == "" {
-		// 使用正确的方式获取用户信息
-		gw, err := gohelper.NewAPIGateway(c.Request.Context())
-		if err != nil {
-			c.JSON(401, gin.H{"error": "未授权"})
-			return
-		}
-		defer gw.Close()
-
-		userInfo, err := gw.Users.QueryUserInfo(c.Request.Context(), &users.UserID{Uid: userID})
-		if err == nil && userInfo != nil && userInfo.Uid != "" {
-			userID = userInfo.Uid
-		}
-	}
-
-	if userID == "" {
-		c.JSON(401, gin.H{"error": "未授权"})
+	userID, ok := requireUserID(c)
+	if !ok {
 		return
 	}
 
-	// 获取任务ID
-	scheduleID := c.Param("id")
-	scheduleUUID, err := uuid.Parse(scheduleID)
+	scheduleUUID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(400, gin.H{"error": "无效的任务ID"})
 		return
 	}
 
-	// 解析请求体
 	var frontendSchedule map[string]interface{}
 	if err := c.ShouldBindJSON(&frontendSchedule); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
-	// 转换为ent.Schedule
 	entSchedule, err := convertToEntSchedule(frontendSchedule, userID)
 	if err != nil {
 		c.JSON(400, gin.H{"error": fmt.Sprintf("解析任务数据失败: %v", err)})
 		return
 	}
-
-	// 设置ID
 	entSchedule.ID = scheduleUUID
 
-	// 更新任务
 	ctx := context.Background()
 	updatedSchedule, err := scheduleUseCase.UpdateSchedule(ctx, entSchedule, userID)
 	if err != nil {
@@ -299,51 +288,28 @@ func UpdateSchedule(c *gin.Context) {
 		return
 	}
 
-	// 返回更新后的任务
 	c.JSON(200, convertToFrontendSchedule(updatedSchedule))
 }
 
-// DeleteSchedule 删除LED定时任务
+// DeleteSchedule deletes an LED schedule by ID.
 func DeleteSchedule(c *gin.Context) {
-	if scheduleUseCase == nil {
-		c.JSON(500, gin.H{"error": "定时任务服务未初始化"})
+	if !requireScheduleUseCase(c) {
 		return
 	}
 
-	// 获取用户ID
-	userID := c.GetHeader("x-hc-user-id")
-	if userID == "" {
-		// 使用正确的方式获取用户信息
-		gw, err := gohelper.NewAPIGateway(c.Request.Context())
-		if err != nil {
-			c.JSON(401, gin.H{"error": "未授权"})
-			return
-		}
-		defer gw.Close()
-
-		userInfo, err := gw.Users.QueryUserInfo(c.Request.Context(), &users.UserID{Uid: userID})
-		if err == nil && userInfo != nil && userInfo.Uid != "" {
-			userID = userInfo.Uid
-		}
-	}
-
-	if userID == "" {
-		c.JSON(401, gin.H{"error": "未授权"})
+	userID, ok := requireUserID(c)
+	if !ok {
 		return
 	}
 
-	// 获取任务ID
-	scheduleID := c.Param("id")
-	scheduleUUID, err := uuid.Parse(scheduleID)
+	scheduleUUID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(400, gin.H{"error": "无效的任务ID"})
 		return
 	}
 
-	// 删除任务
 	ctx := context.Background()
-	err = scheduleUseCase.DeleteSchedule(ctx, scheduleUUID, userID)
-	if err != nil {
+	if err := scheduleUseCase.DeleteSchedule(ctx, scheduleUUID, userID); err != nil {
 		c.JSON(500, gin.H{"error": fmt.Sprintf("删除任务失败: %v", err)})
 		return
 	}
@@ -351,9 +317,8 @@ func DeleteSchedule(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "任务已删除"})
 }
 
-// SetLedStatus 设置LED状态
+// SetLedStatus sets the LED power state.
 func SetLedStatus(ctx context.Context, status bool) error {
-	// 使用正确的API来设置LED状态
 	gw, err := gohelper.NewAPIGateway(ctx)
 	if err != nil {
 		log.Printf("Error creating API gateway: %v", err)
@@ -373,7 +338,7 @@ func SetLedStatus(ctx context.Context, status bool) error {
 	return nil
 }
 
-// Reboot 重启设备
+// Reboot initiates a device reboot.
 func Reboot(ctx context.Context) error {
 	gw, err := gohelper.NewAPIGateway(ctx)
 	if err != nil {
@@ -381,13 +346,13 @@ func Reboot(ctx context.Context) error {
 	}
 	defer gw.Close()
 
-	gw.Box.Shutdown(ctx, &users.ShutdownRequest{
+	_, err = gw.Box.Shutdown(ctx, &users.ShutdownRequest{
 		Action: users.ShutdownRequest_Reboot,
 	})
-	return nil
+	return err
 }
 
-// Shutdown  使设备关机
+// Shutdown initiates a device power off.
 func Shutdown(ctx context.Context) error {
 	gw, err := gohelper.NewAPIGateway(ctx)
 	if err != nil {
@@ -395,30 +360,25 @@ func Shutdown(ctx context.Context) error {
 	}
 	defer gw.Close()
 
-	gw.Box.Shutdown(ctx, &users.ShutdownRequest{
+	_, err = gw.Box.Shutdown(ctx, &users.ShutdownRequest{
 		Action: users.ShutdownRequest_Poweroff,
 	})
-	return nil
+	return err
 }
 
-// InitScheduler 初始化定时任务调度器
+// InitScheduler starts the background scheduler that checks for due tasks every minute.
 func InitScheduler(logger *zlog.Logger) {
-	// 检查任务的定时器
 	go func() {
-		// 每分钟检查一次任务
 		ticker := time.NewTicker(time.Minute)
 		defer ticker.Stop()
 
-		for {
-			select {
-			case <-ticker.C:
-				checkSchedules(logger)
-			}
+		for range ticker.C {
+			checkSchedules(logger)
 		}
 	}()
 }
 
-// 检查是否有需要执行的任务
+// checkSchedules iterates through all enabled schedules and executes any that are due.
 func checkSchedules(logger *zlog.Logger) {
 	if scheduleUseCase == nil {
 		logger.Warn().Msg("定时任务服务未初始化，跳过检查")
@@ -428,114 +388,94 @@ func checkSchedules(logger *zlog.Logger) {
 	now := time.Now()
 	ctx := context.Background()
 
-	// 获取所有任务
 	allSchedules, err := scheduleUseCase.GetAllSchedules(ctx)
 	if err != nil {
 		logger.Error().Err(err).Msg("获取任务失败")
 		return
 	}
 
+	currentWeekday := int(now.Weekday())
 	for _, s := range allSchedules {
-		// 跳过禁用的任务
 		if !s.Enabled {
 			continue
 		}
-
-		// 检查是否是当前星期几
-		weekday := int(now.Weekday())
-		shouldRun := false
-		for _, d := range s.WeekDays {
-			if d == weekday {
-				shouldRun = true
-				break
-			}
-		}
-
-		if !shouldRun {
+		if !shouldRunOnWeekday(s.WeekDays, currentWeekday) {
 			continue
 		}
-
-		// 检查是否是设定的时间
 		if now.Hour() == s.Hour && now.Minute() == s.Minute {
-			switch s.Operation {
-			case schedule.OperationOn, schedule.OperationOff:
-				status := s.Operation == schedule.OperationOn
-				if err = SetLedStatus(ctx, status); err != nil {
-					logger.Error().Err(err).Msg("执行任务失败")
-				} else {
-					logger.Info().Str("任务名称", s.Name).Bool("状态", status).Msg("执行任务成功")
-					// 如果启用了Server酱通知，则发送通知
-					if s.NotifyViaServerChan {
-						sendServerChanNotification(ctx, logger, s.Name, status)
-					}
-				}
-			case schedule.OperationShutdown:
-				if err = Shutdown(ctx); err != nil {
-					logger.Error().Err(err).Msg("关机调用失败")
-				} else {
-					logger.Info().Str("任务名称", s.Name).Msg("关机调用成功")
-					// 如果启用了Server酱通知，则发送通知
-					if s.NotifyViaServerChan {
-						sendServerChanNotification(ctx, logger, s.Name, false) // 关机操作发送关灯通知
-					}
-				}
-			case schedule.OperationReboot:
-				if err = Reboot(ctx); err != nil {
-					logger.Error().Err(err).Msg("重启调用失败")
-				} else {
-					logger.Info().Str("任务名称", s.Name).Msg("重启调用成功")
-					// 如果启用了Server酱通知，则发送通知
-					if s.NotifyViaServerChan {
-						sendServerChanNotification(ctx, logger, s.Name, false) // 重启操作发送关灯通知
-					}
-				}
-			default:
-				logger.Info().Msg("do nothing")
-			}
-
+			executeSchedule(ctx, logger, s)
 		}
 	}
 }
 
-// sendServerChanNotification 发送Server酱通知
+// shouldRunOnWeekday checks if the given weekday is in the schedule's weekdays list.
+func shouldRunOnWeekday(weekDays []int, currentWeekday int) bool {
+	return slices.Contains(weekDays, currentWeekday)
+}
+
+// executeSchedule performs the scheduled operation and sends notifications if enabled.
+func executeSchedule(ctx context.Context, logger *zlog.Logger, s *ent.Schedule) {
+	var err error
+	var status bool
+	var operationName string
+
+	switch s.Operation {
+	case schedule.OperationOn:
+		status = true
+		operationName = "开灯"
+		err = SetLedStatus(ctx, true)
+	case schedule.OperationOff:
+		status = false
+		operationName = "关灯"
+		err = SetLedStatus(ctx, false)
+	case schedule.OperationShutdown:
+		status = false
+		operationName = "关机"
+		err = Shutdown(ctx)
+	case schedule.OperationReboot:
+		status = false
+		operationName = "重启"
+		err = Reboot(ctx)
+	default:
+		logger.Info().Msg("do nothing")
+		return
+	}
+
+	if err != nil {
+		logger.Error().Err(err).Str("operation", operationName).Msg("执行任务失败")
+		return
+	}
+
+	logger.Info().Str("任务名称", s.Name).Str("操作", operationName).Msg("执行任务成功")
+
+	if s.NotifyViaServerChan {
+		sendServerChanNotification(ctx, logger, s.Name, status)
+	}
+}
+
+// sendServerChanNotification sends a notification via ServerChan when a schedule is executed.
 func sendServerChanNotification(ctx context.Context, logger *zlog.Logger, taskName string, status bool) {
-	// 检查scheduleUseCase是否已初始化
 	if scheduleUseCase == nil {
 		logger.Error().Msg("定时任务服务未初始化")
 		return
 	}
 
-	// 获取数据库客户端
-	client := scheduleUseCase.GetClient()
-
-	// 查询配置
-	config, err := client.ServerChanConfig.Query().First(ctx)
+	config, err := getServerChanConfig(ctx)
 	if err != nil {
-		// 如果没有配置，使用默认配置
-		config = &ent.ServerChanConfig{
-			SendKey:     "",
-			OnTemplate:  "{{.Name}} 任务执行成功，灯已开启",
-			OffTemplate: "{{.Name}} 任务执行成功，灯已关闭",
-			Enabled:     false,
-		}
+		logger.Warn().Err(err).Msg("获取Server酱配置失败，使用默认配置")
 	}
 
-	// 检查是否启用通知
 	if !config.Enabled || config.SendKey == "" {
 		return
 	}
 
-	// 创建Server酱推送器
 	pusher := serverchan.NewPusher(config.SendKey, config.OnTemplate, config.OffTemplate)
-
-	// 准备上下文数据
 	ledContext := serverchan.LEDContext{
 		Time:   time.Now(),
 		Status: status,
 		Name:   taskName,
 	}
 
-	// 发送通知
 	if status {
 		err = pusher.PushLedOpenNotify(ledContext)
 	} else {
@@ -548,4 +488,19 @@ func sendServerChanNotification(ctx context.Context, logger *zlog.Logger, taskNa
 	}
 
 	logger.Info().Str("任务名称", taskName).Bool("状态", status).Msg("发送Server酱通知成功")
+}
+
+// getServerChanConfig retrieves the ServerChan configuration from the database.
+func getServerChanConfig(ctx context.Context) (*ent.ServerChanConfig, error) {
+	client := scheduleUseCase.GetClient()
+	config, err := client.ServerChanConfig.Query().First(ctx)
+	if err != nil {
+		return &ent.ServerChanConfig{
+			SendKey:     "",
+			OnTemplate:  "{{.Name}} 任务执行成功，灯已开启",
+			OffTemplate: "{{.Name}} 任务执行成功，灯已关闭",
+			Enabled:     false,
+		}, err
+	}
+	return config, nil
 }

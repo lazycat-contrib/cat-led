@@ -234,7 +234,7 @@
                 errorMessage.classList.remove('show');
                 
                 // 显示加载状态
-                loginText.textContent = '正在跳转...';
+                loginText.textContent = '正在跳转…';
                 loadingIcon.classList.add('show');
                 loginBtn.style.pointerEvents = 'none';
                 
@@ -284,16 +284,7 @@
             errorMessage.classList.add('show');
         }
 
-        // 禁用右键和F12（可选的安全措施）
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
-        
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
-                e.preventDefault();
-            }
-        });
+        // Note: Removed right-click and F12 blocking for better accessibility and developer experience
     </script>
 </body>
 </html>

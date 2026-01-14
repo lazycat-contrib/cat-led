@@ -1,85 +1,50 @@
 package zlog
 
 import (
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
-	"gopkg.in/natefinch/lumberjack.v2"
 	"io"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+// logLevelMap maps string log level names to zerolog levels.
+var logLevelMap = map[string]zerolog.Level{
+	"debug": zerolog.DebugLevel,
+	"info":  zerolog.InfoLevel,
+	"warn":  zerolog.WarnLevel,
+	"error": zerolog.ErrorLevel,
+	"fatal": zerolog.FatalLevel,
+}
+
+// Logger wraps zerolog.Logger with convenience methods.
 type Logger struct {
 	zerolog.Logger
 }
 
+// LogConfig contains configuration for the logger.
 type LogConfig struct {
 	LogLevel    string
 	LogDir      string
 	LogFileName string
-	MaxSize     int
-	MaxBackups  int
-	MaxAge      int
+	MaxSize     int // Maximum file size in MB
+	MaxBackups  int // Maximum number of old log files to retain
+	MaxAge      int // Maximum number of days to retain old log files
 }
 
-// NewLogger 创建一个新的日志记录器，支持终端和文件输出
+// NewLogger creates a new logger that outputs to both console and file.
 func NewLogger(config LogConfig) *Logger {
-	// 设置日志级别
-	var level zerolog.Level
-	switch config.LogLevel {
-	case "debug":
-		level = zerolog.DebugLevel
-	case "info":
-		level = zerolog.InfoLevel
-	case "warn":
-		level = zerolog.WarnLevel
-	case "error":
-		level = zerolog.ErrorLevel
-	case "fatal":
-		level = zerolog.FatalLevel
-	default:
-		level = zerolog.InfoLevel
-	}
+	level := parseLogLevel(config.LogLevel)
 	zerolog.SetGlobalLevel(level)
 
-	// 创建日志目录
-	if config.LogDir != "" {
-		err := os.MkdirAll(config.LogDir, os.ModePerm)
-		if err != nil {
-			log.Error().Err(err).Msg("Failed to create log directory")
-		}
-	}
+	ensureLogDir(config.LogDir)
 
-	// 准备文件输出
-	var writers []io.Writer
-
-	// 控制台输出（带颜色）
-	consoleWriter := zerolog.ConsoleWriter{
-		Out:        os.Stdout,
-		TimeFormat: time.RFC3339,
-	}
-	writers = append(writers, consoleWriter)
-
-	// 文件输出
-	if config.LogFileName != "" {
-		logPath := filepath.Join(config.LogDir, config.LogFileName)
-
-		// 使用Lumberjack进行日志切割
-		fileWriter := &lumberjack.Logger{
-			Filename:   logPath,
-			MaxSize:    config.MaxSize,    // 最大文件大小(MB)
-			MaxBackups: config.MaxBackups, // 保留旧文件的最大个数
-			MaxAge:     config.MaxAge,     // 保留旧文件的最大天数
-			Compress:   true,              // 是否压缩/归档旧文件
-		}
-		writers = append(writers, fileWriter)
-	}
-
-	// 创建多输出写入器
+	writers := buildWriters(config)
 	multiWriter := io.MultiWriter(writers...)
 
-	// 创建日志记录器
 	logger := zerolog.New(multiWriter).
 		With().
 		Timestamp().
@@ -89,27 +54,74 @@ func NewLogger(config LogConfig) *Logger {
 	return &Logger{logger}
 }
 
-// Debug 封装Debug级别日志
+// parseLogLevel converts a string log level to zerolog.Level.
+func parseLogLevel(levelStr string) zerolog.Level {
+	if level, ok := logLevelMap[levelStr]; ok {
+		return level
+	}
+	return zerolog.InfoLevel
+}
+
+// ensureLogDir creates the log directory if it doesn't exist.
+func ensureLogDir(logDir string) {
+	if logDir == "" {
+		return
+	}
+	if err := os.MkdirAll(logDir, os.ModePerm); err != nil {
+		log.Error().Err(err).Msg("Failed to create log directory")
+	}
+}
+
+// buildWriters creates the console and file writers for the logger.
+func buildWriters(config LogConfig) []io.Writer {
+	writers := []io.Writer{
+		zerolog.ConsoleWriter{
+			Out:        os.Stdout,
+			TimeFormat: time.RFC3339,
+		},
+	}
+
+	if config.LogFileName != "" {
+		fileWriter := createFileWriter(config)
+		writers = append(writers, fileWriter)
+	}
+
+	return writers
+}
+
+// createFileWriter creates a rotating file writer.
+func createFileWriter(config LogConfig) io.Writer {
+	logPath := filepath.Join(config.LogDir, config.LogFileName)
+	return &lumberjack.Logger{
+		Filename:   logPath,
+		MaxSize:    config.MaxSize,
+		MaxBackups: config.MaxBackups,
+		MaxAge:     config.MaxAge,
+		Compress:   true,
+	}
+}
+
+// Debug returns a debug-level event.
 func (l *Logger) Debug() *zerolog.Event {
 	return l.Logger.Debug()
 }
 
-// Info 封装Info级别日志
+// Info returns an info-level event.
 func (l *Logger) Info() *zerolog.Event {
 	return l.Logger.Info()
 }
 
-// Warn 封装Warn级别日志
+// Warn returns a warn-level event.
 func (l *Logger) Warn() *zerolog.Event {
 	return l.Logger.Warn()
 }
 
-// Error 封装Error级别日志
+// Error returns an error-level event.
 func (l *Logger) Error() *zerolog.Event {
 	return l.Logger.Error()
 }
 
-// Fatal 封装Fatal级别日志
+// Fatal returns a fatal-level event.
 func (l *Logger) Fatal() *zerolog.Event {
 	return l.Logger.Fatal()
 }

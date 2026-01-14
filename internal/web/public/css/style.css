@@ -28,9 +28,9 @@
   --box-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
   --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   --box-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-  --transition-fast: opacity 0.15s ease, transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
-  --transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-  --transition-slow: opacity 0.5s ease, transform 0.5s ease, background-color 0.5s ease;
+  --transition-fast: 0.15s ease;
+  --transition: 0.3s ease;
+  --transition-slow: 0.5s ease;
   --focus-ring: 0 0 0 3px rgba(0, 122, 255, 0.3);
 }
 
@@ -337,7 +337,7 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: var(--transition-fast);
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
   position: relative;
 }
 
@@ -363,7 +363,7 @@ html {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  transition: var(--transition-fast);
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
   color: var(--header-text-color);
   text-decoration: none;
 }
@@ -471,7 +471,7 @@ html {
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: var(--transition);
+  transition: background-color var(--transition), border-color var(--transition), transform var(--transition), box-shadow var(--transition);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
@@ -1037,16 +1037,27 @@ html {
   }
 }
 
-/* 减少动画运动 - 灯泡火花效果 */
+/* Reduce all animations for prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
+  .background-1,
+  .background-2 {
+    animation: none;
+  }
+
+  [data-theme="dark"] .background-1,
+  [data-theme="dark"] .background-2,
+  [data-theme="light"] .background-1,
+  [data-theme="light"] .background-2 {
+    animation: none;
+  }
+
   .switch label .bulb .sparks i {
     animation: none;
   }
 
   * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    animation-duration: 0.01s;
+    transition-duration: 0.01s;
   }
 }
 
@@ -1060,7 +1071,7 @@ html {
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  transition: var(--transition);
+  transition: background-color var(--transition), transform var(--transition), box-shadow var(--transition);
   box-shadow: var(--box-shadow-sm);
 }
 
@@ -1089,7 +1100,7 @@ html {
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  transition: var(--transition);
+  transition: background-color var(--transition), border-color var(--transition), transform var(--transition);
 }
 
 .secondary-button:hover {
@@ -1156,7 +1167,7 @@ html {
   flex-direction: column;
   padding: 18px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  transition: var(--transition);
+  transition: background-color var(--transition), transform var(--transition);
   cursor: pointer;
 }
 
@@ -1315,7 +1326,7 @@ html {
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--border-radius-sm);
   font-size: 16px;
-  transition: var(--transition);
+  transition: border-color var(--transition), background-color var(--transition);
   -webkit-appearance: none;
   font-family: inherit;
   background-color: rgba(255, 255, 255, 0.1);
@@ -1333,7 +1344,7 @@ html {
   filter: invert(1);
   opacity: 0.7;
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: opacity var(--transition-fast);
 }
 
 .form-group input[type="time"]::-webkit-calendar-picker-indicator:hover {
@@ -1413,7 +1424,7 @@ html {
   background-repeat: no-repeat;
   background-position: right 12px center;
   background-size: 16px;
-  transition: var(--transition);
+  transition: border-color var(--transition), box-shadow var(--transition);
 }
 
 .operation-picker select:focus {
@@ -1516,7 +1527,7 @@ html {
   background-color: rgba(72, 72, 74, 0.8);
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
   border: 1px solid rgba(255, 255, 255, 0.15);
   user-select: none;
 }
@@ -1594,7 +1605,7 @@ html {
   right: 0;
   bottom: 0;
   background-color: rgba(255, 255, 255, 0.2);
-  transition: .4s;
+  transition: background-color 0.4s;
   border-radius: 34px;
 }
 
@@ -1607,7 +1618,7 @@ html {
   top: 50%;
   transform: translateY(-50%);
   background-color: white;
-  transition: .4s;
+  transition: transform 0.4s;
   border-radius: 50%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }

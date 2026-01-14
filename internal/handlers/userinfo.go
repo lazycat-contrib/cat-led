@@ -1,11 +1,14 @@
 package handlers
 
 import (
+	"net/http"
+
 	gohelper "gitee.com/linakesi/lzc-sdk/lang/go"
 	users "gitee.com/linakesi/lzc-sdk/lang/go/common"
 	"github.com/gin-gonic/gin"
 )
 
+// BasicInfo contains basic user and device information.
 type BasicInfo struct {
 	DeviceID      string
 	DeviceVersion string
@@ -13,62 +16,58 @@ type BasicInfo struct {
 	UserRole      string
 }
 
+// LazyCatUser represents a user with basic and detailed information.
 type LazyCatUser struct {
 	BasicInfo BasicInfo `json:"CurrentUserInfo"`
 	Detail    *users.UserInfo
 }
 
+// GetUserInfo returns the current user's information.
 func GetUserInfo(c *gin.Context) {
 	ctx := c.Request.Context()
+
 	gw, err := gohelper.NewAPIGateway(ctx)
 	if err != nil {
-		c.AbortWithError(500, err)
+		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 	defer gw.Close()
 
-	// 优先从Header获取用户信息（由系统注入）
-	userID := c.GetHeader("x-hc-user-id")
-	userRole := c.GetHeader("x-hc-user-role")
-	deviceID := c.GetHeader("x-hc-device-id")
-	deviceVersion := c.GetHeader("x-hc-device-version")
+	basicInfo := extractBasicInfo(c)
+	if basicInfo.UserId == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
 
-	// 如果Header中没有，尝试从session/context获取（OIDC认证）
-	if userID == "" {
+	catUser := LazyCatUser{BasicInfo: basicInfo}
+
+	// Try to get detailed user info (may fail for OIDC users)
+	userInfo, err := gw.Users.QueryUserInfo(ctx, &users.UserID{Uid: basicInfo.UserId})
+	if err == nil {
+		catUser.Detail = userInfo
+	}
+
+	c.JSON(http.StatusOK, catUser)
+}
+
+// extractBasicInfo extracts user and device info from headers and session.
+func extractBasicInfo(c *gin.Context) BasicInfo {
+	info := BasicInfo{
+		UserId:        c.GetHeader("x-hc-user-id"),
+		UserRole:      c.GetHeader("x-hc-user-role"),
+		DeviceID:      c.GetHeader("x-hc-device-id"),
+		DeviceVersion: c.GetHeader("x-hc-device-version"),
+	}
+
+	// Fall back to session if header is empty
+	if info.UserId == "" {
 		if sessionUserID, exists := c.Get("user_id"); exists {
-			userID = sessionUserID.(string)
+			info.UserId = sessionUserID.(string)
 		}
 		if sessionUserRole, exists := c.Get("user_role"); exists {
-			userRole = sessionUserRole.(string)
+			info.UserRole = sessionUserRole.(string)
 		}
 	}
 
-	// 如果仍然没有用户信息，返回错误
-	if userID == "" {
-		c.JSON(401, gin.H{"error": "Unauthorized"})
-		return
-	}
-
-	currentUser := BasicInfo{
-		UserId:        userID,
-		UserRole:      userRole,
-		DeviceID:      deviceID,
-		DeviceVersion: deviceVersion,
-	}
-
-	catUser := LazyCatUser{
-		BasicInfo: currentUser,
-	}
-
-	// 尝试获取详细用户信息
-	userInfo, err := gw.Users.QueryUserInfo(ctx, &users.UserID{Uid: currentUser.UserId})
-	if err != nil {
-		// 如果获取详细信息失败，仍然返回基础信息
-		// 这样可以兼容OIDC认证的用户
-		c.JSON(200, catUser)
-		return
-	}
-
-	catUser.Detail = userInfo
-	c.JSON(200, catUser)
+	return info
 }

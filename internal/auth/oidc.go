@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,6 +17,42 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// Environment variable names for OIDC configuration.
+const (
+	envOIDCClientID     = "LAZYCAT_AUTH_OIDC_CLIENT_ID"
+	envOIDCClientSecret = "LAZYCAT_AUTH_OIDC_CLIENT_SECRET"
+	envOIDCAuthURI      = "LAZYCAT_AUTH_OIDC_AUTH_URI"
+	envOIDCTokenURI     = "LAZYCAT_AUTH_OIDC_TOKEN_URI"
+	envOIDCUserInfoURI  = "LAZYCAT_AUTH_OIDC_USERINFO_URI"
+	envOIDCRedirectURL  = "LAZYCAT_AUTH_OIDC_REDIRECT_URL"
+	envOIDCBasePath     = "LAZYCAT_AUTH_OIDC_BASE_PATH"
+	envOIDCCallbackPath = "LAZYCAT_AUTH_OIDC_CALLBACK_PATH"
+	envAppDomain        = "LAZYCAT_APP_DOMAIN"
+)
+
+// Default paths for OIDC endpoints.
+const (
+	defaultOIDCBasePath     = "/auth/oidc"
+	defaultOIDCCallbackPath = "/auth/oidc/callback"
+	defaultAppDomain        = "localhost:3000"
+)
+
+// Cookie configuration.
+const (
+	cookieUserID    = "user_id"
+	cookieUserRole  = "user_role"
+	cookieOIDCState = "oidc_state"
+	cookieMaxAge    = 3600 * 24 // 24 hours
+	stateMaxAge     = 300       // 5 minutes
+)
+
+// User roles.
+const (
+	roleUser  = "USER"
+	roleAdmin = "ADMIN"
+)
+
+// OIDCConfig holds the OIDC provider configuration.
 type OIDCConfig struct {
 	ClientID     string
 	ClientSecret string
@@ -25,42 +62,49 @@ type OIDCConfig struct {
 	UserInfoURL  string
 }
 
+// OIDCProvider manages OIDC authentication.
 type OIDCProvider struct {
-	config *oauth2.Config
+	config      *oauth2.Config
+	userInfoURL string
 }
 
-// NewOIDCProvider 创建OIDC提供者
+// NewOIDCProvider creates a new OIDC provider from environment variables.
 func NewOIDCProvider() (*OIDCProvider, error) {
-	// 从环境变量获取配置
-	clientID := os.Getenv("LAZYCAT_AUTH_OIDC_CLIENT_ID")
-	clientSecret := os.Getenv("LAZYCAT_AUTH_OIDC_CLIENT_SECRET")
-	authURL := os.Getenv("LAZYCAT_AUTH_OIDC_AUTH_URI")
-	tokenURL := os.Getenv("LAZYCAT_AUTH_OIDC_TOKEN_URI")
-	userInfoURL := os.Getenv("LAZYCAT_AUTH_OIDC_USERINFO_URI")
-
-	// 检查必需的配置
-	if clientID == "" || clientSecret == "" || authURL == "" || tokenURL == "" {
-		return nil, fmt.Errorf("missing required OIDC configuration")
+	config, err := loadOIDCConfig()
+	if err != nil {
+		return nil, err
 	}
 
-	log.Printf("OIDC client ID: %s", clientID)
-	log.Printf("OIDC client secret set: %v", clientSecret != "")
-
-	config := &OIDCConfig{
-		ClientID:     clientID,
-		ClientSecret: clientSecret,
-		RedirectURL:  getRedirectURL(),
-		AuthURL:      authURL,
-		TokenURL:     tokenURL,
-		UserInfoURL:  userInfoURL,
-	}
+	log.Printf("OIDC client ID: %s", config.ClientID)
+	log.Printf("OIDC client secret set: %v", config.ClientSecret != "")
 
 	return createOIDCProvider(config)
 }
 
-// createOIDCProvider 创建OIDC Provider实例
+// loadOIDCConfig reads OIDC configuration from environment variables.
+func loadOIDCConfig() (*OIDCConfig, error) {
+	clientID := os.Getenv(envOIDCClientID)
+	clientSecret := os.Getenv(envOIDCClientSecret)
+	authURL := os.Getenv(envOIDCAuthURI)
+	tokenURL := os.Getenv(envOIDCTokenURI)
+	userInfoURL := os.Getenv(envOIDCUserInfoURI)
+
+	if clientID == "" || clientSecret == "" || authURL == "" || tokenURL == "" {
+		return nil, errors.New("missing required OIDC configuration")
+	}
+
+	return &OIDCConfig{
+		ClientID:     clientID,
+		ClientSecret: clientSecret,
+		RedirectURL:  buildRedirectURL(),
+		AuthURL:      authURL,
+		TokenURL:     tokenURL,
+		UserInfoURL:  userInfoURL,
+	}, nil
+}
+
+// createOIDCProvider creates an OIDCProvider from the given configuration.
 func createOIDCProvider(config *OIDCConfig) (*OIDCProvider, error) {
-	// 配置OAuth2
 	oauth2Config := &oauth2.Config{
 		ClientID:     config.ClientID,
 		ClientSecret: config.ClientSecret,
@@ -73,55 +117,59 @@ func createOIDCProvider(config *OIDCConfig) (*OIDCProvider, error) {
 	}
 
 	return &OIDCProvider{
-		config: oauth2Config,
+		config:      oauth2Config,
+		userInfoURL: config.UserInfoURL,
 	}, nil
 }
 
-// getRedirectURL 获取重定向URL
-func getRedirectURL() string {
-	// 优先从环境变量获取完整的回调URL
-	redirectURL := os.Getenv("LAZYCAT_AUTH_OIDC_REDIRECT_URL")
-	if redirectURL != "" {
+// buildRedirectURL constructs the OAuth2 redirect URL.
+func buildRedirectURL() string {
+	if redirectURL := os.Getenv(envOIDCRedirectURL); redirectURL != "" {
 		return redirectURL
 	}
 
-	// 使用应用分配的域名
-	domain := os.Getenv("LAZYCAT_APP_DOMAIN")
-	if domain == "" {
-		domain = "localhost:3000" // 开发环境默认值
-	}
-
-	// 从环境变量获取回调路径，默认为 /auth/oidc/callback
-	callbackPath := os.Getenv("LAZYCAT_AUTH_OIDC_CALLBACK_PATH")
-	if callbackPath == "" {
-		callbackPath = "/auth/oidc/callback"
-	}
+	domain := getEnvOrDefault(envAppDomain, defaultAppDomain)
+	callbackPath := getEnvOrDefault(envOIDCCallbackPath, defaultOIDCCallbackPath)
 
 	return fmt.Sprintf("https://%s%s", domain, callbackPath)
 }
 
-// generateState 生成随机状态字符串
+// getEnvOrDefault returns the environment variable value or a default.
+func getEnvOrDefault(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
+
+// GetOIDCBasePath returns the configured OIDC base path.
+func GetOIDCBasePath() string {
+	return getEnvOrDefault(envOIDCBasePath, defaultOIDCBasePath)
+}
+
+// GetOIDCCallbackPath returns the configured OIDC callback path.
+func GetOIDCCallbackPath() string {
+	return getEnvOrDefault(envOIDCCallbackPath, defaultOIDCCallbackPath)
+}
+
+// generateState generates a cryptographically random state string for CSRF protection.
 func generateState() string {
 	b := make([]byte, 32)
-	rand.Read(b)
+	_, _ = rand.Read(b)
 	return base64.URLEncoding.EncodeToString(b)
 }
 
-// AuthMiddleware OIDC认证中间件
+// AuthMiddleware checks for valid authentication via header or session.
 func AuthMiddleware(oidcProvider *OIDCProvider) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 检查是否已有认证Header
-		userID := c.GetHeader("x-hc-user-id")
-		if userID != "" {
-			// 已有认证信息，继续处理
+		// Check for authentication header (injected by system)
+		if userID := c.GetHeader("x-hc-user-id"); userID != "" {
 			c.Next()
 			return
 		}
 
-		// 检查是否有会话中的用户信息
-		sessionUserID, exists := c.Get("user_id")
-		if exists && sessionUserID != "" {
-			// 设置Header供后续处理使用
+		// Check for session-based authentication
+		if sessionUserID, exists := c.Get("user_id"); exists && sessionUserID != "" {
 			c.Header("x-hc-user-id", sessionUserID.(string))
 			if userRole, exists := c.Get("user_role"); exists {
 				c.Header("x-hc-user-role", userRole.(string))
@@ -130,65 +178,60 @@ func AuthMiddleware(oidcProvider *OIDCProvider) gin.HandlerFunc {
 			return
 		}
 
-		// 如果是登录页面或回调页面，允许访问
-		oidcBasePath := os.Getenv("LAZYCAT_AUTH_OIDC_BASE_PATH")
-		if oidcBasePath == "" {
-			oidcBasePath = "/auth/oidc"
-		}
-
-		if strings.HasPrefix(c.Request.URL.Path, "/login") ||
-			strings.HasPrefix(c.Request.URL.Path, oidcBasePath) ||
-			strings.HasPrefix(c.Request.URL.Path, "/static") {
+		// Allow access to public paths
+		if isPublicPath(c.Request.URL.Path) {
 			c.Next()
 			return
 		}
 
-		// 没有认证信息，重定向到登录页面
-		if oidcProvider != nil {
-			c.Redirect(http.StatusFound, "/login")
-		} else {
-			c.Redirect(http.StatusFound, "/login?error=oidc_not_configured")
-		}
-		c.Abort()
+		// Redirect to login
+		redirectToLogin(c, oidcProvider)
 	}
 }
 
-// HandleLogin 处理登录请求
+// isPublicPath checks if the path should be accessible without authentication.
+func isPublicPath(path string) bool {
+	oidcBasePath := GetOIDCBasePath()
+	return strings.HasPrefix(path, "/login") ||
+		strings.HasPrefix(path, oidcBasePath) ||
+		strings.HasPrefix(path, "/static")
+}
+
+// redirectToLogin sends the user to the login page.
+func redirectToLogin(c *gin.Context, oidcProvider *OIDCProvider) {
+	if oidcProvider != nil {
+		c.Redirect(http.StatusFound, "/login")
+	} else {
+		c.Redirect(http.StatusFound, "/login?error=oidc_not_configured")
+	}
+	c.Abort()
+}
+
+// HandleLogin initiates the OIDC login flow.
 func (p *OIDCProvider) HandleLogin(c *gin.Context) {
 	state := generateState()
-
-	// 存储state到session或cookie中（这里简化处理，实际应用中应该使用安全的session管理）
-	c.SetCookie("oidc_state", state, 300, "/", "", false, true)
+	c.SetCookie(cookieOIDCState, state, stateMaxAge, "/", "", false, true)
 
 	authURL := p.config.AuthCodeURL(state)
 	c.Redirect(http.StatusFound, authURL)
 }
 
-// HandleCallback 处理OIDC回调
+// HandleCallback processes the OIDC callback after authentication.
 func (p *OIDCProvider) HandleCallback(c *gin.Context) {
-	// 验证state
-	expectedState, err := c.Cookie("oidc_state")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing state cookie"})
+	if err := p.validateState(c); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if c.Query("state") != expectedState {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid state"})
-		return
-	}
+	// Clear state cookie
+	c.SetCookie(cookieOIDCState, "", -1, "/", "", false, true)
 
-	// 清除state cookie
-	c.SetCookie("oidc_state", "", -1, "/", "", false, true)
-
-	// 获取授权码
 	code := c.Query("code")
 	if code == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing authorization code"})
 		return
 	}
 
-	// 交换token
 	ctx := context.Background()
 	token, err := p.config.Exchange(ctx, code)
 	if err != nil {
@@ -196,69 +239,100 @@ func (p *OIDCProvider) HandleCallback(c *gin.Context) {
 		return
 	}
 
-	// 从UserInfo端点获取用户信息
-	var userInfo map[string]interface{}
-	userInfoURL := os.Getenv("LAZYCAT_AUTH_OIDC_USERINFO_URI")
-	if userInfoURL != "" {
-		client := p.config.Client(ctx, token)
-		resp, err := client.Get(userInfoURL)
-		if err == nil {
-			defer resp.Body.Close()
-			if err := json.NewDecoder(resp.Body).Decode(&userInfo); err == nil {
-				// 成功获取用户信息
-			}
-		}
+	userInfo, err := p.fetchUserInfo(ctx, token)
+	if err != nil {
+		log.Printf("Warning: Failed to fetch user info: %v", err)
 	}
 
-	// 提取用户信息
-	userID := ""
-	userRole := "USER"
-
-	if sub, ok := userInfo["sub"].(string); ok {
-		userID = sub
-	} else if preferred_username, ok := userInfo["preferred_username"].(string); ok {
-		userID = preferred_username
-	}
-
-	// 检查用户组/角色
-	if groups, ok := userInfo["groups"].([]interface{}); ok {
-		for _, group := range groups {
-			if groupStr, ok := group.(string); ok && groupStr == "ADMIN" {
-				userRole = "ADMIN"
-				break
-			}
-		}
-	}
-
+	userID, userRole := extractUserIdentity(userInfo)
 	if userID == "" {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user ID"})
 		return
 	}
 
-	// 设置会话信息（这里简化处理，实际应用中应该使用安全的session管理）
-	c.SetCookie("user_id", userID, 3600*24, "/", "", false, true)
-	c.SetCookie("user_role", userRole, 3600*24, "/", "", false, true)
+	// Set session cookies
+	c.SetCookie(cookieUserID, userID, cookieMaxAge, "/", "", false, true)
+	c.SetCookie(cookieUserRole, userRole, cookieMaxAge, "/", "", false, true)
 
-	// 重定向到首页
 	c.Redirect(http.StatusFound, "/")
 }
 
-// HandleLogout 处理登出
-func HandleLogout(c *gin.Context) {
-	// 清除cookies
-	c.SetCookie("user_id", "", -1, "/", "", false, true)
-	c.SetCookie("user_role", "", -1, "/", "", false, true)
+// validateState verifies the OIDC state parameter matches the cookie.
+func (p *OIDCProvider) validateState(c *gin.Context) error {
+	expectedState, err := c.Cookie(cookieOIDCState)
+	if err != nil {
+		return errors.New("missing state cookie")
+	}
 
-	// 重定向到登录页面
+	if c.Query("state") != expectedState {
+		return errors.New("invalid state")
+	}
+
+	return nil
+}
+
+// fetchUserInfo retrieves user information from the OIDC provider.
+func (p *OIDCProvider) fetchUserInfo(ctx context.Context, token *oauth2.Token) (map[string]interface{}, error) {
+	if p.userInfoURL == "" {
+		return nil, errors.New("user info URL not configured")
+	}
+
+	client := p.config.Client(ctx, token)
+	resp, err := client.Get(p.userInfoURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch user info: %w", err)
+	}
+	defer resp.Body.Close()
+
+	var userInfo map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
+		return nil, fmt.Errorf("failed to decode user info: %w", err)
+	}
+
+	return userInfo, nil
+}
+
+// extractUserIdentity extracts the user ID and role from the user info response.
+func extractUserIdentity(userInfo map[string]interface{}) (userID, userRole string) {
+	userRole = roleUser
+
+	if userInfo == nil {
+		return "", userRole
+	}
+
+	// Try to get user ID from various claims
+	if sub, ok := userInfo["sub"].(string); ok {
+		userID = sub
+	} else if preferredUsername, ok := userInfo["preferred_username"].(string); ok {
+		userID = preferredUsername
+	}
+
+	// Check for admin role in groups
+	if groups, ok := userInfo["groups"].([]interface{}); ok {
+		for _, group := range groups {
+			if groupStr, ok := group.(string); ok && groupStr == roleAdmin {
+				userRole = roleAdmin
+				break
+			}
+		}
+	}
+
+	return userID, userRole
+}
+
+// HandleLogout clears session cookies and redirects to login.
+func HandleLogout(c *gin.Context) {
+	c.SetCookie(cookieUserID, "", -1, "/", "", false, true)
+	c.SetCookie(cookieUserRole, "", -1, "/", "", false, true)
 	c.Redirect(http.StatusFound, "/login")
 }
 
-// SessionMiddleware 会话中间件，从cookie中恢复用户信息
+// SessionMiddleware restores user information from cookies into the request context.
 func SessionMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if userID, err := c.Cookie("user_id"); err == nil && userID != "" {
+		if userID, err := c.Cookie(cookieUserID); err == nil && userID != "" {
 			c.Set("user_id", userID)
-			if userRole, err := c.Cookie("user_role"); err == nil && userRole != "" {
+			if userRole, err := c.Cookie(cookieUserRole); err == nil && userRole != "" {
 				c.Set("user_role", userRole)
 			}
 		}
