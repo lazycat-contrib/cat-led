@@ -17,8 +17,8 @@ import (
 // Default configuration values.
 const (
 	defaultPort    = "3000"
-	defaultDBPath  = "/lzcapp/data/schedules.db"
-	defaultLogDir  = "/lzcapp/data/logs"
+	defaultDBPath  = "/lzcapp/var/data/schedules.db"
+	defaultLogDir  = "/lzcapp/var/data/logs"
 	defaultLogFile = "cat-led.log"
 )
 

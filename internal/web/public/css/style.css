@@ -318,6 +318,43 @@ html {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
+/* 明亮主题下的标题颜色 */
+[data-theme="light"] .header-title {
+  color: #2C3E50;
+}
+
+/* 明亮主题下的header按钮 */
+[data-theme="light"] .header-actions button {
+  background: rgba(138, 127, 177, 0.15);
+  border: 1px solid rgba(138, 127, 177, 0.3);
+  color: #2C3E50;
+}
+
+[data-theme="light"] .header-actions button:hover {
+  background: rgba(138, 127, 177, 0.25);
+  border-color: rgba(138, 127, 177, 0.5);
+}
+
+[data-theme="light"] .header-actions button:active {
+  background: rgba(138, 127, 177, 0.35);
+}
+
+/* 明亮主题下的header链接 */
+[data-theme="light"] .header-actions a {
+  background: rgba(138, 127, 177, 0.15);
+  border: 1px solid rgba(138, 127, 177, 0.3);
+  color: #2C3E50;
+}
+
+[data-theme="light"] .header-actions a:hover {
+  background: rgba(138, 127, 177, 0.25);
+  border-color: rgba(138, 127, 177, 0.5);
+}
+
+[data-theme="light"] .header-actions a:active {
+  background: rgba(138, 127, 177, 0.35);
+}
+
 .header-title {
   font-size: 20px;
   font-weight: 600;
@@ -1935,7 +1972,7 @@ input:checked + .toggle-label:before {
 }
 
 [data-theme="light"] .theme-icon path {
-  fill: var(--header-text-color);
+  fill: #2C3E50;
 }
 
 /* 配置页面特定样式 - 增强磨砂玻璃效果 */
