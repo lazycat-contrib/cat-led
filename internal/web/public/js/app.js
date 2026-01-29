@@ -279,6 +279,7 @@ function updateLedStatus(status) {
     const classicToggle = document.querySelector('.bulb-classic #led-toggle');
     if (classicToggle) {
         classicToggle.checked = status;
+        classicToggle.disabled = false; // 确保开关可用
     }
 
     // 更新熔岩灯的状态
@@ -326,10 +327,10 @@ function updateLedStatus(status) {
 // 切换LED状态
 async function toggleLedStatus() {
     const newStatus = !currentLedStatus;
+    const classicToggle = document.querySelector('.bulb-classic #led-toggle');
 
     try {
         // 更新UI以显示加载状态
-        const classicToggle = document.querySelector('.bulb-classic #led-toggle');
         if (classicToggle) {
             classicToggle.disabled = true;
         }
@@ -358,6 +359,11 @@ async function toggleLedStatus() {
 
         // 显示错误通知
         showNotification('操作失败', 'error');
+    } finally {
+        // 无论成功或失败，都重新启用开关
+        if (classicToggle) {
+            classicToggle.disabled = false;
+        }
     }
 }
 
