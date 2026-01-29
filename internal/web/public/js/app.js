@@ -320,6 +320,28 @@ function updateLedStatus(status) {
         lightbulbToggle.checked = status;
     }
 
+    // 更新Single LED的状态
+    const singleLedBulb = document.querySelector('.single-led-bulb');
+    if (singleLedBulb) {
+        if (status) {
+            singleLedBulb.classList.add('light_up');
+        } else {
+            singleLedBulb.classList.remove('light_up');
+        }
+    }
+
+    // 更新Neon Switch的状态
+    const neonSwitchInput = document.querySelector('.neon-switch__input');
+    if (neonSwitchInput) {
+        neonSwitchInput.checked = status;
+    }
+
+    // 更新Fox Day-Night的状态（注意：反转逻辑）
+    const foxToggle = document.getElementById('fox-toggle');
+    if (foxToggle) {
+        foxToggle.checked = !status; // LED开启=白天(unchecked), LED关闭=夜晚(checked)
+    }
+
     $ledStatus.textContent = status ? '已开启' : '已关闭';
     $ledStatus.classList.remove('error');
 }
@@ -1013,6 +1035,56 @@ function initEventListeners() {
             }
         });
     }
+
+    // Single LED 点击事件
+    const singleLedContainer = document.querySelector('.bulb-single-led');
+    const singleLedButton = document.querySelector('.single-led-button');
+    const singleLedBulb = document.querySelector('.single-led-bulb');
+
+    if (singleLedButton) {
+        singleLedButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleLedStatus();
+        });
+    }
+
+    if (singleLedBulb) {
+        singleLedBulb.addEventListener('click', () => {
+            toggleLedStatus();
+        });
+    }
+
+    if (singleLedContainer) {
+        singleLedContainer.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleLedStatus();
+            }
+        });
+    }
+
+    // Neon Switch 点击事件
+    const neonSwitchInput = document.querySelector('.neon-switch__input');
+    if (neonSwitchInput) {
+        neonSwitchInput.addEventListener('change', toggleLedStatus);
+    }
+
+    // Fox Day-Night 点击事件
+    const foxToggle = document.getElementById('fox-toggle');
+    const foxSwitch = document.querySelector('.fox-switch');
+
+    if (foxToggle) {
+        foxToggle.addEventListener('change', toggleLedStatus);
+    }
+
+    // 让fox-switch也可以点击切换
+    if (foxSwitch && foxToggle) {
+        foxSwitch.addEventListener('click', (e) => {
+            e.stopPropagation();
+            foxToggle.checked = !foxToggle.checked;
+            toggleLedStatus();
+        });
+    }
 }
 
 // 初始化主题
@@ -1192,6 +1264,9 @@ function syncBulbToggles() {
     const lavaContainer = document.querySelector('.bulb-lava');
     const vintageContainer = document.querySelector('.bulb-vintage');
     const liquidContainer = document.querySelector('.bulb-liquid');
+    const singleLedBulb = document.querySelector('.single-led-bulb');
+    const neonSwitchInput = document.querySelector('.neon-switch__input');
+    const foxToggle = document.getElementById('fox-toggle');
 
     if (!classicToggle) return;
 
@@ -1203,6 +1278,9 @@ function syncBulbToggles() {
             liquidContainer.classList.add('lamp-on');
             startLiquidAnimation();
         }
+        if (singleLedBulb) singleLedBulb.classList.add('light_up');
+        if (neonSwitchInput) neonSwitchInput.checked = true;
+        if (foxToggle) foxToggle.checked = false; // LED开启 = 白天（unchecked）
     } else {
         if (lavaContainer) lavaContainer.classList.remove('lamp-on');
         if (vintageContainer) vintageContainer.classList.remove('lamp-on');
@@ -1210,6 +1288,9 @@ function syncBulbToggles() {
             liquidContainer.classList.remove('lamp-on');
             stopLiquidAnimation();
         }
+        if (singleLedBulb) singleLedBulb.classList.remove('light_up');
+        if (neonSwitchInput) neonSwitchInput.checked = false;
+        if (foxToggle) foxToggle.checked = true; // LED关闭 = 夜晚（checked）
     }
 }
 

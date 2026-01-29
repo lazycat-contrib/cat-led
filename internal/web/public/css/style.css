@@ -3426,27 +3426,50 @@ input:checked + .toggle-label:before {
   .bulb-lava .bubble {
     animation: none !important;
   }
-  
+
   .vintage-lamp {
     transition: none !important;
   }
-  
+
   .lamp__eye {
     transition: none !important;
   }
-  
+
   .lightbulb-label:before,
   .lightbulb-label:after {
     transition: none !important;
   }
-  
+
   .preview-liquid-light,
   .preview-liquid-light::before {
     animation: none !important;
   }
-  
+
   #liquid-canvas {
     display: none !important;
+  }
+
+  /* Single LED theme */
+  .single-led-bulb,
+  .single-led-mouth {
+    transition: none !important;
+  }
+
+  /* Neon Switch theme */
+  .neon-switch__base-neon path,
+  .neon-switch__knob,
+  .neon-switch__knob-shadow,
+  .neon-switch__knob-neon circle,
+  .neon-switch__led {
+    transition: none !important;
+  }
+
+  /* Fox Day-Night theme */
+  .fox-window,
+  .fox-window .the-fox,
+  .fox-window .the-fox .fox-eyes,
+  .fox-switch .fox-button {
+    transition: none !important;
   }
 }
 
@@ -3469,4 +3492,800 @@ input:checked + .toggle-label:before {
 
 .lamp__pull-cord {
   touch-action: manipulation;
+}
+
+/* ===================================
+   Single LED 主题样式
+   =================================== */
+
+/* Single LED 容器 */
+.bulb-single-led {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.bulb-single-led.active {
+  display: flex;
+}
+
+/* 灯泡本体 */
+.single-led-bulb {
+  display: block;
+  margin: 0 auto;
+  width: 50vh;
+  max-width: 300px;
+  height: calc(50vh * 1.2);
+  max-height: 360px;
+  background: #bbb;
+  border-radius: 40% 40% 2px 2px;
+  transition: background 0.51s ease, box-shadow 0.51s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+/* 眼睛 */
+.single-led-eyes {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 10%;
+  padding-top: 20%;
+}
+
+.single-led-eyes span {
+  display: inline-block;
+  width: 10%;
+  height: 0;
+  padding-bottom: 10%;
+  background-color: #657883;
+  border-radius: 50%;
+}
+
+/* 嘴巴 */
+.single-led-mouth {
+  margin: 4px auto 0;
+  width: 40%;
+  height: 20%;
+  background: #657883;
+  border: none;
+  border-radius: 60% 60% 20% 20%;
+  transition: border-radius 0.51s ease;
+}
+
+/* 亮起状态 */
+.single-led-bulb.light_up {
+  box-shadow: 0 -10px 100px #ffff00;
+  background: #ffff79;
+}
+
+.single-led-bulb.light_up .single-led-mouth {
+  background: #657883;
+  border: none;
+  border-radius: 20% 20% 60% 60%;
+}
+
+/* POWER 按钮 */
+.single-led-button {
+  cursor: pointer;
+  margin: 20px auto 0;
+  padding: 20px 40px;
+  min-width: 20%;
+  border: 2px solid #50e2c2;
+  color: #50e2c2;
+  letter-spacing: 3px;
+  background: transparent;
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.single-led-button:hover {
+  background: #50e2c2;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(80, 226, 194, 0.3);
+}
+
+.single-led-button:active {
+  transform: translateY(0);
+}
+
+/* Single LED 预览样式 */
+.preview-single-led {
+  width: 60px;
+  height: 72px;
+  background: #bbb;
+  border-radius: 40% 40% 2px 2px;
+  position: relative;
+  margin: 0 auto;
+}
+
+.preview-single-led::before {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 25%;
+  width: 12px;
+  height: 12px;
+  background: #657883;
+  border-radius: 50%;
+  box-shadow: 24px 0 0 #657883;
+}
+
+.preview-single-led::after {
+  content: '';
+  position: absolute;
+  top: 45%;
+  left: 30%;
+  width: 24px;
+  height: 12px;
+  background: #657883;
+  border-radius: 60% 60% 20% 20%;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .single-led-bulb {
+    width: 40vh;
+    max-width: 200px;
+    height: calc(40vh * 1.2);
+    max-height: 240px;
+  }
+
+  .single-led-button {
+    padding: 15px 30px;
+    font-size: 1rem;
+  }
+}
+
+/* ===================================
+   Neon Switch 主题样式
+   =================================== */
+
+:root {
+  --neon-hue: 223;
+  --neon-off-hue: 3;
+  --neon-on-hue1: 123;
+  --neon-on-hue2: 168;
+  --neon-trans-dur: 0.6s;
+  --neon-trans-timing: cubic-bezier(0.65,0,0.35,1);
+}
+
+/* Neon Switch 容器 */
+.bulb-neon-switch {
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.bulb-neon-switch.active {
+  display: flex;
+}
+
+/* Neon Switch 基础 */
+.neon-switch,
+.neon-switch__input {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.neon-switch {
+  display: block;
+  margin: auto;
+  position: relative;
+  width: 10em;
+  height: 6em;
+  font-size: 24px;
+}
+
+.neon-switch__base-outer,
+.neon-switch__base-inner {
+  display: block;
+  position: absolute;
+}
+
+.neon-switch__base-outer {
+  border-radius: 2.5em;
+  box-shadow:
+    -0.25em -0.25em 0.5em hsl(var(--neon-hue),10%,30%),
+    0.25em 0.25em 0.25em hsl(var(--neon-hue),10%,30%) inset,
+    0.25em 0.25em 0.5em hsl(0,0%,0%),
+    -0.25em -0.25em 0.25em hsl(var(--neon-hue),10%,5%) inset;
+  top: 0.25em;
+  left: 0.25em;
+  width: 9.5em;
+  height: 5.5em;
+}
+
+.neon-switch__base-inner {
+  border-radius: 2.25em;
+  box-shadow:
+    -0.5em -0.5em 0.5em hsl(var(--neon-hue),10%,30%) inset,
+    0.125em 0.125em 0.25em hsla(var(--neon-hue),10%,30%),
+    0.25em 0.5em 0.5em hsl(var(--neon-hue),10%,5%) inset,
+    -0.125em -0.125em 0.25em hsla(var(--neon-hue),10%,5%);
+  top: 0.75em;
+  left: 0.75em;
+  width: 8.5em;
+  height: 4.5em;
+}
+
+.neon-switch__base-neon {
+  display: block;
+  overflow: visible;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+}
+
+.neon-switch__base-neon path {
+  stroke-dasharray: 0 104.26 0;
+  transition: stroke-dasharray var(--neon-trans-dur) var(--neon-trans-timing);
+}
+
+.neon-switch__input {
+  outline: transparent;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.neon-switch__input:before {
+  border-radius: 0.25em;
+  box-shadow: 0 0 0 0.25em hsla(var(--neon-hue),90%,50%,0);
+  content: "";
+  display: block;
+  position: absolute;
+  inset: -0.25em;
+  transition: box-shadow 0.15s linear;
+}
+
+.neon-switch__input:focus-visible:before {
+  box-shadow: 0 0 0 0.25em hsl(var(--neon-hue),90%,50%);
+}
+
+.neon-switch__knob,
+.neon-switch__knob-container {
+  border-radius: 2em;
+  display: block;
+  position: absolute;
+}
+
+.neon-switch__knob {
+  background-color: hsl(var(--neon-hue),10%,15%);
+  background-image:
+    radial-gradient(88% 88% at 50% 50%,hsl(var(--neon-hue),10%,20%) 47%,hsla(var(--neon-hue),10%,20%,0) 50%),
+    radial-gradient(88% 88% at 47% 47%,hsl(var(--neon-hue),10%,85%) 45%,hsla(var(--neon-hue),10%,85%,0) 50%),
+    radial-gradient(65% 70% at 40% 60%,hsl(var(--neon-hue),10%,20%) 46%,hsla(var(--neon-hue),10%,20%,0) 50%);
+  box-shadow:
+    -0.125em -0.125em 0.125em hsl(var(--neon-hue),10%,15%) inset,
+    -0.25em -0.25em 0.125em hsl(var(--neon-hue),10%,5%) inset,
+    1.5em 0.5em 0.25em hsla(0,0%,0%,0.8);
+  width: 4em;
+  height: 4em;
+  transition: transform var(--neon-trans-dur) var(--neon-trans-timing);
+}
+
+.neon-switch__knob-container {
+  overflow: hidden;
+  top: 1em;
+  left: 1em;
+  width: 8em;
+  height: 4em;
+  pointer-events: none;
+}
+
+.neon-switch__knob-neon {
+  display: block;
+  width: 4em;
+  height: auto;
+}
+
+.neon-switch__knob-neon circle {
+  opacity: 0;
+  stroke-dasharray: 0 90.32 0 54.19;
+  transition:
+    opacity var(--neon-trans-dur) steps(1,end),
+    stroke-dasharray var(--neon-trans-dur) var(--neon-trans-timing);
+}
+
+.neon-switch__knob-shadow {
+  border-radius: 50%;
+  box-shadow: 0.25em 0.25em 0.25em hsla(0,0%,0%,0.9);
+  display: block;
+  position: absolute;
+  top: 1em;
+  left: 1em;
+  width: 4em;
+  height: 4em;
+  transition: transform var(--neon-trans-dur) var(--neon-trans-timing);
+  pointer-events: none;
+}
+
+.neon-switch__led {
+  background-color: hsl(var(--neon-off-hue),90%,70%);
+  border-radius: 50%;
+  box-shadow:
+    0 -0.125em 0.125em hsl(var(--neon-off-hue),90%,40%) inset,
+    0 0 0.25em hsla(var(--neon-off-hue),90%,70%,0.3),
+    0 0 0.25em hsla(var(--neon-off-hue),90%,70%,0.3),
+    0.25em 0.25em 0.25em hsla(0,0%,0%,0.5);
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0.5em;
+  height: 0.5em;
+  transition:
+    background-color var(--neon-trans-dur) var(--neon-trans-timing),
+    box-shadow var(--neon-trans-dur) var(--neon-trans-timing);
+  pointer-events: none;
+}
+
+/* 开启状态 */
+.neon-switch__input:checked ~ .neon-switch__led {
+  background-color: hsl(var(--neon-on-hue1),90%,70%);
+  box-shadow:
+    0 -0.125em 0.125em hsl(var(--neon-on-hue1),90%,40%) inset,
+    0 -0.25em 0.25em hsla(var(--neon-on-hue1),90%,70%,0.3),
+    0 0.25em 0.25em hsla(var(--neon-on-hue1),90%,70%,0.3),
+    0.25em 0.25em 0.25em hsla(0,0%,0%,0.5);
+}
+
+.neon-switch__input:checked ~ .neon-switch__base-neon path {
+  stroke-dasharray: 52.13 0 52.13;
+}
+
+.neon-switch__input:checked ~ .neon-switch__knob-shadow,
+.neon-switch__input:checked ~ .neon-switch__knob-container .neon-switch__knob {
+  transform: translateX(100%);
+}
+
+.neon-switch__input:checked ~ .neon-switch__knob-container .neon-switch__knob-neon circle {
+  opacity: 1;
+  stroke-dasharray: 45.16 0 45.16 54.19;
+  transition-timing-function: steps(1,start), var(--neon-trans-timing);
+}
+
+/* Neon Switch 预览样式 */
+.preview-neon-switch {
+  width: 80px;
+  height: 48px;
+  background: linear-gradient(135deg, hsl(223,10%,15%), hsl(223,10%,25%));
+  border-radius: 24px;
+  position: relative;
+  margin: 0 auto;
+  box-shadow: inset -2px -2px 4px rgba(255,255,255,0.1), inset 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.preview-neon-switch::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, hsl(223,10%,25%), hsl(223,10%,15%));
+  border-radius: 50%;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+.preview-neon-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 4px;
+  height: 4px;
+  background: hsl(3,90%,70%);
+  border-radius: 50%;
+  box-shadow: 0 0 4px hsl(3,90%,70%);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .neon-switch {
+    font-size: 20px;
+  }
+}
+
+/* ===================================
+   Fox Day-Night 主题样式
+   =================================== */
+
+/* Fox Day-Night 容器 */
+.bulb-fox-daynight {
+  min-height: 400px;
+}
+
+.fox-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* 圆形窗口 */
+.fox-window {
+  display: block;
+  position: relative;
+  width: 235px;
+  height: 235px;
+  margin: 0 auto;
+  border-radius: 100%;
+  border: 8px solid #34A87C;
+  background: #DDDDDD;
+  box-shadow: 0px 0px 5px rgba(0,0,0,0.25) inset;
+  overflow: hidden;
+  transition: background-color 0.5s linear;
+}
+
+/* 太阳 */
+.fox-window .fox-sun {
+  display: block;
+  position: relative;
+  top: 18px;
+  height: 40px;
+  width: 40px;
+  background: #FFE067;
+  border-radius: 100%;
+  margin: 0 auto;
+  left: 30px;
+}
+
+/* 月亮 */
+.fox-window .fox-moon {
+  position: relative;
+  height: 24px;
+  width: 24px;
+  background: #EEE;
+  border-radius: 100%;
+  display: none;
+}
+
+/* 狐狸 */
+.fox-window .the-fox {
+  display: block;
+  position: absolute;
+  bottom: -20px;
+  height: 140px;
+  width: 135px;
+  margin: 0 50px;
+  background: #E86A47;
+  transition: bottom 0.15s ease-in-out;
+}
+
+/* 狐狸耳朵 */
+.fox-window .the-fox:before {
+  width: 0;
+  height: 0;
+  border-left: 0px solid transparent;
+  border-right: 60px solid transparent;
+  border-bottom: 30px solid #E86A47;
+  top: -25px;
+  left: 0;
+  position: absolute;
+  content: "";
+}
+
+.fox-window .the-fox:after {
+  width: 0;
+  height: 0;
+  border-right: 0px solid transparent;
+  border-left: 60px solid transparent;
+  border-bottom: 30px solid #E86A47;
+  top: -30px;
+  right: 0;
+  position: absolute;
+  content: "";
+}
+
+.fox-window .the-fox:hover {
+  bottom: -30px;
+}
+
+/* 狐狸眼睛 */
+.fox-window .the-fox .fox-eyes {
+  display: block;
+  position: absolute;
+  background: #FFFFFF;
+  height: 15px;
+  width: 15px;
+  border-radius: 100%;
+  bottom: 90px;
+  transition: all 0.15s linear;
+}
+
+.fox-window .the-fox:hover .fox-eyes {
+  height: 2px;
+  bottom: 97px;
+}
+
+.fox-window .the-fox .fox-eyes.left {
+  left: 30px;
+}
+
+.fox-window .the-fox .fox-eyes.right {
+  right: 30px;
+}
+
+/* 狐狸鼻子 */
+.fox-window .the-fox .fox-nose {
+  display: block;
+  position: relative;
+  background: #333;
+  height: 12px;
+  width: 12px;
+  border-radius: 100%;
+  margin: 0 auto;
+  top: 50px;
+}
+
+/* 狐狸白色部分 */
+.fox-window .the-fox .fox-white-part {
+  display: block;
+  position: relative;
+  width: 0px;
+  height: 0px;
+  top: 55px;
+  border-style: solid;
+  border-width: 60px 70px 0 65px;
+  border-color: #ffffff transparent transparent transparent;
+}
+
+/* 隐藏checkbox */
+input#fox-toggle[type=checkbox] {
+  position: absolute;
+  visibility: hidden;
+  display: none;
+}
+
+/* Label 隐藏，改用JavaScript控制 */
+.fox-container label[for="fox-toggle"] {
+  display: none;
+}
+
+/* 开关 */
+.fox-switch {
+  display: block;
+  position: relative;
+  border-bottom: 1px solid #FFF;
+  border-radius: 25px;
+  background: #34A87C;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.25);
+  height: 40px;
+  width: 100px;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+.fox-switch .fox-button {
+  display: block;
+  position: absolute;
+  border-top: 1px solid #FFF;
+  border-bottom: 1px solid #AAA;
+  border-radius: 100%;
+  background: #48E8AA;
+  height: 32px;
+  width: 32px;
+  top: 4px;
+  left: 4px;
+  box-shadow: 0 0 2px rgba(0,0,0,0.25);
+  transition: left 0.25s ease-in-out;
+}
+
+.fox-switch .fox-button .fox-b-inside {
+  display: block;
+  position: absolute;
+  border: 1px solid #888;
+  border-radius: 100%;
+  background: #FFE067;
+  height: 15px;
+  width: 15px;
+  top: 7px;
+  left: 7px;
+  box-shadow: 0 0 2px rgba(0,0,0,0.25);
+}
+
+/* 日夜指示器 */
+.fox-day-night-cont {
+  display: flex;
+  position: relative;
+  width: 180px;
+  justify-content: space-between;
+  align-items: center;
+  height: 40px;
+}
+
+.fox-day-night-cont .fox-sun-indicator {
+  display: block;
+  position: relative;
+  left: 0;
+  top: 0;
+  height: 20px;
+  width: 20px;
+  border-radius: 100%;
+  background: #FFE067;
+  box-shadow: 0px 0px 10px #FFC41D;
+}
+
+.fox-day-night-cont .fox-moon-indicator {
+  display: block;
+  position: relative;
+  right: 0;
+  top: 0;
+  height: 20px;
+  width: 20px;
+  border-radius: 100%;
+  background: #DDD;
+  box-shadow: 0px 0px 50px #CCC;
+}
+
+.fox-day-night-cont .fox-moon-indicator .fox-moon-inside {
+  display: block;
+  position: absolute;
+  left: 8px;
+  height: 20px;
+  width: 20px;
+  border-radius: 100%;
+  background: #FFFFFF;
+}
+
+/* 夜晚模式切换 */
+input#fox-toggle[type=checkbox]:checked ~ .fox-switch .fox-button {
+  position: absolute;
+  left: 64px;
+}
+
+input#fox-toggle[type=checkbox]:checked ~ .fox-window {
+  background: #222222;
+}
+
+input#fox-toggle[type=checkbox]:checked ~ .fox-window .fox-sun {
+  display: none;
+}
+
+input#fox-toggle[type=checkbox]:checked ~ .fox-window .fox-moon {
+  display: block;
+  position: absolute;
+  margin: 0 auto;
+  top: 40px;
+  left: 60px;
+}
+
+input#fox-toggle[type=checkbox]:checked ~ .fox-window .the-fox {
+  background: #C74628;
+}
+
+input#fox-toggle[type=checkbox]:checked ~ .fox-window .the-fox:before {
+  border-bottom-color: #C74628;
+  top: -30px;
+}
+
+input#fox-toggle[type=checkbox]:checked ~ .fox-window .the-fox:after {
+  border-bottom-color: #C74628;
+  top: -30px;
+}
+
+input#fox-toggle[type=checkbox]:checked ~ .fox-window .the-fox .fox-eyes {
+  height: 2px;
+  bottom: 90px;
+}
+
+input#fox-toggle[type=checkbox]:checked ~ .fox-window .the-fox:hover .fox-eyes {
+  height: 15px;
+  bottom: 85px;
+}
+
+/* Fox 预览样式 */
+.preview-fox-daynight {
+  width: 80px;
+  height: 80px;
+  background: #34A87C;
+  border-radius: 50%;
+  position: relative;
+  margin: 0 auto;
+  border: 3px solid #34A87C;
+  overflow: hidden;
+  background: linear-gradient(to bottom, #DDDDDD 0%, #DDDDDD 100%);
+}
+
+.preview-fox-daynight::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  width: 16px;
+  height: 16px;
+  background: #FFE067;
+  border-radius: 50%;
+}
+
+.preview-fox-daynight::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 20px solid #E86A47;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .fox-container {
+    max-width: 100%;
+  }
+
+  .fox-window {
+    width: 180px;
+    height: 180px;
+  }
+
+  .fox-window .the-fox {
+    width: 100px;
+    height: 110px;
+    margin: 0 40px;
+  }
+
+  .fox-day-night-cont {
+    width: 140px;
+  }
+
+  .fox-switch {
+    width: 80px;
+    height: 32px;
+  }
+
+  .fox-switch .fox-button {
+    width: 26px;
+    height: 26px;
+  }
+
+  input#fox-toggle[type=checkbox]:checked ~ .fox-switch .fox-button {
+    left: 50px;
+  }
+}
+
+/* Focus states for new themes */
+.bulb-single-led:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 4px;
+}
+
+.single-led-button:focus-visible {
+  outline: 2px solid #50e2c2;
+  outline-offset: 2px;
+}
+
+.bulb-neon-switch:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 4px;
+}
+
+.bulb-fox-daynight:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 4px;
+}
+
+#fox-toggle:focus-visible + label {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: 25px;
 }

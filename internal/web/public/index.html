@@ -557,6 +557,108 @@
                     </div>
                 </div>
 
+                <!-- Single LED 样式 -->
+                <div
+                    class="bulb-container bulb-single-led"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Single LED开关"
+                >
+                    <div class="single-led-bulb">
+                        <div class="single-led-eyes">
+                            <span></span><span></span>
+                        </div>
+                        <div class="single-led-mouth"></div>
+                    </div>
+                    <div class="single-led-button">POWER</div>
+                </div>
+
+                <!-- Switch 霓虹开关样式 -->
+                <div
+                    class="bulb-container bulb-neon-switch"
+                    role="button"
+                    tabindex="0"
+                    aria-label="霓虹开关"
+                >
+                    <label class="neon-switch">
+                        <input class="neon-switch__input" type="checkbox" role="switch">
+                        <span class="neon-switch__base-outer"></span>
+                        <span class="neon-switch__base-inner"></span>
+                        <svg class="neon-switch__base-neon" viewBox="0 0 40 24" width="40px" height="24px">
+                            <defs>
+                                <filter id="neon-switch-glow">
+                                    <feGaussianBlur result="coloredBlur" stddeviation="1"></feGaussianBlur>
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur"></feMergeNode>
+                                        <feMergeNode in="SourceGraphic"></feMergeNode>
+                                    </feMerge>
+                                </filter>
+                                <linearGradient id="neon-switch-gradient1" x1="0" y1="0" x2="1" y2="0">
+                                    <stop offset="0%" stop-color="hsl(var(--neon-on-hue1),90%,70%)" />
+                                    <stop offset="100%" stop-color="hsl(var(--neon-on-hue2),90%,70%)" />
+                                </linearGradient>
+                                <linearGradient id="neon-switch-gradient2" x1="0.7" y1="0" x2="0.3" y2="1">
+                                    <stop offset="25%" stop-color="hsla(var(--neon-on-hue1),90%,70%,0)" />
+                                    <stop offset="50%" stop-color="hsla(var(--neon-on-hue1),90%,70%,0.3)" />
+                                    <stop offset="100%" stop-color="hsla(var(--neon-on-hue2),90%,70%,0.3)" />
+                                </linearGradient>
+                            </defs>
+                            <path fill="none" filter="url(#neon-switch-glow)" stroke="url(#neon-switch-gradient1)" stroke-width="1" stroke-dasharray="0 104.26 0" stroke-dashoffset="0.01" stroke-linecap="round" d="m.5,12C.5,5.649,5.649.5,12,.5h16c6.351,0,11.5,5.149,11.5,11.5s-5.149,11.5-11.5,11.5H12C5.649,23.5.5,18.351.5,12Z"/>
+                        </svg>
+                        <span class="neon-switch__knob-shadow"></span>
+                        <span class="neon-switch__knob-container">
+                            <span class="neon-switch__knob">
+                                <svg class="neon-switch__knob-neon" viewBox="0 0 48 48" width="48px" height="48px">
+                                    <circle fill="none" stroke="url(#neon-switch-gradient2)" stroke-dasharray="0 90.32 0 54.19" stroke-linecap="round" stroke-width="1" r="23" cx="24" cy="24" transform="rotate(-112.5,24,24)" />
+                                </svg>
+                            </span>
+                        </span>
+                        <span class="neon-switch__led"></span>
+                    </label>
+                </div>
+
+                <!-- Fox Day-Night 样式 -->
+                <div
+                    class="bulb-container bulb-fox-daynight"
+                    role="button"
+                    tabindex="0"
+                    aria-label="狐狸日夜灯开关"
+                >
+                    <div class="fox-container">
+                        <input type="checkbox" id="fox-toggle" />
+                        <label for="fox-toggle" aria-label="日夜切换"></label>
+
+                        <div class="fox-day-night-cont">
+                            <span class="fox-sun-indicator" aria-hidden="true"></span>
+                            <div class="fox-moon-indicator" aria-hidden="true">
+                                <span class="fox-moon-inside"></span>
+                            </div>
+                        </div>
+
+                        <div class="fox-switch">
+                            <div class="fox-button">
+                                <div class="fox-b-inside"></div>
+                            </div>
+                        </div>
+
+                        <div class="fox-window">
+                            <span class="fox-sun" aria-hidden="true"></span>
+                            <span class="fox-moon" aria-hidden="true"></span>
+
+                            <div class="the-fox">
+                                <div class="fox-face">
+                                    <div class="fox-eyes left"></div>
+                                    <div class="fox-eyes right"></div>
+                                    <span class="fox-nose"></span>
+                                    <div class="fox-white-part">
+                                        <span class="fox-mouth"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="led-status-text">
                     当前状态: <span id="led-status">加载中…</span>
                 </div>
@@ -854,6 +956,39 @@
                                     <h4 class="style-name">点阵时钟</h4>
                                     <p class="style-desc">
                                         7×7点阵，实时显示时间
+                                    </p>
+                                </div>
+                            </button>
+                            <button class="bulb-style-card" data-style="single-led">
+                                <div class="style-preview">
+                                    <div class="preview-single-led"></div>
+                                </div>
+                                <div class="style-info">
+                                    <h4 class="style-name">Single LED</h4>
+                                    <p class="style-desc">
+                                        表情灯泡，可爱设计
+                                    </p>
+                                </div>
+                            </button>
+                            <button class="bulb-style-card" data-style="neon-switch">
+                                <div class="style-preview">
+                                    <div class="preview-neon-switch"></div>
+                                </div>
+                                <div class="style-info">
+                                    <h4 class="style-name">霓虹开关</h4>
+                                    <p class="style-desc">
+                                        霓虹灯效果，科技感设计
+                                    </p>
+                                </div>
+                            </button>
+                            <button class="bulb-style-card" data-style="fox-daynight">
+                                <div class="style-preview">
+                                    <div class="preview-fox-daynight"></div>
+                                </div>
+                                <div class="style-info">
+                                    <h4 class="style-name">狐狸日夜灯</h4>
+                                    <p class="style-desc">
+                                        日夜切换，可爱狐狸设计
                                     </p>
                                 </div>
                             </button>

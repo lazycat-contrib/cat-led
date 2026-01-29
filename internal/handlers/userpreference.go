@@ -13,7 +13,7 @@ import (
 
 // UserPreferenceRequest represents the request body for updating user preferences.
 type UserPreferenceRequest struct {
-	BulbStyle string `json:"bulb_style" binding:"required,oneof=classic lava vintage liquid lightbulb analog"`
+	BulbStyle string `json:"bulb_style" binding:"required,oneof=classic lava vintage liquid lightbulb analog single-led neon-switch fox-daynight"`
 }
 
 // UserPreferenceResponse represents the user preference data returned to the client.

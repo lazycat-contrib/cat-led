@@ -19,7 +19,7 @@ type UserPreference struct {
 	ID int `json:"id,omitempty"`
 	// 用户ID
 	UserID string `json:"user_id,omitempty"`
-	// 灯泡样式: classic(经典灯泡), lava(熔岩灯), vintage(老式台灯), liquid(液态光效), lightbulb(灯泡开关), analog(点阵时钟)
+	// 灯泡样式: classic(经典灯泡), lava(熔岩灯), vintage(老式台灯), liquid(液态光效), lightbulb(灯泡开关), analog(点阵时钟), single-led(表情灯泡), neon-switch(霓虹开关), fox-daynight(狐狸日夜灯)
 	BulbStyle string `json:"bulb_style,omitempty"`
 	// 创建时间
 	CreatedAt time.Time `json:"created_at,omitempty"`

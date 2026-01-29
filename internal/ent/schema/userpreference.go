@@ -19,7 +19,7 @@ func (UserPreference) Fields() []ent.Field {
 			Comment("用户ID"),
 		field.String("bulb_style").
 			Default("classic").
-			Comment("灯泡样式: classic(经典灯泡), lava(熔岩灯), vintage(老式台灯), liquid(液态光效), lightbulb(灯泡开关), analog(点阵时钟)"),
+			Comment("灯泡样式: classic(经典灯泡), lava(熔岩灯), vintage(老式台灯), liquid(液态光效), lightbulb(灯泡开关), analog(点阵时钟), single-led(表情灯泡), neon-switch(霓虹开关), fox-daynight(狐狸日夜灯)"),
 		field.Time("created_at").
 			Immutable().
 			Comment("创建时间"),
