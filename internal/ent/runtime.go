@@ -6,6 +6,7 @@ import (
 	"cat-led/internal/ent/schedule"
 	"cat-led/internal/ent/schema"
 	"cat-led/internal/ent/serverchanconfig"
+	"cat-led/internal/ent/userpreference"
 
 	"github.com/google/uuid"
 )
@@ -42,4 +43,10 @@ func init() {
 	serverchanconfigDescEnabled := serverchanconfigFields[3].Descriptor()
 	// serverchanconfig.DefaultEnabled holds the default value on creation for the enabled field.
 	serverchanconfig.DefaultEnabled = serverchanconfigDescEnabled.Default.(bool)
+	userpreferenceFields := schema.UserPreference{}.Fields()
+	_ = userpreferenceFields
+	// userpreferenceDescBulbStyle is the schema descriptor for bulb_style field.
+	userpreferenceDescBulbStyle := userpreferenceFields[1].Descriptor()
+	// userpreference.DefaultBulbStyle holds the default value on creation for the bulb_style field.
+	userpreference.DefaultBulbStyle = userpreferenceDescBulbStyle.Default.(string)
 }

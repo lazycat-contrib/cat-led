@@ -572,7 +572,7 @@ html {
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: var(--border-radius-lg);
   margin: 20px 16px;
-  padding: 32px 24px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -590,7 +590,7 @@ html {
 .led-status-text {
   font-size: 18px;
   font-weight: 500;
-  margin-top: 30px;
+  margin-top: 16px;
   color: var(--header-text-color);
   text-align: center;
 }
@@ -2099,4 +2099,1374 @@ input:checked + .toggle-label:before {
 
 [data-theme="light"] .schedule-serverchan.enabled {
   color: var(--success-color);
-} 
+}
+/* ===================================
+   灯泡容器管理
+   =================================== */
+
+.led-status-section {
+  position: relative;
+}
+
+.bulb-container {
+  display: none;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.3s ease;
+}
+
+.bulb-container.active {
+  display: flex;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 为不同灯泡设置合适的最小高度 */
+.bulb-classic {
+  min-height: 150px;
+}
+
+.bulb-lava {
+  min-height: 380px;
+}
+
+.bulb-vintage {
+  min-height: 400px;
+}
+
+.bulb-liquid {
+  min-height: 380px;
+}
+
+.bulb-lightbulb {
+  min-height: 120px;
+}
+
+.bulb-analog {
+  min-height: 260px;
+}
+
+/* ===================================
+   熔岩灯样式
+   =================================== */
+
+.bulb-lava {
+  flex-direction: column;
+  min-height: 380px;
+}
+
+/* Glow BG */
+.glow-lava {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: rgba(85, 85, 255, 0);
+  filter: blur(100px);
+  border-radius: 50%;
+  transition: all 0.7s ease;
+  z-index: -1;
+}
+
+.bulb-lava.lamp-on .glow-lava {
+  background: rgba(85, 85, 255, 0.7);
+}
+
+.glow-lava::after {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  width: 350px;
+  height: 90px;
+  background: rgba(85, 85, 255, 0);
+  filter: blur(5px);
+  border-radius: 50%;
+  transition: all 0.7s ease;
+}
+
+.bulb-lava.lamp-on .glow-lava::after {
+  background: #5555ff;
+}
+
+.frame-lava {
+  padding-top: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Body Lamp */
+.body-lamp {
+  position: relative;
+  width: 300px;
+  height: 450px;
+  background: radial-gradient(#001122, rgba(0, 255, 255, 0.2));
+  clip-path: polygon(25% 0%, 75% 0%, 100% 75%, 75% 100%, 25% 100%, 0 75%);
+  overflow: hidden;
+  transition: all 0.7s ease;
+}
+
+.bulb-lava.lamp-on .body-lamp {
+  background: radial-gradient(#001122, rgba(0, 255, 255, 0.35));
+}
+
+/* Base Lamp / Top */
+.base-lamp {
+  position: relative;
+  width: 245px;
+  height: 100px;
+  bottom: 70px;
+  background: #111133;
+  clip-path: polygon(0 0, 100% 0, 80% 100%, 20% 100%);
+  box-shadow: inset 0 0 30px #000;
+}
+
+.base-lava {
+  position: relative;
+  width: 225px;
+  height: 24px;
+  bottom: 75px;
+  background: #111133;
+  clip-path: polygon(10% 0, 90% 0, 100% 100%, 0 100%);
+}
+
+.top-lava {
+  position: relative;
+  width: 150px;
+  height: 24px;
+  top: 0;
+  background: #111133;
+  clip-path: polygon(10% 0, 90% 0, 100% 100%, 0 100%);
+  z-index: 2;
+}
+
+/* Gooey Wrapper*/
+.gooey {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  filter: blur(15px) contrast(30);
+  opacity: 0.3;
+  transition: all 0.7s ease;
+}
+
+.bulb-lava.lamp-on .gooey {
+  opacity: 1;
+}
+
+/* Bubble */
+.bubble {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  background: #00ffff;
+  border-radius: 50%;
+}
+
+.bulb-lava.lamp-on .bubble {
+  animation: move 7s ease-in-out infinite alternate;
+}
+
+.bubble:nth-child(1) {
+  top: 50px;
+  left: 10px;
+}
+
+.bubble:nth-child(2) {
+  width: 50px;
+  height: 30px;
+  left: 50px;
+  animation-delay: -2s;
+}
+
+.bubble:nth-child(3) {
+  width: 70px;
+  height: 70px;
+  left: -70px;
+  animation-delay: -3.5s;
+}
+
+.bubble:nth-child(4) {
+  left: 0px;
+  width: 80%;
+  bottom: -90px;
+  animation: none;
+}
+
+.bubble:nth-child(5) {
+  position: absolute;
+  top: -70px;
+  left: 60px;
+  width: 60%;
+  animation: none;
+}
+
+@keyframes move {
+  0% {
+    border-radius: 75% 25% 20% 80% / 34% 47% 53% 66%;
+    transform: translateY(-200px);
+  }
+  100% {
+    border-radius: 50%;
+    transform: translateY(220px);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .bulb-style-selector {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .body-lamp {
+    width: 240px;
+    height: 360px;
+  }
+
+  .base-lamp {
+    width: 195px;
+    height: 80px;
+    bottom: 60px;
+  }
+
+  .base-lava {
+    width: 180px;
+    bottom: 65px;
+  }
+
+  .top-lava {
+    width: 120px;
+  }
+
+  /* 调整响应式高度 */
+  .bulb-classic {
+    min-height: 130px;
+  }
+
+  .bulb-lava {
+    min-height: 330px;
+  }
+
+  .bulb-vintage {
+    min-height: 360px;
+  }
+
+  .bulb-liquid {
+    min-height: 330px;
+  }
+
+  .bulb-lightbulb {
+    min-height: 110px;
+  }
+
+  .bulb-analog {
+    min-height: 230px;
+  }
+}
+
+@media (max-width: 480px) {
+  .led-style-section {
+    margin: 12px 8px;
+    padding: 16px;
+  }
+
+  .style-preview-mini {
+    width: 60px;
+    height: 60px;
+  }
+
+  .preview-classic-bulb {
+    width: 40px;
+    height: 40px;
+  }
+
+  .preview-lava-lamp {
+    width: 32px;
+    height: 48px;
+  }
+
+  .style-name {
+    font-size: 12px;
+  }
+
+  .body-lamp {
+    width: 180px;
+    height: 270px;
+  }
+
+  .base-lamp {
+    width: 150px;
+    height: 60px;
+    bottom: 45px;
+  }
+
+  .base-lava {
+    width: 135px;
+    bottom: 50px;
+  }
+
+  .top-lava {
+    width: 90px;
+  }
+
+  /* 移动端进一步优化高度 */
+  .bulb-classic {
+    min-height: 110px;
+  }
+
+  .bulb-lava {
+    min-height: 260px;
+  }
+
+  .bulb-vintage {
+    min-height: 300px;
+  }
+
+  .bulb-liquid {
+    min-height: 280px;
+  }
+
+  .bulb-lightbulb {
+    min-height: 90px;
+  }
+
+  .bulb-analog {
+    min-height: 200px;
+  }
+}
+
+/* ===================================
+   灯泡样式模态框
+   =================================== */
+
+.bulb-style-modal-content {
+  max-width: 600px;
+  width: 95%;
+}
+
+.bulb-style-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.bulb-style-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bulb-style-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-4px);
+  box-shadow: var(--box-shadow);
+}
+
+.bulb-style-card:active {
+  transform: translateY(-2px);
+}
+
+.bulb-style-card.active {
+  border-color: var(--primary-color);
+  background: rgba(0, 122, 255, 0.15);
+}
+
+.bulb-style-card.active::before {
+  content: '✓';
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.4);
+}
+
+.bulb-style-card:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.style-preview {
+  width: 100%;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.style-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.style-info .style-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.style-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* 模态框中的预览样式 */
+.preview-classic-bulb {
+  width: 50px;
+  height: 50px;
+  background-color: #4a426b;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: inset 0 0 1px 2px #4a426b, 0 0 15px rgba(255, 159, 10, 0.3);
+}
+
+.preview-classic-bulb::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: #FF9F0A;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px rgba(255, 159, 10, 0.6);
+}
+
+.preview-lava-lamp {
+  width: 40px;
+  height: 60px;
+  background: radial-gradient(#001122, rgba(0, 255, 255, 0.2));
+  clip-path: polygon(25% 0%, 75% 0%, 100% 75%, 75% 100%, 25% 100%, 0 75%);
+  position: relative;
+  overflow: hidden;
+}
+
+.preview-bubble {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: #00ffff;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(3px);
+}
+
+/* 明亮主题下的样式卡片 */
+[data-theme="light"] .bulb-style-card {
+  background: rgba(138, 127, 177, 0.05);
+  border-color: rgba(138, 127, 177, 0.2);
+}
+
+[data-theme="light"] .bulb-style-card:hover {
+  background: rgba(138, 127, 177, 0.1);
+  border-color: rgba(138, 127, 177, 0.4);
+}
+
+[data-theme="light"] .bulb-style-card.active {
+  border-color: var(--primary-color);
+  background: rgba(0, 122, 255, 0.1);
+}
+
+/* 灯泡样式切换按钮 - 浮动在右下角 */
+#bulb-style-toggle {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--header-text-color);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#bulb-style-toggle:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#bulb-style-toggle:active {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(0.95);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bulb-style-icon {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+  transition: fill var(--transition);
+}
+
+#bulb-style-toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+[data-theme="light"] #bulb-style-toggle {
+  background: rgba(138, 127, 177, 0.15);
+  border: 1px solid rgba(138, 127, 177, 0.3);
+  color: #2C3E50;
+}
+
+[data-theme="light"] #bulb-style-toggle:hover {
+  background: rgba(138, 127, 177, 0.25);
+  border-color: rgba(138, 127, 177, 0.5);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="light"] #bulb-style-toggle:active {
+  background: rgba(138, 127, 177, 0.35);
+  transform: scale(0.95);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .bulb-style-icon {
+  fill: #2C3E50;
+}
+
+/* 响应式 - 模态框 */
+@media (max-width: 768px) {
+  .bulb-style-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .bulb-style-card {
+    padding: 16px;
+  }
+
+  .style-preview {
+    height: 100px;
+  }
+
+  .style-info .style-name {
+    font-size: 15px;
+  }
+
+  .style-desc {
+    font-size: 12px;
+  }
+
+  #bulb-style-toggle {
+    bottom: 16px;
+    right: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bulb-style-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .bulb-style-card {
+    padding: 14px;
+  }
+
+  .style-preview {
+    height: 90px;
+  }
+
+  .style-info .style-name {
+    font-size: 14px;
+  }
+
+  .style-desc {
+    font-size: 11px;
+  }
+
+  #bulb-style-toggle {
+    bottom: 12px;
+    right: 12px;
+  }
+}
+
+/* ===================================
+   老式台灯样式
+   =================================== */
+
+.bulb-vintage {
+  flex-direction: column;
+  min-height: 400px;
+}
+
+.vintage-lamp {
+  height: 45vmin;
+  max-height: 450px;
+  overflow: visible !important;
+  transition: all 0.3s ease;
+}
+
+/* 台灯颜色变量 - 关灯状态 */
+.bulb-vintage {
+  --on: 0;
+  --cord: hsl(210, 0%, 40%);
+  --opening: hsl(50, 10%, 20%);
+  --feature: hsl(0, 0%, 4%);
+  --accent: 210;
+  --tongue: hsl(10, 70%, 60%);
+  --base-top: hsl(210, 0%, 40%);
+  --base-side: hsl(210, 0%, 20%);
+  --post: hsl(210, 0%, 20%);
+  --b-1: hsla(45, 0%, 50%, 0.85);
+  --b-2: hsla(45, 0%, 20%, 0.25);
+  --b-3: hsla(45, 0%, 20%, 0.5);
+  --b-4: hsla(45, 0%, 20%, 0.25);
+  --l-1: hsla(45, 0%, 50%, 0);
+  --l-2: hsla(45, 0%, 50%, 0);
+  --shade-hue: 320;
+  --t-1: hsl(320, 0%, 30%);
+  --t-2: hsl(320, 0%, 20%);
+  --t-3: hsl(320, 0%, 10%);
+}
+
+/* 台灯颜色变量 - 开灯状态 */
+.bulb-vintage.lamp-on {
+  --on: 1;
+  --cord: hsl(210, 0%, 90%);
+  --opening: hsl(50, 90%, 90%);
+  --base-top: hsl(210, 0%, 80%);
+  --base-side: hsl(210, 0%, 60%);
+  --post: hsl(210, 0%, 60%);
+  --b-1: hsla(45, 0%, 100%, 0.85);
+  --b-2: hsla(45, 0%, 50%, 0.25);
+  --b-3: hsla(45, 0%, 50%, 0.5);
+  --b-4: hsla(45, 0%, 50%, 0.25);
+  --l-1: hsla(45, 20%, 100%, 0.85);
+  --l-2: hsla(45, 20%, 100%, 0.85);
+  --t-1: hsl(var(--shade-hue), 20%, 90%);
+  --t-2: hsl(var(--shade-hue), 20%, 55%);
+  --t-3: hsl(var(--shade-hue), 20%, 30%);
+}
+
+/* 拉绳 */
+.cord--main {
+  stroke: var(--cord);
+  transition: stroke 0.3s ease;
+}
+
+/* 台灯开口 */
+.shade__opening {
+  fill: var(--opening);
+  transition: fill 0.3s ease;
+}
+
+.shade__opening-shade {
+  opacity: calc(1 - var(--on));
+  transition: opacity 0.3s ease;
+}
+
+/* 台灯特征 */
+.lamp__feature {
+  fill: var(--feature);
+}
+
+.lamp__stroke {
+  stroke: var(--feature);
+  transition: transform 0.3s ease;
+}
+
+.lamp__tongue {
+  fill: var(--tongue);
+}
+
+/* 台灯嘴巴和灯光 */
+.lamp__mouth,
+.lamp__light {
+  opacity: var(--on);
+  transition: opacity 0.3s ease;
+}
+
+/* 台灯眼睛 - 开灯时向上转 */
+.bulb-vintage .lamp__eye {
+  transform: rotate(180deg);
+  transform-origin: 50% 50%;
+  transition: transform 0.3s ease;
+}
+
+.bulb-vintage.lamp-on .lamp__eye {
+  transform: rotate(0deg);
+}
+
+/* 底座 */
+.base__top {
+  fill: var(--base-top);
+  transition: fill 0.3s ease;
+}
+
+.base__side {
+  fill: var(--base-side);
+  transition: fill 0.3s ease;
+}
+
+/* 灯柱 */
+.post__body {
+  fill: var(--post);
+  transition: fill 0.3s ease;
+}
+
+/* 灯罩顶部 */
+.top__body {
+  fill: var(--t-3);
+  transition: fill 0.3s ease;
+}
+
+/* 拉绳球 */
+.lamp__pull-cord {
+  cursor: pointer;
+  transition: fill 0.2s ease, filter 0.2s ease;
+}
+
+.lamp__pull-cord:hover {
+  fill: #E0E0E0;
+  filter: drop-shadow(0 0 4px rgba(224, 224, 224, 0.6));
+}
+
+.lamp__pull-cord:active {
+  transform: translateY(10px);
+  fill: #D0D0D0;
+}
+
+/* 预览样式 */
+.preview-vintage-lamp {
+  width: 45px;
+  height: 65px;
+  background: linear-gradient(to bottom, hsl(320, 0%, 30%) 0%, hsl(320, 0%, 20%) 50%, hsl(210, 0%, 40%) 100%);
+  clip-path: polygon(20% 0%, 80% 0%, 90% 40%, 70% 100%, 30% 100%, 10% 40%);
+  position: relative;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.preview-vintage-lamp::before {
+  content: '';
+  position: absolute;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 30%;
+  background: #888;
+  border-radius: 2px;
+}
+
+.preview-vintage-lamp::after {
+  content: '';
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background: #C4C4C4;
+  border-radius: 50%;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .vintage-lamp {
+    height: 40vmin;
+    max-height: 380px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vintage-lamp {
+    height: 35vmin;
+    max-height: 320px;
+  }
+
+  .preview-vintage-lamp {
+    width: 36px;
+    height: 52px;
+  }
+}
+
+/* ===================================
+   液态光效样式
+   =================================== */
+
+.bulb-liquid {
+  width: 100%;
+  overflow: hidden;
+  background: hsla(0, 5%, 5%, 1);
+  background-image: linear-gradient(to right top, hsla(0, 5%, 15%, 0.5), hsla(0, 5%, 5%, 1));
+  border-radius: var(--border-radius);
+  min-height: 380px;
+}
+
+#liquid-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.bulb-liquid.lamp-on #liquid-canvas {
+  opacity: 1;
+}
+
+.liquid-title {
+  text-align: center;
+  width: 100%;
+  color: hsla(0, 50%, 50%, 1);
+  font-size: 3em;
+  text-shadow: 1px 1px hsla(0, 0%, 5%, 1), -1px -1px hsla(0, 0%, 5%, 1);
+  font-family: 'Poiret One', 'SF Pro Display', -apple-system, cursive;
+  letter-spacing: 6px;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 预览样式 */
+.preview-liquid-light {
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle at 30% 30%, 
+    hsla(0, 70%, 60%, 0.8), 
+    hsla(30, 70%, 50%, 0.6), 
+    hsla(180, 70%, 50%, 0.4));
+  border-radius: 50%;
+  position: relative;
+  animation: liquidPulse 2s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(255, 100, 100, 0.5);
+}
+
+.preview-liquid-light::before {
+  content: '';
+  position: absolute;
+  width: 40%;
+  height: 40%;
+  background: rgba(255, 150, 100, 0.6);
+  border-radius: 50%;
+  top: 20%;
+  left: 30%;
+  animation: liquidBubble 3s ease-in-out infinite;
+}
+
+@keyframes liquidPulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(255, 100, 100, 0.5);
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(100, 200, 255, 0.8);
+    filter: hue-rotate(180deg);
+  }
+}
+
+@keyframes liquidBubble {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-10px) scale(1.2);
+    opacity: 0.4;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .bulb-liquid {
+    min-height: 350px;
+  }
+
+  .liquid-title {
+    font-size: 2.5em;
+  }
+}
+
+@media (max-width: 480px) {
+  .bulb-liquid {
+    min-height: 300px;
+  }
+
+  .liquid-title {
+    font-size: 2em;
+    letter-spacing: 3px;
+  }
+
+  .preview-liquid-light {
+    width: 50px;
+    height: 50px;
+  }
+
+  .bulb-style-selector {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ===================================
+   灯泡开关样式
+   =================================== */
+
+.bulb-lightbulb {
+  padding: 30px 0;
+  justify-content: center;
+  align-items: center;
+  min-height: 120px;
+}
+
+.lightbulb-switch {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.lightbulb-label {
+  background-color: rgba(0,0,0,0.7);
+  border-radius: 0.75em;
+  box-shadow: 0.125em 0.125em 0 0.125em rgba(0,0,0,0.3) inset;
+  color: #fdea7b;
+  display: inline-flex;
+  align-items: center;
+  margin: auto;
+  padding: 0.15em;
+  width: 6em;
+  height: 3em;
+  transition: background-color 0.1s 0.3s ease-out, box-shadow 0.1s 0.3s ease-out;
+  cursor: pointer;
+  position: relative;
+}
+
+.lightbulb-label:before,
+.lightbulb-label:after {
+  content: "";
+  display: block;
+}
+
+.lightbulb-label:before {
+  background-color: #d7d7d7;
+  border-radius: 50%;
+  width: 2.4em;
+  height: 2.4em;
+  transition: background-color 0.1s 0.3s ease-out, transform 0.3s ease-out;
+  z-index: 1;
+}
+
+.lightbulb-label:after {
+  background:
+    linear-gradient(transparent 50%, rgba(0,0,0,0.15) 0) 0 50% / 50% 100%,
+    repeating-linear-gradient(90deg,#bbb 0,#bbb,#bbb 20%,#999 20%,#999 40%) 0 50% / 50% 100%,
+    radial-gradient(circle at 50% 50%,#888 25%, transparent 26%);
+  background-repeat: no-repeat;
+  border: 0.5em solid transparent;
+  border-left: 0.8em solid #d8d8d8;
+  border-right: 0 solid transparent;
+  transition: border-left-color 0.1s 0.3s ease-out, transform 0.3s ease-out;
+  transform: translateX(-22.5%);
+  transform-origin: 25% 50%;
+  width: 2.4em;
+  height: 2em;
+}
+
+/* Checked State */
+.lightbulb-switch:checked + .lightbulb-label {
+  background-color: rgba(0,0,0,0.45);
+  box-shadow: 0.125em 0.125em 0 0.125em rgba(0,0,0,0.1) inset;
+}
+
+.lightbulb-switch:checked + .lightbulb-label:before {
+  background-color: currentColor;
+  transform: translateX(125%);
+  box-shadow: 0 0 20px rgba(253, 234, 123, 0.8);
+}
+
+.lightbulb-switch:checked + .lightbulb-label:after {
+  border-left-color: currentColor;
+  transform: translateX(-2.5%) rotateY(180deg);
+}
+
+/* Hover State */
+.lightbulb-label:hover {
+  box-shadow: 0.125em 0.125em 0 0.125em rgba(0,0,0,0.4) inset,
+              0 0 15px rgba(253, 234, 123, 0.3);
+}
+
+/* 预览样式 */
+.preview-lightbulb {
+  width: 60px;
+  height: 30px;
+  background-color: rgba(0,0,0,0.7);
+  border-radius: 15px;
+  position: relative;
+  box-shadow: 0.125em 0.125em 0 0.125em rgba(0,0,0,0.3) inset;
+}
+
+.preview-lightbulb::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 24px;
+  height: 24px;
+  background-color: #d7d7d7;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.preview-lightbulb::after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  width: 12px;
+  height: 14px;
+  background: linear-gradient(transparent 50%, rgba(0,0,0,0.15) 0);
+  border-left: 4px solid #d8d8d8;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .lightbulb-label {
+    width: 5em;
+    height: 2.5em;
+  }
+
+  .lightbulb-label:before {
+    width: 2em;
+    height: 2em;
+  }
+
+  .lightbulb-label:after {
+    width: 2em;
+    height: 1.6em;
+    border-left-width: 0.7em;
+  }
+}
+
+@media (max-width: 480px) {
+  .lightbulb-label {
+    width: 4.5em;
+    height: 2.25em;
+  }
+
+  .lightbulb-label:before {
+    width: 1.8em;
+    height: 1.8em;
+  }
+
+  .lightbulb-label:after {
+    width: 1.8em;
+    height: 1.5em;
+    border-left-width: 0.6em;
+  }
+
+  .preview-lightbulb {
+    width: 50px;
+    height: 25px;
+  }
+
+  .preview-lightbulb::before {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* ===================================
+   点阵时钟样式
+   =================================== */
+
+.bulb-analog {
+  padding: 40px 0;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  touch-action: manipulation;
+  min-height: 280px;
+}
+
+.analog-clock {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 30px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--border-radius);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.analog-row {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hours - Green/Lime */
+.analog-clock[data-time^="0"] .analog-row:nth-child(1) .dot:nth-child(1),
+.analog-clock[data-time^="1"] .analog-row:nth-child(1) .dot:nth-child(2),
+.analog-clock[data-time^="2"] .analog-row:nth-child(1) .dot:nth-child(3),
+.analog-clock[data-time^="3"] .analog-row:nth-child(2) .dot:nth-child(3),
+.analog-clock[data-time^="4"] .analog-row:nth-child(3) .dot:nth-child(3),
+.analog-clock[data-time^="5"] .analog-row:nth-child(4) .dot:nth-child(3),
+.analog-clock[data-time^="6"] .analog-row:nth-child(5) .dot:nth-child(3),
+.analog-clock[data-time^="7"] .analog-row:nth-child(6) .dot:nth-child(2),
+.analog-clock[data-time^="8"] .analog-row:nth-child(7) .dot:nth-child(1),
+.analog-clock[data-time^="9"] .analog-row:nth-child(7) .dot:nth-child(2),
+.analog-clock[data-time$="00"] .analog-row:nth-child(1) .dot:nth-child(1),
+.analog-clock[data-time$="10"] .analog-row:nth-child(1) .dot:nth-child(2),
+.analog-clock[data-time$="20"] .analog-row:nth-child(1) .dot:nth-child(3),
+.analog-clock[data-time$="30"] .analog-row:nth-child(2) .dot:nth-child(3),
+.analog-clock[data-time$="40"] .analog-row:nth-child(3) .dot:nth-child(3),
+.analog-clock[data-time$="50"] .analog-row:nth-child(4) .dot:nth-child(3) {
+  background: lime;
+  box-shadow: 0 0 20px lime, 0 0 40px lime;
+}
+
+/* Minutes - Yellow/Orange/Gold gradient */
+.analog-clock[data-time*="0"] .analog-row:nth-child(1) .dot:nth-child(4),
+.analog-clock[data-time*="1"] .analog-row:nth-child(1) .dot:nth-child(5),
+.analog-clock[data-time*="2"] .analog-row:nth-child(2) .dot:nth-child(5),
+.analog-clock[data-time*="3"] .analog-row:nth-child(3) .dot:nth-child(5),
+.analog-clock[data-time*="4"] .analog-row:nth-child(4) .dot:nth-child(5),
+.analog-clock[data-time*="5"] .analog-row:nth-child(5) .dot:nth-child(5) {
+  background: linear-gradient(135deg, yellow, orange, gold);
+  box-shadow: 0 0 20px yellow, 0 0 40px orange;
+}
+
+/* Seconds - Red gradient */
+.analog-clock[data-time$="0"] .analog-row:nth-child(1) .dot:nth-child(6),
+.analog-clock[data-time$="1"] .analog-row:nth-child(1) .dot:nth-child(7),
+.analog-clock[data-time$="2"] .analog-row:nth-child(2) .dot:nth-child(7),
+.analog-clock[data-time$="3"] .analog-row:nth-child(3) .dot:nth-child(7),
+.analog-clock[data-time$="4"] .analog-row:nth-child(4) .dot:nth-child(7),
+.analog-clock[data-time$="5"] .analog-row:nth-child(5) .dot:nth-child(7),
+.analog-clock[data-time$="6"] .analog-row:nth-child(6) .dot:nth-child(7),
+.analog-clock[data-time$="7"] .analog-row:nth-child(7) .dot:nth-child(6),
+.analog-clock[data-time$="8"] .analog-row:nth-child(7) .dot:nth-child(5),
+.analog-clock[data-time$="9"] .analog-row:nth-child(7) .dot:nth-child(4) {
+  background: linear-gradient(135deg, red, darkred, crimson);
+  box-shadow: 0 0 20px red, 0 0 40px darkred;
+}
+
+/* Preview style */
+.preview-analog-clock {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+}
+
+.preview-analog-clock::before {
+  content: '';
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(7, 1fr);
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+}
+
+.preview-analog-clock::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: lime;
+  border-radius: 50%;
+  top: 50%;
+  left: 30%;
+  box-shadow: 0 0 10px lime;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .analog-clock {
+    gap: 12px;
+    padding: 25px;
+  }
+
+  .analog-row {
+    gap: 12px;
+  }
+
+  .dot {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .analog-clock {
+    gap: 10px;
+    padding: 20px;
+  }
+
+  .analog-row {
+    gap: 10px;
+  }
+
+  .dot {
+    width: 15px;
+    height: 15px;
+  }
+
+  .preview-analog-clock {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+/* ===================================
+   可访问性修复
+   =================================== */
+
+/* Focus styles for bulb style selector buttons */
+.bulb-style-option:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Focus style for vintage lamp pull cord */
+.lamp__pull-cord:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 4px;
+}
+
+/* Focus style for lightbulb switch */
+.lightbulb-switch:focus-visible + .lightbulb-label {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 4px;
+}
+
+/* Focus style for analog clock */
+.bulb-analog:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 4px;
+}
+
+/* Reduce motion for liquid animation */
+@media (prefers-reduced-motion: reduce) {
+  .bulb-lava .bubble {
+    animation: none !important;
+  }
+  
+  .vintage-lamp {
+    transition: none !important;
+  }
+  
+  .lamp__eye {
+    transition: none !important;
+  }
+  
+  .lightbulb-label:before,
+  .lightbulb-label:after {
+    transition: none !important;
+  }
+  
+  .preview-liquid-light,
+  .preview-liquid-light::before {
+    animation: none !important;
+  }
+  
+  #liquid-canvas {
+    display: none !important;
+  }
+}
+
+/* Touch target improvements */
+.lamp__pull-cord {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.bulb-style-option {
+  min-width: 100px;
+  min-height: 100px;
+}
+
+/* Canvas pointer events */
+#liquid-canvas {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.lamp__pull-cord {
+  touch-action: manipulation;
+}

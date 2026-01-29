@@ -23,148 +23,148 @@ type ScheduleUpdate struct {
 }
 
 // Where appends a list predicates to the ScheduleUpdate builder.
-func (su *ScheduleUpdate) Where(ps ...predicate.Schedule) *ScheduleUpdate {
-	su.mutation.Where(ps...)
-	return su
+func (_u *ScheduleUpdate) Where(ps ...predicate.Schedule) *ScheduleUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetName sets the "name" field.
-func (su *ScheduleUpdate) SetName(s string) *ScheduleUpdate {
-	su.mutation.SetName(s)
-	return su
+func (_u *ScheduleUpdate) SetName(v string) *ScheduleUpdate {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (su *ScheduleUpdate) SetNillableName(s *string) *ScheduleUpdate {
-	if s != nil {
-		su.SetName(*s)
+func (_u *ScheduleUpdate) SetNillableName(v *string) *ScheduleUpdate {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return su
+	return _u
 }
 
 // SetWeekDays sets the "week_days" field.
-func (su *ScheduleUpdate) SetWeekDays(i []int) *ScheduleUpdate {
-	su.mutation.SetWeekDays(i)
-	return su
+func (_u *ScheduleUpdate) SetWeekDays(v []int) *ScheduleUpdate {
+	_u.mutation.SetWeekDays(v)
+	return _u
 }
 
-// AppendWeekDays appends i to the "week_days" field.
-func (su *ScheduleUpdate) AppendWeekDays(i []int) *ScheduleUpdate {
-	su.mutation.AppendWeekDays(i)
-	return su
+// AppendWeekDays appends value to the "week_days" field.
+func (_u *ScheduleUpdate) AppendWeekDays(v []int) *ScheduleUpdate {
+	_u.mutation.AppendWeekDays(v)
+	return _u
 }
 
 // SetHour sets the "hour" field.
-func (su *ScheduleUpdate) SetHour(i int) *ScheduleUpdate {
-	su.mutation.ResetHour()
-	su.mutation.SetHour(i)
-	return su
+func (_u *ScheduleUpdate) SetHour(v int) *ScheduleUpdate {
+	_u.mutation.ResetHour()
+	_u.mutation.SetHour(v)
+	return _u
 }
 
 // SetNillableHour sets the "hour" field if the given value is not nil.
-func (su *ScheduleUpdate) SetNillableHour(i *int) *ScheduleUpdate {
-	if i != nil {
-		su.SetHour(*i)
+func (_u *ScheduleUpdate) SetNillableHour(v *int) *ScheduleUpdate {
+	if v != nil {
+		_u.SetHour(*v)
 	}
-	return su
+	return _u
 }
 
-// AddHour adds i to the "hour" field.
-func (su *ScheduleUpdate) AddHour(i int) *ScheduleUpdate {
-	su.mutation.AddHour(i)
-	return su
+// AddHour adds value to the "hour" field.
+func (_u *ScheduleUpdate) AddHour(v int) *ScheduleUpdate {
+	_u.mutation.AddHour(v)
+	return _u
 }
 
 // SetMinute sets the "minute" field.
-func (su *ScheduleUpdate) SetMinute(i int) *ScheduleUpdate {
-	su.mutation.ResetMinute()
-	su.mutation.SetMinute(i)
-	return su
+func (_u *ScheduleUpdate) SetMinute(v int) *ScheduleUpdate {
+	_u.mutation.ResetMinute()
+	_u.mutation.SetMinute(v)
+	return _u
 }
 
 // SetNillableMinute sets the "minute" field if the given value is not nil.
-func (su *ScheduleUpdate) SetNillableMinute(i *int) *ScheduleUpdate {
-	if i != nil {
-		su.SetMinute(*i)
+func (_u *ScheduleUpdate) SetNillableMinute(v *int) *ScheduleUpdate {
+	if v != nil {
+		_u.SetMinute(*v)
 	}
-	return su
+	return _u
 }
 
-// AddMinute adds i to the "minute" field.
-func (su *ScheduleUpdate) AddMinute(i int) *ScheduleUpdate {
-	su.mutation.AddMinute(i)
-	return su
+// AddMinute adds value to the "minute" field.
+func (_u *ScheduleUpdate) AddMinute(v int) *ScheduleUpdate {
+	_u.mutation.AddMinute(v)
+	return _u
 }
 
 // SetOperation sets the "operation" field.
-func (su *ScheduleUpdate) SetOperation(s schedule.Operation) *ScheduleUpdate {
-	su.mutation.SetOperation(s)
-	return su
+func (_u *ScheduleUpdate) SetOperation(v schedule.Operation) *ScheduleUpdate {
+	_u.mutation.SetOperation(v)
+	return _u
 }
 
 // SetNillableOperation sets the "operation" field if the given value is not nil.
-func (su *ScheduleUpdate) SetNillableOperation(s *schedule.Operation) *ScheduleUpdate {
-	if s != nil {
-		su.SetOperation(*s)
+func (_u *ScheduleUpdate) SetNillableOperation(v *schedule.Operation) *ScheduleUpdate {
+	if v != nil {
+		_u.SetOperation(*v)
 	}
-	return su
+	return _u
 }
 
 // SetEnabled sets the "enabled" field.
-func (su *ScheduleUpdate) SetEnabled(b bool) *ScheduleUpdate {
-	su.mutation.SetEnabled(b)
-	return su
+func (_u *ScheduleUpdate) SetEnabled(v bool) *ScheduleUpdate {
+	_u.mutation.SetEnabled(v)
+	return _u
 }
 
 // SetNillableEnabled sets the "enabled" field if the given value is not nil.
-func (su *ScheduleUpdate) SetNillableEnabled(b *bool) *ScheduleUpdate {
-	if b != nil {
-		su.SetEnabled(*b)
+func (_u *ScheduleUpdate) SetNillableEnabled(v *bool) *ScheduleUpdate {
+	if v != nil {
+		_u.SetEnabled(*v)
 	}
-	return su
+	return _u
 }
 
 // SetAllowEditByOthers sets the "allow_edit_by_others" field.
-func (su *ScheduleUpdate) SetAllowEditByOthers(b bool) *ScheduleUpdate {
-	su.mutation.SetAllowEditByOthers(b)
-	return su
+func (_u *ScheduleUpdate) SetAllowEditByOthers(v bool) *ScheduleUpdate {
+	_u.mutation.SetAllowEditByOthers(v)
+	return _u
 }
 
 // SetNillableAllowEditByOthers sets the "allow_edit_by_others" field if the given value is not nil.
-func (su *ScheduleUpdate) SetNillableAllowEditByOthers(b *bool) *ScheduleUpdate {
-	if b != nil {
-		su.SetAllowEditByOthers(*b)
+func (_u *ScheduleUpdate) SetNillableAllowEditByOthers(v *bool) *ScheduleUpdate {
+	if v != nil {
+		_u.SetAllowEditByOthers(*v)
 	}
-	return su
+	return _u
 }
 
 // SetNotifyViaServerChan sets the "notify_via_server_chan" field.
-func (su *ScheduleUpdate) SetNotifyViaServerChan(b bool) *ScheduleUpdate {
-	su.mutation.SetNotifyViaServerChan(b)
-	return su
+func (_u *ScheduleUpdate) SetNotifyViaServerChan(v bool) *ScheduleUpdate {
+	_u.mutation.SetNotifyViaServerChan(v)
+	return _u
 }
 
 // SetNillableNotifyViaServerChan sets the "notify_via_server_chan" field if the given value is not nil.
-func (su *ScheduleUpdate) SetNillableNotifyViaServerChan(b *bool) *ScheduleUpdate {
-	if b != nil {
-		su.SetNotifyViaServerChan(*b)
+func (_u *ScheduleUpdate) SetNillableNotifyViaServerChan(v *bool) *ScheduleUpdate {
+	if v != nil {
+		_u.SetNotifyViaServerChan(*v)
 	}
-	return su
+	return _u
 }
 
 // Mutation returns the ScheduleMutation object of the builder.
-func (su *ScheduleUpdate) Mutation() *ScheduleMutation {
-	return su.mutation
+func (_u *ScheduleUpdate) Mutation() *ScheduleMutation {
+	return _u.mutation
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (su *ScheduleUpdate) Save(ctx context.Context) (int, error) {
-	return withHooks(ctx, su.sqlSave, su.mutation, su.hooks)
+func (_u *ScheduleUpdate) Save(ctx context.Context) (int, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (su *ScheduleUpdate) SaveX(ctx context.Context) int {
-	affected, err := su.Save(ctx)
+func (_u *ScheduleUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -172,21 +172,21 @@ func (su *ScheduleUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (su *ScheduleUpdate) Exec(ctx context.Context) error {
-	_, err := su.Save(ctx)
+func (_u *ScheduleUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (su *ScheduleUpdate) ExecX(ctx context.Context) {
-	if err := su.Exec(ctx); err != nil {
+func (_u *ScheduleUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (su *ScheduleUpdate) check() error {
-	if v, ok := su.mutation.Operation(); ok {
+func (_u *ScheduleUpdate) check() error {
+	if v, ok := _u.mutation.Operation(); ok {
 		if err := schedule.OperationValidator(v); err != nil {
 			return &ValidationError{Name: "operation", err: fmt.Errorf(`ent: validator failed for field "Schedule.operation": %w`, err)}
 		}
@@ -194,54 +194,54 @@ func (su *ScheduleUpdate) check() error {
 	return nil
 }
 
-func (su *ScheduleUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := su.check(); err != nil {
-		return n, err
+func (_u *ScheduleUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(schedule.Table, schedule.Columns, sqlgraph.NewFieldSpec(schedule.FieldID, field.TypeUUID))
-	if ps := su.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := su.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(schedule.FieldName, field.TypeString, value)
 	}
-	if value, ok := su.mutation.WeekDays(); ok {
+	if value, ok := _u.mutation.WeekDays(); ok {
 		_spec.SetField(schedule.FieldWeekDays, field.TypeJSON, value)
 	}
-	if value, ok := su.mutation.AppendedWeekDays(); ok {
+	if value, ok := _u.mutation.AppendedWeekDays(); ok {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, schedule.FieldWeekDays, value)
 		})
 	}
-	if value, ok := su.mutation.Hour(); ok {
+	if value, ok := _u.mutation.Hour(); ok {
 		_spec.SetField(schedule.FieldHour, field.TypeInt, value)
 	}
-	if value, ok := su.mutation.AddedHour(); ok {
+	if value, ok := _u.mutation.AddedHour(); ok {
 		_spec.AddField(schedule.FieldHour, field.TypeInt, value)
 	}
-	if value, ok := su.mutation.Minute(); ok {
+	if value, ok := _u.mutation.Minute(); ok {
 		_spec.SetField(schedule.FieldMinute, field.TypeInt, value)
 	}
-	if value, ok := su.mutation.AddedMinute(); ok {
+	if value, ok := _u.mutation.AddedMinute(); ok {
 		_spec.AddField(schedule.FieldMinute, field.TypeInt, value)
 	}
-	if value, ok := su.mutation.Operation(); ok {
+	if value, ok := _u.mutation.Operation(); ok {
 		_spec.SetField(schedule.FieldOperation, field.TypeEnum, value)
 	}
-	if value, ok := su.mutation.Enabled(); ok {
+	if value, ok := _u.mutation.Enabled(); ok {
 		_spec.SetField(schedule.FieldEnabled, field.TypeBool, value)
 	}
-	if value, ok := su.mutation.AllowEditByOthers(); ok {
+	if value, ok := _u.mutation.AllowEditByOthers(); ok {
 		_spec.SetField(schedule.FieldAllowEditByOthers, field.TypeBool, value)
 	}
-	if value, ok := su.mutation.NotifyViaServerChan(); ok {
+	if value, ok := _u.mutation.NotifyViaServerChan(); ok {
 		_spec.SetField(schedule.FieldNotifyViaServerChan, field.TypeBool, value)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, su.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{schedule.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -249,8 +249,8 @@ func (su *ScheduleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	su.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // ScheduleUpdateOne is the builder for updating a single Schedule entity.
@@ -262,155 +262,155 @@ type ScheduleUpdateOne struct {
 }
 
 // SetName sets the "name" field.
-func (suo *ScheduleUpdateOne) SetName(s string) *ScheduleUpdateOne {
-	suo.mutation.SetName(s)
-	return suo
+func (_u *ScheduleUpdateOne) SetName(v string) *ScheduleUpdateOne {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (suo *ScheduleUpdateOne) SetNillableName(s *string) *ScheduleUpdateOne {
-	if s != nil {
-		suo.SetName(*s)
+func (_u *ScheduleUpdateOne) SetNillableName(v *string) *ScheduleUpdateOne {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return suo
+	return _u
 }
 
 // SetWeekDays sets the "week_days" field.
-func (suo *ScheduleUpdateOne) SetWeekDays(i []int) *ScheduleUpdateOne {
-	suo.mutation.SetWeekDays(i)
-	return suo
+func (_u *ScheduleUpdateOne) SetWeekDays(v []int) *ScheduleUpdateOne {
+	_u.mutation.SetWeekDays(v)
+	return _u
 }
 
-// AppendWeekDays appends i to the "week_days" field.
-func (suo *ScheduleUpdateOne) AppendWeekDays(i []int) *ScheduleUpdateOne {
-	suo.mutation.AppendWeekDays(i)
-	return suo
+// AppendWeekDays appends value to the "week_days" field.
+func (_u *ScheduleUpdateOne) AppendWeekDays(v []int) *ScheduleUpdateOne {
+	_u.mutation.AppendWeekDays(v)
+	return _u
 }
 
 // SetHour sets the "hour" field.
-func (suo *ScheduleUpdateOne) SetHour(i int) *ScheduleUpdateOne {
-	suo.mutation.ResetHour()
-	suo.mutation.SetHour(i)
-	return suo
+func (_u *ScheduleUpdateOne) SetHour(v int) *ScheduleUpdateOne {
+	_u.mutation.ResetHour()
+	_u.mutation.SetHour(v)
+	return _u
 }
 
 // SetNillableHour sets the "hour" field if the given value is not nil.
-func (suo *ScheduleUpdateOne) SetNillableHour(i *int) *ScheduleUpdateOne {
-	if i != nil {
-		suo.SetHour(*i)
+func (_u *ScheduleUpdateOne) SetNillableHour(v *int) *ScheduleUpdateOne {
+	if v != nil {
+		_u.SetHour(*v)
 	}
-	return suo
+	return _u
 }
 
-// AddHour adds i to the "hour" field.
-func (suo *ScheduleUpdateOne) AddHour(i int) *ScheduleUpdateOne {
-	suo.mutation.AddHour(i)
-	return suo
+// AddHour adds value to the "hour" field.
+func (_u *ScheduleUpdateOne) AddHour(v int) *ScheduleUpdateOne {
+	_u.mutation.AddHour(v)
+	return _u
 }
 
 // SetMinute sets the "minute" field.
-func (suo *ScheduleUpdateOne) SetMinute(i int) *ScheduleUpdateOne {
-	suo.mutation.ResetMinute()
-	suo.mutation.SetMinute(i)
-	return suo
+func (_u *ScheduleUpdateOne) SetMinute(v int) *ScheduleUpdateOne {
+	_u.mutation.ResetMinute()
+	_u.mutation.SetMinute(v)
+	return _u
 }
 
 // SetNillableMinute sets the "minute" field if the given value is not nil.
-func (suo *ScheduleUpdateOne) SetNillableMinute(i *int) *ScheduleUpdateOne {
-	if i != nil {
-		suo.SetMinute(*i)
+func (_u *ScheduleUpdateOne) SetNillableMinute(v *int) *ScheduleUpdateOne {
+	if v != nil {
+		_u.SetMinute(*v)
 	}
-	return suo
+	return _u
 }
 
-// AddMinute adds i to the "minute" field.
-func (suo *ScheduleUpdateOne) AddMinute(i int) *ScheduleUpdateOne {
-	suo.mutation.AddMinute(i)
-	return suo
+// AddMinute adds value to the "minute" field.
+func (_u *ScheduleUpdateOne) AddMinute(v int) *ScheduleUpdateOne {
+	_u.mutation.AddMinute(v)
+	return _u
 }
 
 // SetOperation sets the "operation" field.
-func (suo *ScheduleUpdateOne) SetOperation(s schedule.Operation) *ScheduleUpdateOne {
-	suo.mutation.SetOperation(s)
-	return suo
+func (_u *ScheduleUpdateOne) SetOperation(v schedule.Operation) *ScheduleUpdateOne {
+	_u.mutation.SetOperation(v)
+	return _u
 }
 
 // SetNillableOperation sets the "operation" field if the given value is not nil.
-func (suo *ScheduleUpdateOne) SetNillableOperation(s *schedule.Operation) *ScheduleUpdateOne {
-	if s != nil {
-		suo.SetOperation(*s)
+func (_u *ScheduleUpdateOne) SetNillableOperation(v *schedule.Operation) *ScheduleUpdateOne {
+	if v != nil {
+		_u.SetOperation(*v)
 	}
-	return suo
+	return _u
 }
 
 // SetEnabled sets the "enabled" field.
-func (suo *ScheduleUpdateOne) SetEnabled(b bool) *ScheduleUpdateOne {
-	suo.mutation.SetEnabled(b)
-	return suo
+func (_u *ScheduleUpdateOne) SetEnabled(v bool) *ScheduleUpdateOne {
+	_u.mutation.SetEnabled(v)
+	return _u
 }
 
 // SetNillableEnabled sets the "enabled" field if the given value is not nil.
-func (suo *ScheduleUpdateOne) SetNillableEnabled(b *bool) *ScheduleUpdateOne {
-	if b != nil {
-		suo.SetEnabled(*b)
+func (_u *ScheduleUpdateOne) SetNillableEnabled(v *bool) *ScheduleUpdateOne {
+	if v != nil {
+		_u.SetEnabled(*v)
 	}
-	return suo
+	return _u
 }
 
 // SetAllowEditByOthers sets the "allow_edit_by_others" field.
-func (suo *ScheduleUpdateOne) SetAllowEditByOthers(b bool) *ScheduleUpdateOne {
-	suo.mutation.SetAllowEditByOthers(b)
-	return suo
+func (_u *ScheduleUpdateOne) SetAllowEditByOthers(v bool) *ScheduleUpdateOne {
+	_u.mutation.SetAllowEditByOthers(v)
+	return _u
 }
 
 // SetNillableAllowEditByOthers sets the "allow_edit_by_others" field if the given value is not nil.
-func (suo *ScheduleUpdateOne) SetNillableAllowEditByOthers(b *bool) *ScheduleUpdateOne {
-	if b != nil {
-		suo.SetAllowEditByOthers(*b)
+func (_u *ScheduleUpdateOne) SetNillableAllowEditByOthers(v *bool) *ScheduleUpdateOne {
+	if v != nil {
+		_u.SetAllowEditByOthers(*v)
 	}
-	return suo
+	return _u
 }
 
 // SetNotifyViaServerChan sets the "notify_via_server_chan" field.
-func (suo *ScheduleUpdateOne) SetNotifyViaServerChan(b bool) *ScheduleUpdateOne {
-	suo.mutation.SetNotifyViaServerChan(b)
-	return suo
+func (_u *ScheduleUpdateOne) SetNotifyViaServerChan(v bool) *ScheduleUpdateOne {
+	_u.mutation.SetNotifyViaServerChan(v)
+	return _u
 }
 
 // SetNillableNotifyViaServerChan sets the "notify_via_server_chan" field if the given value is not nil.
-func (suo *ScheduleUpdateOne) SetNillableNotifyViaServerChan(b *bool) *ScheduleUpdateOne {
-	if b != nil {
-		suo.SetNotifyViaServerChan(*b)
+func (_u *ScheduleUpdateOne) SetNillableNotifyViaServerChan(v *bool) *ScheduleUpdateOne {
+	if v != nil {
+		_u.SetNotifyViaServerChan(*v)
 	}
-	return suo
+	return _u
 }
 
 // Mutation returns the ScheduleMutation object of the builder.
-func (suo *ScheduleUpdateOne) Mutation() *ScheduleMutation {
-	return suo.mutation
+func (_u *ScheduleUpdateOne) Mutation() *ScheduleMutation {
+	return _u.mutation
 }
 
 // Where appends a list predicates to the ScheduleUpdate builder.
-func (suo *ScheduleUpdateOne) Where(ps ...predicate.Schedule) *ScheduleUpdateOne {
-	suo.mutation.Where(ps...)
-	return suo
+func (_u *ScheduleUpdateOne) Where(ps ...predicate.Schedule) *ScheduleUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (suo *ScheduleUpdateOne) Select(field string, fields ...string) *ScheduleUpdateOne {
-	suo.fields = append([]string{field}, fields...)
-	return suo
+func (_u *ScheduleUpdateOne) Select(field string, fields ...string) *ScheduleUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated Schedule entity.
-func (suo *ScheduleUpdateOne) Save(ctx context.Context) (*Schedule, error) {
-	return withHooks(ctx, suo.sqlSave, suo.mutation, suo.hooks)
+func (_u *ScheduleUpdateOne) Save(ctx context.Context) (*Schedule, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (suo *ScheduleUpdateOne) SaveX(ctx context.Context) *Schedule {
-	node, err := suo.Save(ctx)
+func (_u *ScheduleUpdateOne) SaveX(ctx context.Context) *Schedule {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -418,21 +418,21 @@ func (suo *ScheduleUpdateOne) SaveX(ctx context.Context) *Schedule {
 }
 
 // Exec executes the query on the entity.
-func (suo *ScheduleUpdateOne) Exec(ctx context.Context) error {
-	_, err := suo.Save(ctx)
+func (_u *ScheduleUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (suo *ScheduleUpdateOne) ExecX(ctx context.Context) {
-	if err := suo.Exec(ctx); err != nil {
+func (_u *ScheduleUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (suo *ScheduleUpdateOne) check() error {
-	if v, ok := suo.mutation.Operation(); ok {
+func (_u *ScheduleUpdateOne) check() error {
+	if v, ok := _u.mutation.Operation(); ok {
 		if err := schedule.OperationValidator(v); err != nil {
 			return &ValidationError{Name: "operation", err: fmt.Errorf(`ent: validator failed for field "Schedule.operation": %w`, err)}
 		}
@@ -440,17 +440,17 @@ func (suo *ScheduleUpdateOne) check() error {
 	return nil
 }
 
-func (suo *ScheduleUpdateOne) sqlSave(ctx context.Context) (_node *Schedule, err error) {
-	if err := suo.check(); err != nil {
+func (_u *ScheduleUpdateOne) sqlSave(ctx context.Context) (_node *Schedule, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(schedule.Table, schedule.Columns, sqlgraph.NewFieldSpec(schedule.FieldID, field.TypeUUID))
-	id, ok := suo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Schedule.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := suo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, schedule.FieldID)
 		for _, f := range fields {
@@ -462,52 +462,52 @@ func (suo *ScheduleUpdateOne) sqlSave(ctx context.Context) (_node *Schedule, err
 			}
 		}
 	}
-	if ps := suo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := suo.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(schedule.FieldName, field.TypeString, value)
 	}
-	if value, ok := suo.mutation.WeekDays(); ok {
+	if value, ok := _u.mutation.WeekDays(); ok {
 		_spec.SetField(schedule.FieldWeekDays, field.TypeJSON, value)
 	}
-	if value, ok := suo.mutation.AppendedWeekDays(); ok {
+	if value, ok := _u.mutation.AppendedWeekDays(); ok {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, schedule.FieldWeekDays, value)
 		})
 	}
-	if value, ok := suo.mutation.Hour(); ok {
+	if value, ok := _u.mutation.Hour(); ok {
 		_spec.SetField(schedule.FieldHour, field.TypeInt, value)
 	}
-	if value, ok := suo.mutation.AddedHour(); ok {
+	if value, ok := _u.mutation.AddedHour(); ok {
 		_spec.AddField(schedule.FieldHour, field.TypeInt, value)
 	}
-	if value, ok := suo.mutation.Minute(); ok {
+	if value, ok := _u.mutation.Minute(); ok {
 		_spec.SetField(schedule.FieldMinute, field.TypeInt, value)
 	}
-	if value, ok := suo.mutation.AddedMinute(); ok {
+	if value, ok := _u.mutation.AddedMinute(); ok {
 		_spec.AddField(schedule.FieldMinute, field.TypeInt, value)
 	}
-	if value, ok := suo.mutation.Operation(); ok {
+	if value, ok := _u.mutation.Operation(); ok {
 		_spec.SetField(schedule.FieldOperation, field.TypeEnum, value)
 	}
-	if value, ok := suo.mutation.Enabled(); ok {
+	if value, ok := _u.mutation.Enabled(); ok {
 		_spec.SetField(schedule.FieldEnabled, field.TypeBool, value)
 	}
-	if value, ok := suo.mutation.AllowEditByOthers(); ok {
+	if value, ok := _u.mutation.AllowEditByOthers(); ok {
 		_spec.SetField(schedule.FieldAllowEditByOthers, field.TypeBool, value)
 	}
-	if value, ok := suo.mutation.NotifyViaServerChan(); ok {
+	if value, ok := _u.mutation.NotifyViaServerChan(); ok {
 		_spec.SetField(schedule.FieldNotifyViaServerChan, field.TypeBool, value)
 	}
-	_node = &Schedule{config: suo.config}
+	_node = &Schedule{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, suo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{schedule.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -515,6 +515,6 @@ func (suo *ScheduleUpdateOne) sqlSave(ctx context.Context) (_node *Schedule, err
 		}
 		return nil, err
 	}
-	suo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

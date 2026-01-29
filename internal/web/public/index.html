@@ -1,189 +1,876 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="dark light">
-    <meta name="theme-color" content="#514878">
-    <title>懒猫关灯</title>
-    <link rel="stylesheet" href="/static/css/normalize-5.0.0.min.css">
-    <link rel="stylesheet" href="/static/css/style.css">
-    <!-- 添加图标库 -->
-    <link rel="stylesheet" href="/static/css/remixicon.css">
-</head>
-<body>
-    <!-- 动效背景容器 -->
-    <div class="background-container">
-        <div class="background-1"></div>
-        <div class="background-2"></div>
-    </div>
-    
-    <div id="app">
-        <!-- 顶部导航栏 -->
-        <header class="app-header">
-            <div class="header-title">懒猫关灯</div>
-            <div class="header-actions">
-                <button id="theme-toggle" aria-label="切换主题">
-                    <!-- 暗色主题图标 -->
-                    <svg id="dark-icon" t="1755228574750" class="icon theme-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="9349" width="24" height="24" style="display: none;" aria-hidden="true" focusable="false">
-                        <path d="M512 832c-179.2 0-320-140.8-320-320s140.8-320 320-320 320 140.8 320 320S691.2 832 512 832M512 896c211.2 0 384-172.8 384-384s-172.8-384-384-384S128 300.8 128 512 300.8 896 512 896L512 896zM800 512c0-160-128-288-288-288l0 576C672 800 800 672 800 512zM480 608 243.2 608C249.6 620.8 256 640 262.4 652.8l217.6 0L480 608zM480 416 480 371.2 262.4 371.2C256 384 249.6 403.2 243.2 416L480 416zM480 300.8 480 256 384 256C358.4 268.8 339.2 281.6 320 300.8 320 300.8zM224 537.6l256 0L480 492.8l-256 0c0 6.4 0 12.8 0 19.2S224 524.8 224 537.6zM480 723.2 320 723.2c19.2 19.2 38.4 32 64 44.8l96 0L480 723.2z" fill="currentColor" p-id="9349"></path>
-                    </svg>
-                    <!-- 明亮主题图标 -->
-                    <svg id="light-icon" t="1755228625494" class="icon theme-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10333" width="24" height="24" style="display: none;" aria-hidden="true" focusable="false">
-                        <path d="M512 192c179.2 0 320 140.8 320 320s-140.8 320-320 320-320-140.8-320-320S332.8 192 512 192M512 128C300.8 128 128 300.8 128 512s172.8 384 384 384 384-172.8 384-384S723.2 128 512 128L512 128z" fill="currentColor" p-id="10334"></path>
-                        <path d="M544 416l236.8 0C774.4 403.2 768 384 761.6 371.2L544 371.2 544 416z" fill="currentColor" p-id="10335"></path>
-                        <path d="M544 608l0 44.8 217.6 0c6.4-12.8 12.8-32 19.2-44.8L544 608z" fill="currentColor" p-id="10336"></path>
-                        <path d="M544 723.2 544 768 640 768c25.6-12.8 44.8-25.6 64-44.8L544 723.2z" fill="currentColor" p-id="10337"></path>
-                        <path d="M800 492.8l-256 0 0 44.8 256 0c0-6.4 0-12.8 0-25.6S800 499.2 800 492.8z" fill="currentColor" p-id="10338"></path>
-                        <path d="M544 300.8 704 300.8c-19.2-19.2-38.4-32-64-44.8L544 256 544 300.8z" fill="currentColor" p-id="10339"></path>
-                    </svg>
-                </button>
-                <a href="/config.html" aria-label="配置">
-                    <svg t="1757391383098" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5366" width="24" height="24" aria-hidden="true" focusable="false">
-                        <path d="M1008.57728 218.21568l0.13952-1.12-0.17024-0.84736 0.06656-0.53504 0.0704-0.55936 0.03456-0.28032-0.21504-0.28544 0.0384-0.30464 0.0704-0.56064-0.47616-0.6016 0.06912-0.55936 0.06656-0.53504-0.20096-0.59392-0.24704-0.03072 0.13696-1.0944-0.4736-0.6272 0.0704-0.55936 0.03456-0.28032 0.03456-0.28032-0.47616-0.6016-0.512-0.34816 0.03584-0.27904-0.92416-1.22624 0.06912-0.56064-0.47232-0.6272-0.45184-0.59904-0.4736-0.6272 0.06784-0.53504-0.44928-0.62464-0.29568-0.03584-0.27136-0.03456-0.18048-0.56448-0.1984-0.61952-0.27136-0.03328-0.23552-0.31488 0.03072-0.256-0.512-0.06528 0.03456-0.27904-0.54272-0.06784 0.03456-0.28032 0.03456-0.28032-0.512-0.064-0.50048-0.60544-0.512-0.064 0.03456-0.28032-0.54272-0.06784-0.99072-0.69248-0.2048-0.56832-0.27136-0.03328-0.512-0.064-0.27136-0.03456-0.1984-0.61952-0.24704-0.03072-0.29568-0.03584-0.54272-0.06784-0.45184-0.59904-0.54272-0.06784 0.0704-0.56064-0.512-0.064-0.54272-0.06784-0.512-0.064-0.87296-0.10496-0.1792-0.56576-0.27136-0.03328-0.27136-0.03328-0.27136-0.03456-0.24704-0.03072-0.27136-0.03328-0.54272-0.06784-0.24704-0.03072-0.54272-0.06784-1.62816-0.20352-0.512-0.064-0.54272-0.06784-0.512-0.064-0.27136-0.03456-0.78976-0.09856-0.29568-0.03584-0.85632 0.4352-0.27136-0.03328-0.27136-0.03456-0.512-0.064-0.06912 0.55936-0.54272-0.06784-0.512-0.064-0.60928 0.46592-0.56704-0.0704-0.512-0.064L32.83328 437.59104a24.11136 24.11136 0 0 0-17.12768 28.672 23.552 23.552 0 0 0 12.22912 15.24736l257.60128 145.79456 7.6672 164.77312a22.87488 22.87488 0 0 0 23.808 22.2464 21.78688 21.78688 0 0 0 13.81376-6.10816l113.43104-91.1168 194.688 110.5088a22.64576 22.64576 0 0 0 30.92992-8.7552L1005.01248 229.5296l0.61184-0.49152 0.03584-0.28032 0.03072-0.256 0.24704 0.03072 0.0704-0.55936 0.27136 0.03328 0.03456-0.28032 0.06656-0.53376 0.03456-0.28032 0.30592-0.24576 0.30976-0.27136 0.06656-0.53504 0.31744-0.52864 0.06656-0.53376 0.06912-0.56064 0.06656-0.53376 0.0704-0.56064 0.37504-0.80512 0.34176-0.52608 0.44416-3.56352-0.27136-0.03328z m-700.544 367.90912L100.04864 468.94464l730.19648-187.5776L308.03328 586.1248z m28.31872 158.12096l-3.712-90.08384 68.4672 38.79808-64.768 51.28576z m305.8048 31.40608L354.10944 612.6208l569.64864-332.18048-281.6 495.21152z" fill="currentColor" p-id="5367"></path>
-                    </svg>
-                </a>
-                <button id="add-schedule-btn" aria-label="添加定时任务">
-                    <i class="ri-add-line"></i>
-                </button>
-            </div>
-        </header>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#514878" />
+        <title>懒猫小灯</title>
+        <link rel="stylesheet" href="/static/css/normalize-5.0.0.min.css" />
+        <link rel="stylesheet" href="/static/css/style.css" />
+        <!-- 添加图标库 -->
+        <link rel="stylesheet" href="/static/css/remixicon.css" />
+    </head>
+    <body>
+        <!-- 动效背景容器 -->
+        <div class="background-container">
+            <div class="background-1"></div>
+            <div class="background-2"></div>
+        </div>
 
-        <!-- 用户信息区域 -->
-        <section class="user-info-section">
-            <div class="user-profile">
-                <div class="user-avatar">
-                    <i class="ri-user-3-line" aria-hidden="true" role="img" aria-label="用户头像"></i>
-                </div>
-                <div class="user-details">
-                    <div class="user-name">加载中…</div>
-                    <div class="user-role">角色: 加载中…</div>
-                </div>
-                <div class="user-actions">
-                    <button id="logout-btn" aria-label="登出" title="退出登录" class="logout-button">
-                        <i class="ri-logout-circle-r-line"></i>
-                        <span>退出</span>
+        <div id="app">
+            <!-- 顶部导航栏 -->
+            <header class="app-header">
+                <div class="header-title">懒猫小灯</div>
+                <div class="header-actions">
+                    <button id="theme-toggle" aria-label="切换主题">
+                        <!-- 暗色主题图标 -->
+                        <svg
+                            id="dark-icon"
+                            t="1755228574750"
+                            class="icon theme-icon"
+                            viewBox="0 0 1024 1024"
+                            version="1.1"
+                            xmlns="http://www.w3.org/2000/svg"
+                            p-id="9349"
+                            width="24"
+                            height="24"
+                            style="display: none"
+                            aria-hidden="true"
+                            focusable="false"
+                        >
+                            <path
+                                d="M512 832c-179.2 0-320-140.8-320-320s140.8-320 320-320 320 140.8 320 320S691.2 832 512 832M512 896c211.2 0 384-172.8 384-384s-172.8-384-384-384S128 300.8 128 512 300.8 896 512 896L512 896zM800 512c0-160-128-288-288-288l0 576C672 800 800 672 800 512zM480 608 243.2 608C249.6 620.8 256 640 262.4 652.8l217.6 0L480 608zM480 416 480 371.2 262.4 371.2C256 384 249.6 403.2 243.2 416L480 416zM480 300.8 480 256 384 256C358.4 268.8 339.2 281.6 320 300.8 320 300.8zM224 537.6l256 0L480 492.8l-256 0c0 6.4 0 12.8 0 19.2S224 524.8 224 537.6zM480 723.2 320 723.2c19.2 19.2 38.4 32 64 44.8l96 0L480 723.2z"
+                                fill="currentColor"
+                                p-id="9349"
+                            ></path>
+                        </svg>
+                        <!-- 明亮主题图标 -->
+                        <svg
+                            id="light-icon"
+                            t="1755228625494"
+                            class="icon theme-icon"
+                            viewBox="0 0 1024 1024"
+                            version="1.1"
+                            xmlns="http://www.w3.org/2000/svg"
+                            p-id="10333"
+                            width="24"
+                            height="24"
+                            style="display: none"
+                            aria-hidden="true"
+                            focusable="false"
+                        >
+                            <path
+                                d="M512 192c179.2 0 320 140.8 320 320s-140.8 320-320 320-320-140.8-320-320S332.8 192 512 192M512 128C300.8 128 128 300.8 128 512s172.8 384 384 384 384-172.8 384-384S723.2 128 512 128L512 128z"
+                                fill="currentColor"
+                                p-id="10334"
+                            ></path>
+                            <path
+                                d="M544 416l236.8 0C774.4 403.2 768 384 761.6 371.2L544 371.2 544 416z"
+                                fill="currentColor"
+                                p-id="10335"
+                            ></path>
+                            <path
+                                d="M544 608l0 44.8 217.6 0c6.4-12.8 12.8-32 19.2-44.8L544 608z"
+                                fill="currentColor"
+                                p-id="10336"
+                            ></path>
+                            <path
+                                d="M544 723.2 544 768 640 768c25.6-12.8 44.8-25.6 64-44.8L544 723.2z"
+                                fill="currentColor"
+                                p-id="10337"
+                            ></path>
+                            <path
+                                d="M800 492.8l-256 0 0 44.8 256 0c0-6.4 0-12.8 0-25.6S800 499.2 800 492.8z"
+                                fill="currentColor"
+                                p-id="10338"
+                            ></path>
+                            <path
+                                d="M544 300.8 704 300.8c-19.2-19.2-38.4-32-64-44.8L544 256 544 300.8z"
+                                fill="currentColor"
+                                p-id="10339"
+                            ></path>
+                        </svg>
+                    </button>
+                    <a href="/config.html" aria-label="配置">
+                        <svg
+                            t="1757391383098"
+                            class="icon"
+                            viewBox="0 0 1024 1024"
+                            version="1.1"
+                            xmlns="http://www.w3.org/2000/svg"
+                            p-id="5366"
+                            width="24"
+                            height="24"
+                            aria-hidden="true"
+                            focusable="false"
+                        >
+                            <path
+                                d="M1008.57728 218.21568l0.13952-1.12-0.17024-0.84736 0.06656-0.53504 0.0704-0.55936 0.03456-0.28032-0.21504-0.28544 0.0384-0.30464 0.0704-0.56064-0.47616-0.6016 0.06912-0.55936 0.06656-0.53504-0.20096-0.59392-0.24704-0.03072 0.13696-1.0944-0.4736-0.6272 0.0704-0.55936 0.03456-0.28032 0.03456-0.28032-0.47616-0.6016-0.512-0.34816 0.03584-0.27904-0.92416-1.22624 0.06912-0.56064-0.47232-0.6272-0.45184-0.59904-0.4736-0.6272 0.06784-0.53504-0.44928-0.62464-0.29568-0.03584-0.27136-0.03456-0.18048-0.56448-0.1984-0.61952-0.27136-0.03328-0.23552-0.31488 0.03072-0.256-0.512-0.06528 0.03456-0.27904-0.54272-0.06784 0.03456-0.28032 0.03456-0.28032-0.512-0.064-0.50048-0.60544-0.512-0.064 0.03456-0.28032-0.54272-0.06784-0.99072-0.69248-0.2048-0.56832-0.27136-0.03328-0.512-0.064-0.27136-0.03456-0.1984-0.61952-0.24704-0.03072-0.29568-0.03584-0.54272-0.06784-0.45184-0.59904-0.54272-0.06784 0.0704-0.56064-0.512-0.064-0.54272-0.06784-0.512-0.064-0.87296-0.10496-0.1792-0.56576-0.27136-0.03328-0.27136-0.03328-0.27136-0.03456-0.24704-0.03072-0.27136-0.03328-0.54272-0.06784-0.24704-0.03072-0.54272-0.06784-1.62816-0.20352-0.512-0.064-0.54272-0.06784-0.512-0.064-0.27136-0.03456-0.78976-0.09856-0.29568-0.03584-0.85632 0.4352-0.27136-0.03328-0.27136-0.03456-0.512-0.064-0.06912 0.55936-0.54272-0.06784-0.512-0.064-0.60928 0.46592-0.56704-0.0704-0.512-0.064L32.83328 437.59104a24.11136 24.11136 0 0 0-17.12768 28.672 23.552 23.552 0 0 0 12.22912 15.24736l257.60128 145.79456 7.6672 164.77312a22.87488 22.87488 0 0 0 23.808 22.2464 21.78688 21.78688 0 0 0 13.81376-6.10816l113.43104-91.1168 194.688 110.5088a22.64576 22.64576 0 0 0 30.92992-8.7552L1005.01248 229.5296l0.61184-0.49152 0.03584-0.28032 0.03072-0.256 0.24704 0.03072 0.0704-0.55936 0.27136 0.03328 0.03456-0.28032 0.06656-0.53376 0.03456-0.28032 0.30592-0.24576 0.30976-0.27136 0.06656-0.53504 0.31744-0.52864 0.06656-0.53376 0.06912-0.56064 0.06656-0.53376 0.0704-0.56064 0.37504-0.80512 0.34176-0.52608 0.44416-3.56352-0.27136-0.03328z m-700.544 367.90912L100.04864 468.94464l730.19648-187.5776L308.03328 586.1248z m28.31872 158.12096l-3.712-90.08384 68.4672 38.79808-64.768 51.28576z m305.8048 31.40608L354.10944 612.6208l569.64864-332.18048-281.6 495.21152z"
+                                fill="currentColor"
+                                p-id="5367"
+                            ></path>
+                        </svg>
+                    </a>
+                    <button id="add-schedule-btn" aria-label="添加定时任务">
+                        <i class="ri-add-line"></i>
                     </button>
                 </div>
-            </div>
-            <div class="device-info">
-                <div class="device-id">设备ID: 加载中…</div>
-                <div class="device-version">版本: 加载中…</div>
-            </div>
-        </section>
+            </header>
 
-        <!-- LED当前状态展示 -->
-        <section class="led-status-section">
-            <div class="switch">
-                <input type="checkbox" name="toggle" id="led-toggle">
-                <label for="led-toggle">
-                    <i class="bulb">
-                        <span class="bulb-center"></span>
-                        <span class="filament-1"></span>
-                        <span class="filament-2"></span>
-                        <span class="reflections">
-                            <span></span>
-                        </span>
-                        <span class="sparks">
-                            <i class="spark1"></i>
-                            <i class="spark2"></i>
-                            <i class="spark3"></i>
-                            <i class="spark4"></i>
-                        </span>
-                    </i>
-                </label>
-            </div>
-            <div class="led-status-text">当前状态: <span id="led-status">加载中…</span></div>
-        </section>
+            <!-- 用户信息区域 -->
+            <section class="user-info-section">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <i
+                            class="ri-user-3-line"
+                            aria-hidden="true"
+                            role="img"
+                            aria-label="用户头像"
+                        ></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name">加载中…</div>
+                        <div class="user-role">角色: 加载中…</div>
+                    </div>
+                    <div class="user-actions">
+                        <button
+                            id="logout-btn"
+                            aria-label="登出"
+                            title="退出登录"
+                            class="logout-button"
+                        >
+                            <i class="ri-logout-circle-r-line"></i>
+                            <span>退出</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="device-info">
+                    <div class="device-id">设备ID: 加载中…</div>
+                    <div class="device-version">版本: 加载中…</div>
+                </div>
+            </section>
 
-        <!-- 定时任务列表 -->
-        <section class="schedules-section">
-            <h2 class="section-title">定时任务</h2>
-            <div class="schedules-list" id="schedules-list">
-                <!-- 定时任务将通过JavaScript动态插入 -->
-                <div class="empty-state">
-                    <i class="ri-time-line" aria-hidden="true" role="img" aria-label="时钟图标"></i>
-                    <p>暂无定时任务，点击右上角添加</p>
+            <!-- LED当前状态展示 -->
+            <section class="led-status-section">
+                <!-- 经典灯泡样式 -->
+                <div class="bulb-container bulb-classic active">
+                    <div class="switch">
+                        <input type="checkbox" name="toggle" id="led-toggle" />
+                        <label for="led-toggle">
+                            <i class="bulb">
+                                <span class="bulb-center"></span>
+                                <span class="filament-1"></span>
+                                <span class="filament-2"></span>
+                                <span class="reflections">
+                                    <span></span>
+                                </span>
+                                <span class="sparks">
+                                    <i class="spark1"></i>
+                                    <i class="spark2"></i>
+                                    <i class="spark3"></i>
+                                    <i class="spark4"></i>
+                                </span>
+                            </i>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 熔岩灯样式 -->
+                <div
+                    class="bulb-container bulb-lava"
+                    role="button"
+                    tabindex="0"
+                    aria-label="熔岩灯开关"
+                >
+                    <div class="glow-lava"></div>
+                    <div class="frame-lava">
+                        <div class="top-lava"></div>
+                        <div class="body-lamp">
+                            <div class="gooey">
+                                <div class="bubble"></div>
+                                <div class="bubble"></div>
+                                <div class="bubble"></div>
+                                <div class="bubble"></div>
+                                <div class="bubble"></div>
+                            </div>
+                        </div>
+                        <div class="base-lamp"></div>
+                        <div class="base-lava"></div>
+                    </div>
+                </div>
+
+                <!-- 老式台灯样式 -->
+                <div
+                    class="bulb-container bulb-vintage"
+                    role="button"
+                    tabindex="0"
+                    aria-label="老式台灯开关"
+                >
+                    <svg
+                        class="vintage-lamp"
+                        viewBox="0 0 333 484"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        role="img"
+                        aria-label="老式台灯"
+                    >
+                        <g class="lamp__shade shade">
+                            <ellipse
+                                class="shade__opening"
+                                cx="165"
+                                cy="220"
+                                rx="130"
+                                ry="20"
+                            />
+                            <ellipse
+                                class="shade__opening-shade"
+                                cx="165"
+                                cy="220"
+                                rx="130"
+                                ry="20"
+                                fill="url(#opening-shade)"
+                            />
+                        </g>
+                        <g class="lamp__base base">
+                            <path
+                                class="base__side"
+                                d="M165 464c44.183 0 80-8.954 80-20v-14h-22.869c-14.519-3.703-34.752-6-57.131-6-22.379 0-42.612 2.297-57.131 6H85v14c0 11.046 35.817 20 80 20z"
+                            />
+                            <path
+                                d="M165 464c44.183 0 80-8.954 80-20v-14h-22.869c-14.519-3.703-34.752-6-57.131-6-22.379 0-42.612 2.297-57.131 6H85v14c0 11.046 35.817 20 80 20z"
+                                fill="url(#side-shading)"
+                            />
+                            <ellipse
+                                class="base__top"
+                                cx="165"
+                                cy="430"
+                                rx="80"
+                                ry="20"
+                            />
+                            <ellipse
+                                cx="165"
+                                cy="430"
+                                rx="80"
+                                ry="20"
+                                fill="url(#base-shading)"
+                            />
+                        </g>
+                        <g class="lamp__post post">
+                            <path
+                                class="post__body"
+                                d="M180 142h-30v286c0 3.866 6.716 7 15 7 8.284 0 15-3.134 15-7V142z"
+                            />
+                            <path
+                                d="M180 142h-30v286c0 3.866 6.716 7 15 7 8.284 0 15-3.134 15-7V142z"
+                                fill="url(#post-shading)"
+                            />
+                        </g>
+                        <g class="lamp__cords cords">
+                            <line
+                                class="cord cord--main"
+                                x1="124"
+                                y2="348"
+                                x2="124"
+                                y1="190"
+                                stroke-width="6"
+                                stroke-linecap="round"
+                            />
+                        </g>
+                        <path
+                            class="lamp__light"
+                            d="M290.5 193H39L0 463.5c0 11.046 75.478 20 165.5 20s167-11.954 167-23l-42-267.5z"
+                            fill="url(#light)"
+                        />
+                        <g class="lamp__top top">
+                            <path
+                                class="top__body"
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M164.859 0c55.229 0 100 8.954 100 20l29.859 199.06C291.529 208.451 234.609 200 164.859 200S38.189 208.451 35 219.06L64.859 20c0-11.046 44.772-20 100-20z"
+                            />
+                            <path
+                                class="top__shading"
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M164.859 0c55.229 0 100 8.954 100 20l29.859 199.06C291.529 208.451 234.609 200 164.859 200S38.189 208.451 35 219.06L64.859 20c0-11.046 44.772-20 100-20z"
+                                fill="url(#top-shading)"
+                            />
+                        </g>
+                        <g class="lamp__face face">
+                            <g class="lamp__mouth">
+                                <path
+                                    d="M165 178c19.882 0 36-16.118 36-36h-72c0 19.882 16.118 36 36 36z"
+                                    fill="#141414"
+                                />
+                                <clipPath
+                                    class="lamp__feature"
+                                    id="mouth"
+                                    x="129"
+                                    y="142"
+                                    width="72"
+                                    height="36"
+                                >
+                                    <path
+                                        d="M165 178c19.882 0 36-16.118 36-36h-72c0 19.882 16.118 36 36 36z"
+                                        fill="#141414"
+                                    />
+                                </clipPath>
+                                <g clip-path="url(#mouth)">
+                                    <circle
+                                        class="lamp__tongue"
+                                        cx="179.4"
+                                        cy="172.6"
+                                        r="18"
+                                    />
+                                </g>
+                            </g>
+                            <g class="lamp__eyes">
+                                <path
+                                    class="lamp__eye lamp__stroke"
+                                    d="M115 135c0-5.523-5.82-10-13-10s-13 4.477-13 10"
+                                    stroke-width="4"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                                <path
+                                    class="lamp__eye lamp__stroke"
+                                    d="M241 135c0-5.523-5.82-10-13-10s-13 4.477-13 10"
+                                    stroke-width="4"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                            </g>
+                        </g>
+                        <defs>
+                            <linearGradient
+                                id="opening-shade"
+                                x1="35"
+                                y1="220"
+                                x2="295"
+                                y2="220"
+                                gradientUnits="userSpaceOnUse"
+                            >
+                                <stop />
+                                <stop
+                                    offset="1"
+                                    stop-color="var(--shade)"
+                                    stop-opacity="0"
+                                />
+                            </linearGradient>
+                            <linearGradient
+                                id="base-shading"
+                                x1="85"
+                                y1="444"
+                                x2="245"
+                                y2="444"
+                                gradientUnits="userSpaceOnUse"
+                            >
+                                <stop stop-color="var(--b-1)" />
+                                <stop
+                                    offset="0.8"
+                                    stop-color="var(--b-2)"
+                                    stop-opacity="0"
+                                />
+                            </linearGradient>
+                            <linearGradient
+                                id="side-shading"
+                                x1="119"
+                                y1="430"
+                                x2="245"
+                                y2="430"
+                                gradientUnits="userSpaceOnUse"
+                            >
+                                <stop stop-color="var(--b-3)" />
+                                <stop
+                                    offset="1"
+                                    stop-color="var(--b-4)"
+                                    stop-opacity="0"
+                                />
+                            </linearGradient>
+                            <linearGradient
+                                id="post-shading"
+                                x1="150"
+                                y1="288"
+                                x2="180"
+                                y2="288"
+                                gradientUnits="userSpaceOnUse"
+                            >
+                                <stop stop-color="var(--b-1)" />
+                                <stop
+                                    offset="1"
+                                    stop-color="var(--b-2)"
+                                    stop-opacity="0"
+                                />
+                            </linearGradient>
+                            <linearGradient
+                                id="light"
+                                x1="165.5"
+                                y1="218.5"
+                                x2="165.5"
+                                y2="483.5"
+                                gradientUnits="userSpaceOnUse"
+                            >
+                                <stop
+                                    stop-color="var(--l-1)"
+                                    stop-opacity=".2"
+                                />
+                                <stop
+                                    offset="1"
+                                    stop-color="var(--l-2)"
+                                    stop-opacity="0"
+                                />
+                            </linearGradient>
+                            <linearGradient
+                                id="top-shading"
+                                x1="56"
+                                y1="110"
+                                x2="295"
+                                y2="110"
+                                gradientUnits="userSpaceOnUse"
+                            >
+                                <stop
+                                    stop-color="var(--t-1)"
+                                    stop-opacity=".8"
+                                />
+                                <stop
+                                    offset="1"
+                                    stop-color="var(--t-2)"
+                                    stop-opacity="0"
+                                />
+                            </linearGradient>
+                        </defs>
+                        <circle
+                            class="lamp__pull-cord"
+                            cx="124"
+                            cy="347"
+                            r="12"
+                            fill="#C4C4C4"
+                            role="button"
+                            tabindex="0"
+                            aria-label="拉绳开关"
+                        />
+                    </svg>
+                </div>
+
+                <!-- 液态光效样式 -->
+                <div
+                    class="bulb-container bulb-liquid"
+                    role="button"
+                    tabindex="0"
+                    aria-label="液态光效开关"
+                >
+                    <canvas
+                        id="liquid-canvas"
+                        role="img"
+                        aria-label="液态光效动画"
+                    ></canvas>
+                    <div class="liquid-title" aria-hidden="true">
+                        Liquid Lights
+                    </div>
+                </div>
+
+                <!-- 灯泡开关样式 -->
+                <div class="bulb-container bulb-lightbulb">
+                    <input
+                        class="lightbulb-switch"
+                        type="checkbox"
+                        id="lightbulb-toggle"
+                    />
+                    <label
+                        for="lightbulb-toggle"
+                        class="lightbulb-label"
+                    ></label>
+                </div>
+
+                <!-- 点阵时钟样式 -->
+                <div
+                    class="bulb-container bulb-analog"
+                    role="button"
+                    tabindex="0"
+                    aria-label="点阵时钟"
+                >
+                    <div class="analog-clock" data-time="000000">
+                        <div class="analog-row">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                        <div class="analog-row">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                        <div class="analog-row">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                        <div class="analog-row">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                        <div class="analog-row">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                        <div class="analog-row">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                        <div class="analog-row">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="led-status-text">
+                    当前状态: <span id="led-status">加载中…</span>
+                </div>
+
+                <!-- 灯泡样式切换按钮 -->
+                <button id="bulb-style-toggle" aria-label="选择灯泡样式">
+                    <svg
+                        class="bulb-style-icon"
+                        viewBox="0 0 1024 1024"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M802.141549 1023.96684c-2.951567 0-5.789613-0.681131-8.514137-2.043393L511.412161 873.663947 228.175213 1021.923447c-6.130178 3.178611-13.622619 2.724524-19.29871-1.475783-5.676091-4.086786-8.400615-11.011617-7.265396-17.822926l54.149909-315.023058L26.901022 464.758342c-4.99496-4.881438-6.811309-12.146835-4.654395-18.731101 2.156915-6.584266 7.946528-11.465704 14.757837-12.4874L352.935696 388.244633 494.951497 101.602031c3.065089-6.2437 9.422311-10.216964 16.347142-10.216964s13.282053 3.973264 16.347142 10.216964L668.866929 388.244633l315.931232 45.295208c6.924831 1.021696 12.600922 5.789613 14.757837 12.4874 2.156915 6.584266 0.340565 13.849662-4.654395 18.731101L766.041609 687.488158l54.149909 315.023058c1.135218 6.811309-1.589306 13.849662-7.265396 17.936448-3.292133 2.383958-7.038353 3.519177-10.784573 3.519176z m-723.134011-559.549064l209.220719 203.544628c4.313829 4.200307 6.2437 10.216964 5.222004 16.233621l-49.495514 288.118386 258.829755-135.545056c5.335526-2.724524 11.692748-2.724524 17.028274 0l257.921581 135.431534-49.495515-288.004864c-1.021696-5.903135 0.908175-12.033313 5.222004-16.233621l209.220719-203.544628-288.685995-41.321943c-6.016657-0.908175-11.125139-4.654395-13.849662-9.98992L511.298639 150.984024 381.429674 413.105913c-2.724524 5.449047-7.833006 9.081746-13.736141 9.98992L79.007538 464.417776z"
+                        />
+                        <path
+                            d="M81.732062 393.126072c-10.103442 0-18.277013-8.173571-18.277013-18.277014V18.277013C63.341527 8.173571 71.62862 0 81.732062 0s18.277013 8.173571 18.277014 18.277013v356.572045c0 10.103442-8.287093 18.277013-18.277014 18.277014zM255.420451 301.741005c-10.103442 0-18.277013-8.173571-18.277014-18.277014V18.277013c0-10.103442 8.173571-18.277013 18.277014-18.277013s18.277013 8.173571 18.277013 18.277013v265.186978c0 10.103442-8.173571 18.277013-18.277013 18.277014zM767.403871 301.741005c-10.103442 0-18.277013-8.173571-18.277014-18.277014V18.277013c0-10.103442 8.173571-18.277013 18.277014-18.277013 10.103442 0 18.277013 8.173571 18.277013 18.277013v265.186978c0 10.103442-8.173571 18.277013-18.277013 18.277014zM950.174005 393.126072c-10.103442 0-18.277013-8.173571-18.277013-18.277014V18.277013c0-10.103442 8.173571-18.277013 18.277013-18.277013 10.103442 0 18.277013 8.173571 18.277014 18.277013v356.572045c0.113522 10.103442-8.173571 18.277013-18.277014 18.277014z"
+                        />
+                    </svg>
+                </button>
+            </section>
+
+            <!-- 定时任务列表 -->
+            <section class="schedules-section">
+                <h2 class="section-title">定时任务</h2>
+                <div class="schedules-list" id="schedules-list">
+                    <!-- 定时任务将通过JavaScript动态插入 -->
+                    <div class="empty-state">
+                        <i
+                            class="ri-time-line"
+                            aria-hidden="true"
+                            role="img"
+                            aria-label="时钟图标"
+                        ></i>
+                        <p>暂无定时任务，点击右上角添加</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 添加/编辑定时任务模态框 -->
+            <div class="modal" id="schedule-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="modal-title">添加定时任务</h3>
+                        <button id="close-modal-btn" aria-label="关闭">
+                            <i class="ri-close-line"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="schedule-form">
+                            <div class="form-group">
+                                <label for="schedule-name">任务名称</label>
+                                <input
+                                    type="text"
+                                    id="schedule-name"
+                                    placeholder="请输入任务名称"
+                                    required
+                                />
+                            </div>
+                            <div class="form-group time-picker-group">
+                                <div class="time-picker">
+                                    <label for="start-time">执行时间</label>
+                                    <input
+                                        type="time"
+                                        id="start-time"
+                                        required
+                                    />
+                                </div>
+                                <div class="operation-picker">
+                                    <label for="operation">操作</label>
+                                    <select id="operation" required>
+                                        <option value="on">开灯</option>
+                                        <option value="off">关灯</option>
+                                        <option value="shutdown">关机</option>
+                                        <option value="reboot">重启</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label id="repeat-label">重复</label>
+                                <div
+                                    class="repeat-days"
+                                    role="group"
+                                    aria-labelledby="repeat-label"
+                                >
+                                    <div
+                                        class="day-select"
+                                        data-day="0"
+                                        role="checkbox"
+                                        aria-checked="false"
+                                        tabindex="0"
+                                    >
+                                        日
+                                    </div>
+                                    <div
+                                        class="day-select"
+                                        data-day="1"
+                                        role="checkbox"
+                                        aria-checked="false"
+                                        tabindex="0"
+                                    >
+                                        一
+                                    </div>
+                                    <div
+                                        class="day-select"
+                                        data-day="2"
+                                        role="checkbox"
+                                        aria-checked="false"
+                                        tabindex="0"
+                                    >
+                                        二
+                                    </div>
+                                    <div
+                                        class="day-select"
+                                        data-day="3"
+                                        role="checkbox"
+                                        aria-checked="false"
+                                        tabindex="0"
+                                    >
+                                        三
+                                    </div>
+                                    <div
+                                        class="day-select"
+                                        data-day="4"
+                                        role="checkbox"
+                                        aria-checked="false"
+                                        tabindex="0"
+                                    >
+                                        四
+                                    </div>
+                                    <div
+                                        class="day-select"
+                                        data-day="5"
+                                        role="checkbox"
+                                        aria-checked="false"
+                                        tabindex="0"
+                                    >
+                                        五
+                                    </div>
+                                    <div
+                                        class="day-select"
+                                        data-day="6"
+                                        role="checkbox"
+                                        aria-checked="false"
+                                        tabindex="0"
+                                    >
+                                        六
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group toggle-group">
+                                <label for="allow-edit">允许他人编辑</label>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="allow-edit" />
+                                    <label
+                                        for="allow-edit"
+                                        class="toggle-label"
+                                    ></label>
+                                </div>
+                            </div>
+                            <div class="form-group toggle-group">
+                                <label for="schedule-enabled">启用任务</label>
+                                <div class="toggle-switch">
+                                    <input
+                                        type="checkbox"
+                                        id="schedule-enabled"
+                                        checked
+                                    />
+                                    <label
+                                        for="schedule-enabled"
+                                        class="toggle-label"
+                                    ></label>
+                                </div>
+                            </div>
+                            <div class="form-group toggle-group">
+                                <label for="notify-via-server-chan"
+                                    >Server酱通知</label
+                                >
+                                <div class="toggle-switch">
+                                    <input
+                                        type="checkbox"
+                                        id="notify-via-server-chan"
+                                    />
+                                    <label
+                                        for="notify-via-server-chan"
+                                        class="toggle-label"
+                                    ></label>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button
+                                    type="submit"
+                                    class="primary-button"
+                                    id="save-schedule-btn"
+                                >
+                                    保存
+                                </button>
+                                <button
+                                    type="button"
+                                    class="secondary-button"
+                                    id="cancel-schedule-btn"
+                                >
+                                    取消
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </section>
 
-        <!-- 添加/编辑定时任务模态框 -->
-        <div class="modal" id="schedule-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 id="modal-title">添加定时任务</h3>
-                    <button id="close-modal-btn" aria-label="关闭">
-                        <i class="ri-close-line"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="schedule-form">
-                        <div class="form-group">
-                            <label for="schedule-name">任务名称</label>
-                            <input type="text" id="schedule-name" placeholder="请输入任务名称" required>
+            <!-- 灯泡样式选择模态框 -->
+            <div class="modal" id="bulb-style-modal">
+                <div class="modal-content bulb-style-modal-content">
+                    <div class="modal-header">
+                        <h3>选择灯泡样式</h3>
+                        <button
+                            id="close-bulb-style-modal-btn"
+                            aria-label="关闭"
+                        >
+                            <i class="ri-close-line"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="bulb-style-grid">
+                            <button
+                                class="bulb-style-card active"
+                                data-style="classic"
+                            >
+                                <div class="style-preview">
+                                    <div class="preview-classic-bulb"></div>
+                                </div>
+                                <div class="style-info">
+                                    <h4 class="style-name">经典灯泡</h4>
+                                    <p class="style-desc">
+                                        紫色渐变灯泡，带灯丝效果
+                                    </p>
+                                </div>
+                            </button>
+                            <button class="bulb-style-card" data-style="lava">
+                                <div class="style-preview">
+                                    <div class="preview-lava-lamp">
+                                        <div class="preview-bubble"></div>
+                                    </div>
+                                </div>
+                                <div class="style-info">
+                                    <h4 class="style-name">熔岩灯</h4>
+                                    <p class="style-desc">
+                                        六边形熔岩灯，浮动气泡效果
+                                    </p>
+                                </div>
+                            </button>
+                            <button
+                                class="bulb-style-card"
+                                data-style="vintage"
+                            >
+                                <div class="style-preview">
+                                    <div class="preview-vintage-lamp"></div>
+                                </div>
+                                <div class="style-info">
+                                    <h4 class="style-name">老式台灯</h4>
+                                    <p class="style-desc">
+                                        复古台灯，拉绳开关设计
+                                    </p>
+                                </div>
+                            </button>
+                            <button class="bulb-style-card" data-style="liquid">
+                                <div class="style-preview">
+                                    <div class="preview-liquid-light"></div>
+                                </div>
+                                <div class="style-info">
+                                    <h4 class="style-name">液态光效</h4>
+                                    <p class="style-desc">
+                                        动态粒子动画，流动光效
+                                    </p>
+                                </div>
+                            </button>
+                            <button
+                                class="bulb-style-card"
+                                data-style="lightbulb"
+                            >
+                                <div class="style-preview">
+                                    <div class="preview-lightbulb"></div>
+                                </div>
+                                <div class="style-info">
+                                    <h4 class="style-name">灯泡开关</h4>
+                                    <p class="style-desc">
+                                        拨动开关样式，简洁设计
+                                    </p>
+                                </div>
+                            </button>
+                            <button class="bulb-style-card" data-style="analog">
+                                <div class="style-preview">
+                                    <div class="preview-analog-clock"></div>
+                                </div>
+                                <div class="style-info">
+                                    <h4 class="style-name">点阵时钟</h4>
+                                    <p class="style-desc">
+                                        7×7点阵，实时显示时间
+                                    </p>
+                                </div>
+                            </button>
                         </div>
-                        <div class="form-group time-picker-group">
-                            <div class="time-picker">
-                                <label for="start-time">执行时间</label>
-                                <input type="time" id="start-time" required>
-                            </div>
-                            <div class="operation-picker">
-                                <label for="operation">操作</label>
-                                <select id="operation" required>
-                                    <option value="on">开灯</option>
-                                    <option value="off">关灯</option>
-                                    <option value="shutdown">关机</option>
-                                    <option value="reboot">重启</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label id="repeat-label">重复</label>
-                            <div class="repeat-days" role="group" aria-labelledby="repeat-label">
-                                <div class="day-select" data-day="0" role="checkbox" aria-checked="false" tabindex="0">日</div>
-                                <div class="day-select" data-day="1" role="checkbox" aria-checked="false" tabindex="0">一</div>
-                                <div class="day-select" data-day="2" role="checkbox" aria-checked="false" tabindex="0">二</div>
-                                <div class="day-select" data-day="3" role="checkbox" aria-checked="false" tabindex="0">三</div>
-                                <div class="day-select" data-day="4" role="checkbox" aria-checked="false" tabindex="0">四</div>
-                                <div class="day-select" data-day="5" role="checkbox" aria-checked="false" tabindex="0">五</div>
-                                <div class="day-select" data-day="6" role="checkbox" aria-checked="false" tabindex="0">六</div>
-                            </div>
-                        </div>
-                        <div class="form-group toggle-group">
-                            <label for="allow-edit">允许他人编辑</label>
-                            <div class="toggle-switch">
-                                <input type="checkbox" id="allow-edit">
-                                <label for="allow-edit" class="toggle-label"></label>
-                            </div>
-                        </div>
-                        <div class="form-group toggle-group">
-                            <label for="schedule-enabled">启用任务</label>
-                            <div class="toggle-switch">
-                                <input type="checkbox" id="schedule-enabled" checked>
-                                <label for="schedule-enabled" class="toggle-label"></label>
-                            </div>
-                        </div>
-                        <div class="form-group toggle-group">
-                            <label for="notify-via-server-chan">Server酱通知</label>
-                            <div class="toggle-switch">
-                                <input type="checkbox" id="notify-via-server-chan">
-                                <label for="notify-via-server-chan" class="toggle-label"></label>
-                            </div>
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" class="primary-button" id="save-schedule-btn">保存</button>
-                            <button type="button" class="secondary-button" id="cancel-schedule-btn">取消</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Toast通知容器 -->
-    <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
+        <!-- Toast通知容器 -->
+        <div
+            class="toast-container"
+            id="toast-container"
+            aria-live="polite"
+            aria-atomic="true"
+        ></div>
 
-    <script src="/static/js/app.js"></script>
-</body>
-</html> 
+        <script src="/static/js/app.js"></script>
+    </body>
+</html>

@@ -16,6 +16,8 @@ type Tx struct {
 	Schedule *ScheduleClient
 	// ServerChanConfig is the client for interacting with the ServerChanConfig builders.
 	ServerChanConfig *ServerChanConfigClient
+	// UserPreference is the client for interacting with the UserPreference builders.
+	UserPreference *UserPreferenceClient
 
 	// lazily loaded.
 	client     *Client
@@ -149,6 +151,7 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Schedule = NewScheduleClient(tx.config)
 	tx.ServerChanConfig = NewServerChanConfigClient(tx.config)
+	tx.UserPreference = NewUserPreferenceClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

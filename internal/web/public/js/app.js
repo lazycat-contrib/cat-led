@@ -6,6 +6,9 @@ let schedules = [];
 let currentEditingScheduleId = null;
 let statusRefreshInterval = null; // 新增：用于存储状态刷新的定时器ID
 let currentTheme = 'dark'; // 默认使用暗色主题
+let currentBulbStyle = 'classic'; // 默认灯泡样式
+let liquidAnimationId = null; // 液态光效动画ID
+let analogClockInterval = null; // 点阵时钟定时器
 
 // DOM元素
 const $ledToggle = document.getElementById('led-toggle');
@@ -20,6 +23,9 @@ const $cancelScheduleBtn = document.getElementById('cancel-schedule-btn');
 const $daySelects = document.querySelectorAll('.day-select');
 const $themeToggle = document.getElementById('theme-toggle'); // 主题切换按钮
 const $logoutBtn = document.getElementById('logout-btn'); // 登出按钮
+const $bulbStyleToggle = document.getElementById('bulb-style-toggle'); // 灯泡样式切换按钮
+const $bulbStyleModal = document.getElementById('bulb-style-modal'); // 灯泡样式模态框
+const $closeBulbStyleModalBtn = document.getElementById('close-bulb-style-modal-btn'); // 关闭灯泡样式模态框按钮
 
 // 初始化应用
 document.addEventListener('DOMContentLoaded', () => {
@@ -30,9 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
 async function initApp() {
     // 初始化主题
     initTheme();
-    
+
     // 获取用户信息
     await fetchUserInfo();
+
+    // 获取用户偏好设置（包括LED样式）
+    await fetchUserPreference();
 
     // 获取LED状态
     await fetchLedStatus();
@@ -198,8 +207,11 @@ function handleLedStatusError(errorMsg) {
     $ledStatus.classList.add('error');
 
     // 禁用开关
-    $ledToggle.disabled = true;
-    $ledToggle.checked = false;
+    const classicToggle = document.querySelector('.bulb-classic #led-toggle');
+    if (classicToggle) {
+        classicToggle.disabled = true;
+        classicToggle.checked = false;
+    }
 
     // 显示错误通知
     showNotification('无法获取LED状态', 'error');
@@ -262,10 +274,53 @@ function stopStatusRefresh() {
 // 更新LED状态UI
 function updateLedStatus(status) {
     currentLedStatus = status;
-    $ledToggle.checked = status;
+
+    // 更新经典灯泡的开关
+    const classicToggle = document.querySelector('.bulb-classic #led-toggle');
+    if (classicToggle) {
+        classicToggle.checked = status;
+    }
+
+    // 更新熔岩灯的状态
+    const lavaContainer = document.querySelector('.bulb-lava');
+    if (lavaContainer) {
+        if (status) {
+            lavaContainer.classList.add('lamp-on');
+        } else {
+            lavaContainer.classList.remove('lamp-on');
+        }
+    }
+
+    // 更新老式台灯的状态
+    const vintageContainer = document.querySelector('.bulb-vintage');
+    if (vintageContainer) {
+        if (status) {
+            vintageContainer.classList.add('lamp-on');
+        } else {
+            vintageContainer.classList.remove('lamp-on');
+        }
+    }
+
+    // 更新液态光效的状态
+    const liquidContainer = document.querySelector('.bulb-liquid');
+    if (liquidContainer) {
+        if (status) {
+            liquidContainer.classList.add('lamp-on');
+            startLiquidAnimation();
+        } else {
+            liquidContainer.classList.remove('lamp-on');
+            stopLiquidAnimation();
+        }
+    }
+
+    // 更新灯泡开关的状态
+    const lightbulbToggle = document.querySelector('#lightbulb-toggle');
+    if (lightbulbToggle) {
+        lightbulbToggle.checked = status;
+    }
+
     $ledStatus.textContent = status ? '已开启' : '已关闭';
     $ledStatus.classList.remove('error');
-    $ledToggle.disabled = false;
 }
 
 // 切换LED状态
@@ -274,7 +329,10 @@ async function toggleLedStatus() {
 
     try {
         // 更新UI以显示加载状态
-        $ledToggle.disabled = true;
+        const classicToggle = document.querySelector('.bulb-classic #led-toggle');
+        if (classicToggle) {
+            classicToggle.disabled = true;
+        }
         $ledStatus.textContent = '更新中…';
 
         // 构建请求URL
@@ -754,8 +812,11 @@ function closeToast(toast) {
 
 // 初始化事件监听器
 function initEventListeners() {
-    // LED开关
-    $ledToggle.addEventListener('change', toggleLedStatus);
+    // LED开关 - 监听经典灯泡的开关
+    const classicToggle = document.querySelector('.bulb-classic #led-toggle');
+    if (classicToggle) {
+        classicToggle.addEventListener('change', toggleLedStatus);
+    }
 
     // 添加任务按钮
     $addScheduleBtn.addEventListener('click', openAddScheduleModal);
@@ -791,8 +852,13 @@ function initEventListeners() {
 
     // 添加键盘Escape键关闭模态框
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && $scheduleModal.classList.contains('show')) {
-            closeModal();
+        if (e.key === 'Escape') {
+            if ($scheduleModal.classList.contains('show')) {
+                closeModal();
+            }
+            if ($bulbStyleModal && $bulbStyleModal.classList.contains('show')) {
+                closeBulbStyleModal();
+            }
         }
     });
 
@@ -805,6 +871,141 @@ function initEventListeners() {
     // 登出按钮
     if ($logoutBtn) {
         $logoutBtn.addEventListener('click', handleLogout);
+    }
+
+    // 灯泡样式切换按钮
+    if ($bulbStyleToggle) {
+        $bulbStyleToggle.addEventListener('click', openBulbStyleModal);
+    }
+
+    // 关闭灯泡样式模态框
+    if ($closeBulbStyleModalBtn) {
+        $closeBulbStyleModalBtn.addEventListener('click', closeBulbStyleModal);
+    }
+
+    // 灯泡样式模态框外部点击关闭
+    if ($bulbStyleModal) {
+        $bulbStyleModal.addEventListener('click', (e) => {
+            if (e.target === $bulbStyleModal) {
+                closeBulbStyleModal();
+            }
+        });
+    }
+
+    // 灯泡样式卡片选择
+    const bulbStyleCards = document.querySelectorAll('.bulb-style-card');
+    bulbStyleCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const style = card.dataset.style;
+            updateUserPreference(style);
+
+            // 更新选中状态
+            bulbStyleCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+
+            // 延迟关闭模态框，让用户看到选中效果
+            setTimeout(() => {
+                closeBulbStyleModal();
+            }, 300);
+        });
+    });
+
+    // 灯泡样式选择器（移除旧的内联选择器代码）
+    const bulbStyleOptions = document.querySelectorAll('.bulb-style-option');
+    if (bulbStyleOptions.length > 0) {
+        // 如果存在旧的内联选择器，保留事件监听（向后兼容）
+        bulbStyleOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const style = option.dataset.style;
+                updateUserPreference(style);
+
+                // 更新选中状态
+                bulbStyleOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+            });
+        });
+    }
+
+    // 老式台灯拉绳点击事件
+    const vintagePullCord = document.querySelector('.lamp__pull-cord');
+    if (vintagePullCord) {
+        vintagePullCord.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleLedStatus();
+        });
+        vintagePullCord.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleLedStatus();
+            }
+        });
+    }
+
+    // 液态光效点击事件
+    const liquidCanvas = document.getElementById('liquid-canvas');
+    const liquidContainer = document.querySelector('.bulb-liquid');
+    if (liquidContainer) {
+        liquidContainer.addEventListener('click', () => {
+            toggleLedStatus();
+        });
+        liquidContainer.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleLedStatus();
+            }
+        });
+    }
+
+    // 老式台灯容器点击事件（整个容器可点击）
+    const vintageContainer = document.querySelector('.bulb-vintage');
+    if (vintageContainer) {
+        vintageContainer.addEventListener('click', (e) => {
+            // 如果点击的是拉绳，让拉绳的事件处理
+            if (e.target.closest('.lamp__pull-cord')) {
+                return;
+            }
+            toggleLedStatus();
+        });
+        vintageContainer.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleLedStatus();
+            }
+        });
+    }
+
+    // 熔岩灯点击事件
+    const lavaContainer = document.querySelector('.bulb-lava');
+    if (lavaContainer) {
+        lavaContainer.addEventListener('click', () => {
+            toggleLedStatus();
+        });
+        lavaContainer.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleLedStatus();
+            }
+        });
+    }
+
+    // 灯泡开关点击事件
+    const lightbulbToggle = document.querySelector('#lightbulb-toggle');
+    if (lightbulbToggle) {
+        lightbulbToggle.addEventListener('change', toggleLedStatus);
+    }
+
+    // 点阵时钟点击事件
+    const analogContainer = document.querySelector('.bulb-analog');
+    if (analogContainer) {
+        analogContainer.addEventListener('click', () => {
+            toggleLedStatus();
+        });
+        analogContainer.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleLedStatus();
+            }
+        });
     }
 }
 
@@ -892,4 +1093,352 @@ function handleVisibilityChange() {
         // 页面不可见时，停止刷新以节省资源
         stopStatusRefresh();
     }
+}
+
+// 获取用户偏好设置
+async function fetchUserPreference() {
+    try {
+        const response = await fetch('/api/user/preference');
+        if (!response.ok) {
+            // 如果获取失败，使用默认样式
+            console.log('获取用户偏好失败，使用默认样式');
+            applyBulbStyle('classic');
+            return;
+        }
+
+        const data = await response.json();
+        console.log('用户偏好:', data);
+
+        if (data.bulb_style) {
+            currentBulbStyle = data.bulb_style;
+            applyBulbStyle(currentBulbStyle);
+        }
+    } catch (error) {
+        console.error('获取用户偏好错误:', error);
+        // 使用默认样式
+        applyBulbStyle('classic');
+    }
+}
+
+// 应用灯泡样式
+function applyBulbStyle(style) {
+    const containers = document.querySelectorAll('.bulb-container');
+
+    // 隐藏所有灯泡
+    containers.forEach(container => {
+        container.classList.remove('active');
+    });
+
+    // 显示选中的灯泡
+    const targetContainer = document.querySelector(`.bulb-${style}`);
+    if (targetContainer) {
+        targetContainer.classList.add('active');
+    }
+
+    currentBulbStyle = style;
+
+    // 更新样式选择器的激活状态（内联选择器，如果存在）
+    const bulbStyleOptions = document.querySelectorAll('.bulb-style-option');
+    bulbStyleOptions.forEach(option => {
+        if (option.dataset.style === style) {
+            option.classList.add('active');
+        } else {
+            option.classList.remove('active');
+        }
+    });
+
+    // 更新模态框中卡片的激活状态
+    const bulbStyleCards = document.querySelectorAll('.bulb-style-card');
+    bulbStyleCards.forEach(card => {
+        if (card.dataset.style === style) {
+            card.classList.add('active');
+        } else {
+            card.classList.remove('active');
+        }
+    });
+
+    // 同步两个开关的状态
+    syncBulbToggles();
+
+    // 启动或停止点阵时钟
+    if (style === 'analog') {
+        startAnalogClock();
+    } else {
+        stopAnalogClock();
+    }
+
+    // 如果是液态光效，重新初始化canvas
+    if (style === 'liquid') {
+        setTimeout(() => {
+            resizeLiquidCanvas();
+            if (currentLedStatus) {
+                startLiquidAnimation();
+            }
+        }, 100);
+    }
+
+    console.log(`已应用灯泡样式: ${style}`);
+}
+
+// 同步两个灯泡的开关状态
+function syncBulbToggles() {
+    const classicToggle = document.querySelector('.bulb-classic #led-toggle');
+    const lavaContainer = document.querySelector('.bulb-lava');
+    const vintageContainer = document.querySelector('.bulb-vintage');
+    const liquidContainer = document.querySelector('.bulb-liquid');
+
+    if (!classicToggle) return;
+
+    // 根据经典灯泡的状态同步其他灯的显示
+    if (classicToggle.checked) {
+        if (lavaContainer) lavaContainer.classList.add('lamp-on');
+        if (vintageContainer) vintageContainer.classList.add('lamp-on');
+        if (liquidContainer) {
+            liquidContainer.classList.add('lamp-on');
+            startLiquidAnimation();
+        }
+    } else {
+        if (lavaContainer) lavaContainer.classList.remove('lamp-on');
+        if (vintageContainer) vintageContainer.classList.remove('lamp-on');
+        if (liquidContainer) {
+            liquidContainer.classList.remove('lamp-on');
+            stopLiquidAnimation();
+        }
+    }
+}
+
+// 更新用户偏好设置
+async function updateUserPreference(bulbStyle) {
+    try {
+        const response = await fetch('/api/user/preference', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                bulb_style: bulbStyle
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('更新用户偏好失败');
+        }
+
+        const data = await response.json();
+        console.log('用户偏好已更新:', data);
+
+        // 应用新样式
+        applyBulbStyle(bulbStyle);
+        showNotification('灯泡样式已更新', 'success');
+    } catch (error) {
+        console.error('更新用户偏好错误:', error);
+        showNotification('更新灯泡样式失败', 'error');
+    }
 } 
+// ===================================
+// 液态光效动画
+// ===================================
+
+let liquidCanvas, liquidCtx, liquidW, liquidH;
+let liquidArr = [];
+let liquidCnt = 0;
+let isLiquidRunning = false;
+let resizeTimeout = null;
+
+function initLiquidCanvas() {
+    liquidCanvas = document.getElementById('liquid-canvas');
+    if (!liquidCanvas) return;
+
+    liquidCtx = liquidCanvas.getContext('2d');
+    resizeLiquidCanvas();
+
+    // Debounced resize handler
+    window.addEventListener('resize', () => {
+        if (resizeTimeout) clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(resizeLiquidCanvas, 150);
+    });
+}
+
+function resizeLiquidCanvas() {
+    if (!liquidCanvas) return;
+
+    const container = liquidCanvas.parentElement;
+    if (!container) return;
+
+    // 如果容器是隐藏的，使用父级section的尺寸
+    if (container.offsetParent === null) {
+        const section = container.closest('.led-status-section');
+        if (section) {
+            liquidW = liquidCanvas.width = section.clientWidth;
+            liquidH = liquidCanvas.height = Math.max(section.clientHeight, 400);
+        }
+    } else {
+        liquidW = liquidCanvas.width = container.clientWidth || 400;
+        liquidH = liquidCanvas.height = container.clientHeight || 400;
+    }
+}
+
+function startLiquidAnimation() {
+    if (isLiquidRunning) return;
+
+    // Check for reduced motion preference
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return;
+    }
+
+    isLiquidRunning = true;
+    liquidCnt = 0;
+    liquidArr = [];
+    animateLiquid();
+}
+
+function stopLiquidAnimation() {
+    isLiquidRunning = false;
+    if (liquidAnimationId) {
+        cancelAnimationFrame(liquidAnimationId);
+        liquidAnimationId = null;
+    }
+    if (liquidCtx) {
+        liquidCtx.clearRect(0, 0, liquidW, liquidH);
+    }
+    liquidArr = [];
+}
+
+function animateLiquid() {
+    if (!isLiquidRunning) return;
+
+    // Stop animation if canvas is not visible (performance)
+    if (liquidCanvas && liquidCanvas.offsetParent === null) {
+        stopLiquidAnimation();
+        return;
+    }
+
+    liquidCnt++;
+    if (liquidCnt % 6 === 0) drawLiquid();
+
+    liquidAnimationId = requestAnimationFrame(animateLiquid);
+}
+
+function drawLiquid() {
+    if (!liquidCtx) return;
+    
+    const _w = liquidW * 0.5;
+    const _h = liquidH * 0.5;
+    
+    const splot = {
+        x: rng(_w - 300, _w + 300),
+        y: rng(_h - 300, _h + 300),
+        r: rng(20, 60),
+        spX: rng(-1, 1),
+        spY: rng(-1, 1)
+    };
+
+    liquidArr.push(splot);
+    
+    while (liquidArr.length > 80) {
+        liquidArr.shift();
+    }
+    
+    liquidCtx.clearRect(0, 0, liquidW, liquidH);
+
+    for (let i = 0; i < liquidArr.length; i++) {
+        const splot = liquidArr[i];
+        
+        liquidCtx.fillStyle = rndCol();
+        liquidCtx.beginPath();
+        liquidCtx.arc(splot.x, splot.y, splot.r, 0, Math.PI * 2, true);
+        liquidCtx.shadowBlur = 80;
+        liquidCtx.shadowOffsetX = 2;
+        liquidCtx.shadowOffsetY = 2;
+        liquidCtx.shadowColor = rndCol();
+        liquidCtx.globalCompositeOperation = 'lighter';
+        liquidCtx.fill();
+
+        splot.x = splot.x + splot.spX;
+        splot.y = splot.y + splot.spY;
+        splot.r = splot.r * 0.96;
+    }
+}
+
+function rndCol() {
+    const r = Math.floor(Math.random() * 180);
+    const g = Math.floor(Math.random() * 60);
+    const b = Math.floor(Math.random() * 100);
+    return `rgb(${r}, ${g}, ${b})`;
+}
+
+function rng(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// 在页面加载时初始化liquid canvas
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        initLiquidCanvas();
+    }, 500);
+});
+
+// ===================================
+// 点阵时钟功能
+// ===================================
+
+function setAnalogTime() {
+    const analogClock = document.querySelector('.analog-clock');
+    if (!analogClock) return;
+
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+
+    // 转换为两位数字符串
+    const h = hours.toString().padStart(2, '0');
+    const m = minutes.toString().padStart(2, '0');
+    const s = seconds.toString().padStart(2, '0');
+
+    // 设置data-time属性为HHMMSS格式
+    analogClock.setAttribute('data-time', h + m + s);
+}
+
+function startAnalogClock() {
+    if (analogClockInterval) return;
+
+    // 立即设置一次时间
+    setAnalogTime();
+
+    // 每秒更新一次
+    analogClockInterval = setInterval(setAnalogTime, 1000);
+}
+
+function stopAnalogClock() {
+    if (analogClockInterval) {
+        clearInterval(analogClockInterval);
+        analogClockInterval = null;
+    }
+}
+
+// ===================================
+// 灯泡样式模态框
+// ===================================
+
+function openBulbStyleModal() {
+    if ($bulbStyleModal) {
+        $bulbStyleModal.classList.add('show');
+
+        // 更新模态框中卡片的选中状态
+        const bulbStyleCards = document.querySelectorAll('.bulb-style-card');
+        bulbStyleCards.forEach(card => {
+            if (card.dataset.style === currentBulbStyle) {
+                card.classList.add('active');
+            } else {
+                card.classList.remove('active');
+            }
+        });
+    }
+}
+
+function closeBulbStyleModal() {
+    if ($bulbStyleModal) {
+        $bulbStyleModal.classList.remove('show');
+    }
+}

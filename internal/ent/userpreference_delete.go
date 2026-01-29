@@ -4,7 +4,7 @@ package ent
 
 import (
 	"cat-led/internal/ent/predicate"
-	"cat-led/internal/ent/schedule"
+	"cat-led/internal/ent/userpreference"
 	"context"
 
 	"entgo.io/ent/dialect/sql"
@@ -12,26 +12,26 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ScheduleDelete is the builder for deleting a Schedule entity.
-type ScheduleDelete struct {
+// UserPreferenceDelete is the builder for deleting a UserPreference entity.
+type UserPreferenceDelete struct {
 	config
 	hooks    []Hook
-	mutation *ScheduleMutation
+	mutation *UserPreferenceMutation
 }
 
-// Where appends a list predicates to the ScheduleDelete builder.
-func (_d *ScheduleDelete) Where(ps ...predicate.Schedule) *ScheduleDelete {
+// Where appends a list predicates to the UserPreferenceDelete builder.
+func (_d *UserPreferenceDelete) Where(ps ...predicate.UserPreference) *UserPreferenceDelete {
 	_d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (_d *ScheduleDelete) Exec(ctx context.Context) (int, error) {
+func (_d *UserPreferenceDelete) Exec(ctx context.Context) (int, error) {
 	return withHooks(ctx, _d.sqlExec, _d.mutation, _d.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *ScheduleDelete) ExecX(ctx context.Context) int {
+func (_d *UserPreferenceDelete) ExecX(ctx context.Context) int {
 	n, err := _d.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -39,8 +39,8 @@ func (_d *ScheduleDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (_d *ScheduleDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(schedule.Table, sqlgraph.NewFieldSpec(schedule.FieldID, field.TypeUUID))
+func (_d *UserPreferenceDelete) sqlExec(ctx context.Context) (int, error) {
+	_spec := sqlgraph.NewDeleteSpec(userpreference.Table, sqlgraph.NewFieldSpec(userpreference.FieldID, field.TypeInt))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -56,32 +56,32 @@ func (_d *ScheduleDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// ScheduleDeleteOne is the builder for deleting a single Schedule entity.
-type ScheduleDeleteOne struct {
-	_d *ScheduleDelete
+// UserPreferenceDeleteOne is the builder for deleting a single UserPreference entity.
+type UserPreferenceDeleteOne struct {
+	_d *UserPreferenceDelete
 }
 
-// Where appends a list predicates to the ScheduleDelete builder.
-func (_d *ScheduleDeleteOne) Where(ps ...predicate.Schedule) *ScheduleDeleteOne {
+// Where appends a list predicates to the UserPreferenceDelete builder.
+func (_d *UserPreferenceDeleteOne) Where(ps ...predicate.UserPreference) *UserPreferenceDeleteOne {
 	_d._d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query.
-func (_d *ScheduleDeleteOne) Exec(ctx context.Context) error {
+func (_d *UserPreferenceDeleteOne) Exec(ctx context.Context) error {
 	n, err := _d._d.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{schedule.Label}
+		return &NotFoundError{userpreference.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *ScheduleDeleteOne) ExecX(ctx context.Context) {
+func (_d *UserPreferenceDeleteOne) ExecX(ctx context.Context) {
 	if err := _d.Exec(ctx); err != nil {
 		panic(err)
 	}

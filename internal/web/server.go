@@ -124,6 +124,10 @@ func (s *Server) setupAuthenticatedRoutes() {
 	// ServerChan API
 	authenticated.GET("/api/serverchan/config", handlers.GetServerChanConfig)
 	authenticated.POST("/api/serverchan/config", handlers.SaveServerChanConfig)
+
+	// User Preference API
+	authenticated.GET("/api/user/preference", handlers.GetUserPreference)
+	authenticated.PUT("/api/user/preference", handlers.UpdateUserPreference)
 }
 
 // Run starts the web server on the specified address.

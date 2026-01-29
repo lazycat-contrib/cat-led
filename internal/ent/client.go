@@ -13,6 +13,7 @@ import (
 
 	"cat-led/internal/ent/schedule"
 	"cat-led/internal/ent/serverchanconfig"
+	"cat-led/internal/ent/userpreference"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -29,6 +30,8 @@ type Client struct {
 	Schedule *ScheduleClient
 	// ServerChanConfig is the client for interacting with the ServerChanConfig builders.
 	ServerChanConfig *ServerChanConfigClient
+	// UserPreference is the client for interacting with the UserPreference builders.
+	UserPreference *UserPreferenceClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -42,6 +45,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Schedule = NewScheduleClient(c.config)
 	c.ServerChanConfig = NewServerChanConfigClient(c.config)
+	c.UserPreference = NewUserPreferenceClient(c.config)
 }
 
 type (
@@ -136,6 +140,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:           cfg,
 		Schedule:         NewScheduleClient(cfg),
 		ServerChanConfig: NewServerChanConfigClient(cfg),
+		UserPreference:   NewUserPreferenceClient(cfg),
 	}, nil
 }
 
@@ -157,6 +162,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:           cfg,
 		Schedule:         NewScheduleClient(cfg),
 		ServerChanConfig: NewServerChanConfigClient(cfg),
+		UserPreference:   NewUserPreferenceClient(cfg),
 	}, nil
 }
 
@@ -187,6 +193,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.Schedule.Use(hooks...)
 	c.ServerChanConfig.Use(hooks...)
+	c.UserPreference.Use(hooks...)
 }
 
 // Intercept adds the query interceptors to all the entity clients.
@@ -194,6 +201,7 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.Schedule.Intercept(interceptors...)
 	c.ServerChanConfig.Intercept(interceptors...)
+	c.UserPreference.Intercept(interceptors...)
 }
 
 // Mutate implements the ent.Mutator interface.
@@ -203,6 +211,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Schedule.mutate(ctx, m)
 	case *ServerChanConfigMutation:
 		return c.ServerChanConfig.mutate(ctx, m)
+	case *UserPreferenceMutation:
+		return c.UserPreference.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
@@ -263,8 +273,8 @@ func (c *ScheduleClient) Update() *ScheduleUpdate {
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *ScheduleClient) UpdateOne(s *Schedule) *ScheduleUpdateOne {
-	mutation := newScheduleMutation(c.config, OpUpdateOne, withSchedule(s))
+func (c *ScheduleClient) UpdateOne(_m *Schedule) *ScheduleUpdateOne {
+	mutation := newScheduleMutation(c.config, OpUpdateOne, withSchedule(_m))
 	return &ScheduleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
@@ -281,8 +291,8 @@ func (c *ScheduleClient) Delete() *ScheduleDelete {
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *ScheduleClient) DeleteOne(s *Schedule) *ScheduleDeleteOne {
-	return c.DeleteOneID(s.ID)
+func (c *ScheduleClient) DeleteOne(_m *Schedule) *ScheduleDeleteOne {
+	return c.DeleteOneID(_m.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
@@ -396,8 +406,8 @@ func (c *ServerChanConfigClient) Update() *ServerChanConfigUpdate {
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *ServerChanConfigClient) UpdateOne(scc *ServerChanConfig) *ServerChanConfigUpdateOne {
-	mutation := newServerChanConfigMutation(c.config, OpUpdateOne, withServerChanConfig(scc))
+func (c *ServerChanConfigClient) UpdateOne(_m *ServerChanConfig) *ServerChanConfigUpdateOne {
+	mutation := newServerChanConfigMutation(c.config, OpUpdateOne, withServerChanConfig(_m))
 	return &ServerChanConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
@@ -414,8 +424,8 @@ func (c *ServerChanConfigClient) Delete() *ServerChanConfigDelete {
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *ServerChanConfigClient) DeleteOne(scc *ServerChanConfig) *ServerChanConfigDeleteOne {
-	return c.DeleteOneID(scc.ID)
+func (c *ServerChanConfigClient) DeleteOne(_m *ServerChanConfig) *ServerChanConfigDeleteOne {
+	return c.DeleteOneID(_m.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
@@ -474,12 +484,145 @@ func (c *ServerChanConfigClient) mutate(ctx context.Context, m *ServerChanConfig
 	}
 }
 
+// UserPreferenceClient is a client for the UserPreference schema.
+type UserPreferenceClient struct {
+	config
+}
+
+// NewUserPreferenceClient returns a client for the UserPreference from the given config.
+func NewUserPreferenceClient(c config) *UserPreferenceClient {
+	return &UserPreferenceClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `userpreference.Hooks(f(g(h())))`.
+func (c *UserPreferenceClient) Use(hooks ...Hook) {
+	c.hooks.UserPreference = append(c.hooks.UserPreference, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `userpreference.Intercept(f(g(h())))`.
+func (c *UserPreferenceClient) Intercept(interceptors ...Interceptor) {
+	c.inters.UserPreference = append(c.inters.UserPreference, interceptors...)
+}
+
+// Create returns a builder for creating a UserPreference entity.
+func (c *UserPreferenceClient) Create() *UserPreferenceCreate {
+	mutation := newUserPreferenceMutation(c.config, OpCreate)
+	return &UserPreferenceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserPreference entities.
+func (c *UserPreferenceClient) CreateBulk(builders ...*UserPreferenceCreate) *UserPreferenceCreateBulk {
+	return &UserPreferenceCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *UserPreferenceClient) MapCreateBulk(slice any, setFunc func(*UserPreferenceCreate, int)) *UserPreferenceCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &UserPreferenceCreateBulk{err: fmt.Errorf("calling to UserPreferenceClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*UserPreferenceCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &UserPreferenceCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserPreference.
+func (c *UserPreferenceClient) Update() *UserPreferenceUpdate {
+	mutation := newUserPreferenceMutation(c.config, OpUpdate)
+	return &UserPreferenceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserPreferenceClient) UpdateOne(_m *UserPreference) *UserPreferenceUpdateOne {
+	mutation := newUserPreferenceMutation(c.config, OpUpdateOne, withUserPreference(_m))
+	return &UserPreferenceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserPreferenceClient) UpdateOneID(id int) *UserPreferenceUpdateOne {
+	mutation := newUserPreferenceMutation(c.config, OpUpdateOne, withUserPreferenceID(id))
+	return &UserPreferenceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserPreference.
+func (c *UserPreferenceClient) Delete() *UserPreferenceDelete {
+	mutation := newUserPreferenceMutation(c.config, OpDelete)
+	return &UserPreferenceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserPreferenceClient) DeleteOne(_m *UserPreference) *UserPreferenceDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *UserPreferenceClient) DeleteOneID(id int) *UserPreferenceDeleteOne {
+	builder := c.Delete().Where(userpreference.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserPreferenceDeleteOne{builder}
+}
+
+// Query returns a query builder for UserPreference.
+func (c *UserPreferenceClient) Query() *UserPreferenceQuery {
+	return &UserPreferenceQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserPreference},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a UserPreference entity by its id.
+func (c *UserPreferenceClient) Get(ctx context.Context, id int) (*UserPreference, error) {
+	return c.Query().Where(userpreference.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserPreferenceClient) GetX(ctx context.Context, id int) *UserPreference {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *UserPreferenceClient) Hooks() []Hook {
+	return c.hooks.UserPreference
+}
+
+// Interceptors returns the client interceptors.
+func (c *UserPreferenceClient) Interceptors() []Interceptor {
+	return c.inters.UserPreference
+}
+
+func (c *UserPreferenceClient) mutate(ctx context.Context, m *UserPreferenceMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserPreferenceCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserPreferenceUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserPreferenceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserPreferenceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown UserPreference mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Schedule, ServerChanConfig []ent.Hook
+		Schedule, ServerChanConfig, UserPreference []ent.Hook
 	}
 	inters struct {
-		Schedule, ServerChanConfig []ent.Interceptor
+		Schedule, ServerChanConfig, UserPreference []ent.Interceptor
 	}
 )

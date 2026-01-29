@@ -5,6 +5,7 @@ package ent
 import (
 	"cat-led/internal/ent/schedule"
 	"cat-led/internal/ent/serverchanconfig"
+	"cat-led/internal/ent/userpreference"
 	"context"
 	"errors"
 	"fmt"
@@ -71,14 +72,15 @@ var (
 )
 
 // checkColumn checks if the column exists in the given table.
-func checkColumn(table, column string) error {
+func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			schedule.Table:         schedule.ValidColumn,
 			serverchanconfig.Table: serverchanconfig.ValidColumn,
+			userpreference.Table:   userpreference.ValidColumn,
 		})
 	})
-	return columnCheck(table, column)
+	return columnCheck(t, c)
 }
 
 // Asc applies the given fields in ASC order.

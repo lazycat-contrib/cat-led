@@ -11,3 +11,6 @@ type Schedule func(*sql.Selector)
 
 // ServerChanConfig is the predicate function for serverchanconfig builders.
 type ServerChanConfig func(*sql.Selector)
+
+// UserPreference is the predicate function for userpreference builders.
+type UserPreference func(*sql.Selector)

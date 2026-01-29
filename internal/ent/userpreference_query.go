@@ -4,7 +4,7 @@ package ent
 
 import (
 	"cat-led/internal/ent/predicate"
-	"cat-led/internal/ent/schedule"
+	"cat-led/internal/ent/userpreference"
 	"context"
 	"fmt"
 	"math"
@@ -13,67 +13,66 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 )
 
-// ScheduleQuery is the builder for querying Schedule entities.
-type ScheduleQuery struct {
+// UserPreferenceQuery is the builder for querying UserPreference entities.
+type UserPreferenceQuery struct {
 	config
 	ctx        *QueryContext
-	order      []schedule.OrderOption
+	order      []userpreference.OrderOption
 	inters     []Interceptor
-	predicates []predicate.Schedule
+	predicates []predicate.UserPreference
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the ScheduleQuery builder.
-func (_q *ScheduleQuery) Where(ps ...predicate.Schedule) *ScheduleQuery {
+// Where adds a new predicate for the UserPreferenceQuery builder.
+func (_q *UserPreferenceQuery) Where(ps ...predicate.UserPreference) *UserPreferenceQuery {
 	_q.predicates = append(_q.predicates, ps...)
 	return _q
 }
 
 // Limit the number of records to be returned by this query.
-func (_q *ScheduleQuery) Limit(limit int) *ScheduleQuery {
+func (_q *UserPreferenceQuery) Limit(limit int) *UserPreferenceQuery {
 	_q.ctx.Limit = &limit
 	return _q
 }
 
 // Offset to start from.
-func (_q *ScheduleQuery) Offset(offset int) *ScheduleQuery {
+func (_q *UserPreferenceQuery) Offset(offset int) *UserPreferenceQuery {
 	_q.ctx.Offset = &offset
 	return _q
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (_q *ScheduleQuery) Unique(unique bool) *ScheduleQuery {
+func (_q *UserPreferenceQuery) Unique(unique bool) *UserPreferenceQuery {
 	_q.ctx.Unique = &unique
 	return _q
 }
 
 // Order specifies how the records should be ordered.
-func (_q *ScheduleQuery) Order(o ...schedule.OrderOption) *ScheduleQuery {
+func (_q *UserPreferenceQuery) Order(o ...userpreference.OrderOption) *UserPreferenceQuery {
 	_q.order = append(_q.order, o...)
 	return _q
 }
 
-// First returns the first Schedule entity from the query.
-// Returns a *NotFoundError when no Schedule was found.
-func (_q *ScheduleQuery) First(ctx context.Context) (*Schedule, error) {
+// First returns the first UserPreference entity from the query.
+// Returns a *NotFoundError when no UserPreference was found.
+func (_q *UserPreferenceQuery) First(ctx context.Context) (*UserPreference, error) {
 	nodes, err := _q.Limit(1).All(setContextOp(ctx, _q.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{schedule.Label}
+		return nil, &NotFoundError{userpreference.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (_q *ScheduleQuery) FirstX(ctx context.Context) *Schedule {
+func (_q *UserPreferenceQuery) FirstX(ctx context.Context) *UserPreference {
 	node, err := _q.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -81,22 +80,22 @@ func (_q *ScheduleQuery) FirstX(ctx context.Context) *Schedule {
 	return node
 }
 
-// FirstID returns the first Schedule ID from the query.
-// Returns a *NotFoundError when no Schedule ID was found.
-func (_q *ScheduleQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+// FirstID returns the first UserPreference ID from the query.
+// Returns a *NotFoundError when no UserPreference ID was found.
+func (_q *UserPreferenceQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{schedule.Label}
+		err = &NotFoundError{userpreference.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *ScheduleQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (_q *UserPreferenceQuery) FirstIDX(ctx context.Context) int {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -104,10 +103,10 @@ func (_q *ScheduleQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	return id
 }
 
-// Only returns a single Schedule entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one Schedule entity is found.
-// Returns a *NotFoundError when no Schedule entities are found.
-func (_q *ScheduleQuery) Only(ctx context.Context) (*Schedule, error) {
+// Only returns a single UserPreference entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one UserPreference entity is found.
+// Returns a *NotFoundError when no UserPreference entities are found.
+func (_q *UserPreferenceQuery) Only(ctx context.Context) (*UserPreference, error) {
 	nodes, err := _q.Limit(2).All(setContextOp(ctx, _q.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
@@ -116,14 +115,14 @@ func (_q *ScheduleQuery) Only(ctx context.Context) (*Schedule, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{schedule.Label}
+		return nil, &NotFoundError{userpreference.Label}
 	default:
-		return nil, &NotSingularError{schedule.Label}
+		return nil, &NotSingularError{userpreference.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (_q *ScheduleQuery) OnlyX(ctx context.Context) *Schedule {
+func (_q *UserPreferenceQuery) OnlyX(ctx context.Context) *UserPreference {
 	node, err := _q.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -131,11 +130,11 @@ func (_q *ScheduleQuery) OnlyX(ctx context.Context) *Schedule {
 	return node
 }
 
-// OnlyID is like Only, but returns the only Schedule ID in the query.
-// Returns a *NotSingularError when more than one Schedule ID is found.
+// OnlyID is like Only, but returns the only UserPreference ID in the query.
+// Returns a *NotSingularError when more than one UserPreference ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *ScheduleQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (_q *UserPreferenceQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -143,15 +142,15 @@ func (_q *ScheduleQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{schedule.Label}
+		err = &NotFoundError{userpreference.Label}
 	default:
-		err = &NotSingularError{schedule.Label}
+		err = &NotSingularError{userpreference.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *ScheduleQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (_q *UserPreferenceQuery) OnlyIDX(ctx context.Context) int {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -159,18 +158,18 @@ func (_q *ScheduleQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	return id
 }
 
-// All executes the query and returns a list of Schedules.
-func (_q *ScheduleQuery) All(ctx context.Context) ([]*Schedule, error) {
+// All executes the query and returns a list of UserPreferences.
+func (_q *UserPreferenceQuery) All(ctx context.Context) ([]*UserPreference, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryAll)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	qr := querierAll[[]*Schedule, *ScheduleQuery]()
-	return withInterceptors[[]*Schedule](ctx, _q, qr, _q.inters)
+	qr := querierAll[[]*UserPreference, *UserPreferenceQuery]()
+	return withInterceptors[[]*UserPreference](ctx, _q, qr, _q.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (_q *ScheduleQuery) AllX(ctx context.Context) []*Schedule {
+func (_q *UserPreferenceQuery) AllX(ctx context.Context) []*UserPreference {
 	nodes, err := _q.All(ctx)
 	if err != nil {
 		panic(err)
@@ -178,20 +177,20 @@ func (_q *ScheduleQuery) AllX(ctx context.Context) []*Schedule {
 	return nodes
 }
 
-// IDs executes the query and returns a list of Schedule IDs.
-func (_q *ScheduleQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
+// IDs executes the query and returns a list of UserPreference IDs.
+func (_q *UserPreferenceQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryIDs)
-	if err = _q.Select(schedule.FieldID).Scan(ctx, &ids); err != nil {
+	if err = _q.Select(userpreference.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *ScheduleQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (_q *UserPreferenceQuery) IDsX(ctx context.Context) []int {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -200,16 +199,16 @@ func (_q *ScheduleQuery) IDsX(ctx context.Context) []uuid.UUID {
 }
 
 // Count returns the count of the given query.
-func (_q *ScheduleQuery) Count(ctx context.Context) (int, error) {
+func (_q *UserPreferenceQuery) Count(ctx context.Context) (int, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryCount)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, _q, querierCount[*ScheduleQuery](), _q.inters)
+	return withInterceptors[int](ctx, _q, querierCount[*UserPreferenceQuery](), _q.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (_q *ScheduleQuery) CountX(ctx context.Context) int {
+func (_q *UserPreferenceQuery) CountX(ctx context.Context) int {
 	count, err := _q.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -218,7 +217,7 @@ func (_q *ScheduleQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (_q *ScheduleQuery) Exist(ctx context.Context) (bool, error) {
+func (_q *UserPreferenceQuery) Exist(ctx context.Context) (bool, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryExist)
 	switch _, err := _q.FirstID(ctx); {
 	case IsNotFound(err):
@@ -231,7 +230,7 @@ func (_q *ScheduleQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (_q *ScheduleQuery) ExistX(ctx context.Context) bool {
+func (_q *UserPreferenceQuery) ExistX(ctx context.Context) bool {
 	exist, err := _q.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -239,18 +238,18 @@ func (_q *ScheduleQuery) ExistX(ctx context.Context) bool {
 	return exist
 }
 
-// Clone returns a duplicate of the ScheduleQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the UserPreferenceQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (_q *ScheduleQuery) Clone() *ScheduleQuery {
+func (_q *UserPreferenceQuery) Clone() *UserPreferenceQuery {
 	if _q == nil {
 		return nil
 	}
-	return &ScheduleQuery{
+	return &UserPreferenceQuery{
 		config:     _q.config,
 		ctx:        _q.ctx.Clone(),
-		order:      append([]schedule.OrderOption{}, _q.order...),
+		order:      append([]userpreference.OrderOption{}, _q.order...),
 		inters:     append([]Interceptor{}, _q.inters...),
-		predicates: append([]predicate.Schedule{}, _q.predicates...),
+		predicates: append([]predicate.UserPreference{}, _q.predicates...),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -263,19 +262,19 @@ func (_q *ScheduleQuery) Clone() *ScheduleQuery {
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		UserID string `json:"user_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.Schedule.Query().
-//		GroupBy(schedule.FieldName).
+//	client.UserPreference.Query().
+//		GroupBy(userpreference.FieldUserID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-func (_q *ScheduleQuery) GroupBy(field string, fields ...string) *ScheduleGroupBy {
+func (_q *UserPreferenceQuery) GroupBy(field string, fields ...string) *UserPreferenceGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &ScheduleGroupBy{build: _q}
+	grbuild := &UserPreferenceGroupBy{build: _q}
 	grbuild.flds = &_q.ctx.Fields
-	grbuild.label = schedule.Label
+	grbuild.label = userpreference.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
@@ -286,26 +285,26 @@ func (_q *ScheduleQuery) GroupBy(field string, fields ...string) *ScheduleGroupB
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		UserID string `json:"user_id,omitempty"`
 //	}
 //
-//	client.Schedule.Query().
-//		Select(schedule.FieldName).
+//	client.UserPreference.Query().
+//		Select(userpreference.FieldUserID).
 //		Scan(ctx, &v)
-func (_q *ScheduleQuery) Select(fields ...string) *ScheduleSelect {
+func (_q *UserPreferenceQuery) Select(fields ...string) *UserPreferenceSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
-	sbuild := &ScheduleSelect{ScheduleQuery: _q}
-	sbuild.label = schedule.Label
+	sbuild := &UserPreferenceSelect{UserPreferenceQuery: _q}
+	sbuild.label = userpreference.Label
 	sbuild.flds, sbuild.scan = &_q.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
-// Aggregate returns a ScheduleSelect configured with the given aggregations.
-func (_q *ScheduleQuery) Aggregate(fns ...AggregateFunc) *ScheduleSelect {
+// Aggregate returns a UserPreferenceSelect configured with the given aggregations.
+func (_q *UserPreferenceQuery) Aggregate(fns ...AggregateFunc) *UserPreferenceSelect {
 	return _q.Select().Aggregate(fns...)
 }
 
-func (_q *ScheduleQuery) prepareQuery(ctx context.Context) error {
+func (_q *UserPreferenceQuery) prepareQuery(ctx context.Context) error {
 	for _, inter := range _q.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
@@ -317,7 +316,7 @@ func (_q *ScheduleQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range _q.ctx.Fields {
-		if !schedule.ValidColumn(f) {
+		if !userpreference.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -331,16 +330,16 @@ func (_q *ScheduleQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (_q *ScheduleQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Schedule, error) {
+func (_q *UserPreferenceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*UserPreference, error) {
 	var (
-		nodes = []*Schedule{}
+		nodes = []*UserPreference{}
 		_spec = _q.querySpec()
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*Schedule).scanValues(nil, columns)
+		return (*UserPreference).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &Schedule{config: _q.config}
+		node := &UserPreference{config: _q.config}
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
@@ -356,7 +355,7 @@ func (_q *ScheduleQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Sch
 	return nodes, nil
 }
 
-func (_q *ScheduleQuery) sqlCount(ctx context.Context) (int, error) {
+func (_q *UserPreferenceQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
 	_spec.Node.Columns = _q.ctx.Fields
 	if len(_q.ctx.Fields) > 0 {
@@ -365,8 +364,8 @@ func (_q *ScheduleQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, _q.driver, _spec)
 }
 
-func (_q *ScheduleQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(schedule.Table, schedule.Columns, sqlgraph.NewFieldSpec(schedule.FieldID, field.TypeUUID))
+func (_q *UserPreferenceQuery) querySpec() *sqlgraph.QuerySpec {
+	_spec := sqlgraph.NewQuerySpec(userpreference.Table, userpreference.Columns, sqlgraph.NewFieldSpec(userpreference.FieldID, field.TypeInt))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -375,9 +374,9 @@ func (_q *ScheduleQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := _q.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, schedule.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, userpreference.FieldID)
 		for i := range fields {
-			if fields[i] != schedule.FieldID {
+			if fields[i] != userpreference.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
@@ -405,12 +404,12 @@ func (_q *ScheduleQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (_q *ScheduleQuery) sqlQuery(ctx context.Context) *sql.Selector {
+func (_q *UserPreferenceQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(_q.driver.Dialect())
-	t1 := builder.Table(schedule.Table)
+	t1 := builder.Table(userpreference.Table)
 	columns := _q.ctx.Fields
 	if len(columns) == 0 {
-		columns = schedule.Columns
+		columns = userpreference.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if _q.sql != nil {
@@ -437,28 +436,28 @@ func (_q *ScheduleQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// ScheduleGroupBy is the group-by builder for Schedule entities.
-type ScheduleGroupBy struct {
+// UserPreferenceGroupBy is the group-by builder for UserPreference entities.
+type UserPreferenceGroupBy struct {
 	selector
-	build *ScheduleQuery
+	build *UserPreferenceQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (_g *ScheduleGroupBy) Aggregate(fns ...AggregateFunc) *ScheduleGroupBy {
+func (_g *UserPreferenceGroupBy) Aggregate(fns ...AggregateFunc) *UserPreferenceGroupBy {
 	_g.fns = append(_g.fns, fns...)
 	return _g
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_g *ScheduleGroupBy) Scan(ctx context.Context, v any) error {
+func (_g *UserPreferenceGroupBy) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _g.build.ctx, ent.OpQueryGroupBy)
 	if err := _g.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*ScheduleQuery, *ScheduleGroupBy](ctx, _g.build, _g, _g.build.inters, v)
+	return scanWithInterceptors[*UserPreferenceQuery, *UserPreferenceGroupBy](ctx, _g.build, _g, _g.build.inters, v)
 }
 
-func (_g *ScheduleGroupBy) sqlScan(ctx context.Context, root *ScheduleQuery, v any) error {
+func (_g *UserPreferenceGroupBy) sqlScan(ctx context.Context, root *UserPreferenceQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
 	aggregation := make([]string, 0, len(_g.fns))
 	for _, fn := range _g.fns {
@@ -485,28 +484,28 @@ func (_g *ScheduleGroupBy) sqlScan(ctx context.Context, root *ScheduleQuery, v a
 	return sql.ScanSlice(rows, v)
 }
 
-// ScheduleSelect is the builder for selecting fields of Schedule entities.
-type ScheduleSelect struct {
-	*ScheduleQuery
+// UserPreferenceSelect is the builder for selecting fields of UserPreference entities.
+type UserPreferenceSelect struct {
+	*UserPreferenceQuery
 	selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (_s *ScheduleSelect) Aggregate(fns ...AggregateFunc) *ScheduleSelect {
+func (_s *UserPreferenceSelect) Aggregate(fns ...AggregateFunc) *UserPreferenceSelect {
 	_s.fns = append(_s.fns, fns...)
 	return _s
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_s *ScheduleSelect) Scan(ctx context.Context, v any) error {
+func (_s *UserPreferenceSelect) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _s.ctx, ent.OpQuerySelect)
 	if err := _s.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*ScheduleQuery, *ScheduleSelect](ctx, _s.ScheduleQuery, _s, _s.inters, v)
+	return scanWithInterceptors[*UserPreferenceQuery, *UserPreferenceSelect](ctx, _s.UserPreferenceQuery, _s, _s.inters, v)
 }
 
-func (_s *ScheduleSelect) sqlScan(ctx context.Context, root *ScheduleQuery, v any) error {
+func (_s *UserPreferenceSelect) sqlScan(ctx context.Context, root *UserPreferenceQuery, v any) error {
 	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(_s.fns))
 	for _, fn := range _s.fns {

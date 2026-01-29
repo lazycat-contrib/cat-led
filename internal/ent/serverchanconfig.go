@@ -47,7 +47,7 @@ func (*ServerChanConfig) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the ServerChanConfig fields.
-func (scc *ServerChanConfig) assignValues(columns []string, values []any) error {
+func (_m *ServerChanConfig) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -58,33 +58,33 @@ func (scc *ServerChanConfig) assignValues(columns []string, values []any) error 
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			scc.ID = int(value.Int64)
+			_m.ID = int(value.Int64)
 		case serverchanconfig.FieldSendKey:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field send_key", values[i])
 			} else if value.Valid {
-				scc.SendKey = value.String
+				_m.SendKey = value.String
 			}
 		case serverchanconfig.FieldOnTemplate:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field on_template", values[i])
 			} else if value.Valid {
-				scc.OnTemplate = value.String
+				_m.OnTemplate = value.String
 			}
 		case serverchanconfig.FieldOffTemplate:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field off_template", values[i])
 			} else if value.Valid {
-				scc.OffTemplate = value.String
+				_m.OffTemplate = value.String
 			}
 		case serverchanconfig.FieldEnabled:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field enabled", values[i])
 			} else if value.Valid {
-				scc.Enabled = value.Bool
+				_m.Enabled = value.Bool
 			}
 		default:
-			scc.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -92,44 +92,44 @@ func (scc *ServerChanConfig) assignValues(columns []string, values []any) error 
 
 // Value returns the ent.Value that was dynamically selected and assigned to the ServerChanConfig.
 // This includes values selected through modifiers, order, etc.
-func (scc *ServerChanConfig) Value(name string) (ent.Value, error) {
-	return scc.selectValues.Get(name)
+func (_m *ServerChanConfig) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // Update returns a builder for updating this ServerChanConfig.
 // Note that you need to call ServerChanConfig.Unwrap() before calling this method if this ServerChanConfig
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (scc *ServerChanConfig) Update() *ServerChanConfigUpdateOne {
-	return NewServerChanConfigClient(scc.config).UpdateOne(scc)
+func (_m *ServerChanConfig) Update() *ServerChanConfigUpdateOne {
+	return NewServerChanConfigClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the ServerChanConfig entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (scc *ServerChanConfig) Unwrap() *ServerChanConfig {
-	_tx, ok := scc.config.driver.(*txDriver)
+func (_m *ServerChanConfig) Unwrap() *ServerChanConfig {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: ServerChanConfig is not a transactional entity")
 	}
-	scc.config.driver = _tx.drv
-	return scc
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (scc *ServerChanConfig) String() string {
+func (_m *ServerChanConfig) String() string {
 	var builder strings.Builder
 	builder.WriteString("ServerChanConfig(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", scc.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("send_key=")
-	builder.WriteString(scc.SendKey)
+	builder.WriteString(_m.SendKey)
 	builder.WriteString(", ")
 	builder.WriteString("on_template=")
-	builder.WriteString(scc.OnTemplate)
+	builder.WriteString(_m.OnTemplate)
 	builder.WriteString(", ")
 	builder.WriteString("off_template=")
-	builder.WriteString(scc.OffTemplate)
+	builder.WriteString(_m.OffTemplate)
 	builder.WriteString(", ")
 	builder.WriteString("enabled=")
-	builder.WriteString(fmt.Sprintf("%v", scc.Enabled))
+	builder.WriteString(fmt.Sprintf("%v", _m.Enabled))
 	builder.WriteByte(')')
 	return builder.String()
 }
