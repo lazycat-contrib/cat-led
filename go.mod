@@ -11,7 +11,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/lib-x/entsqlite v0.1.7
 	github.com/rs/zerolog v1.34.0
-	golang.org/x/oauth2 v0.34.0
+	golang.org/x/oauth2 v0.35.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
