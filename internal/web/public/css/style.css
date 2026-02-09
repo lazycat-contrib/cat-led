@@ -2459,6 +2459,17 @@ input:checked + .toggle-label:before {
 .bulb-style-modal-content {
   max-width: 600px;
   width: 95%;
+  max-height: calc(100dvh - 32px);
+  max-height: calc(100dvh - 32px - env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+}
+
+.bulb-style-modal-content .modal-body {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  min-height: 0;
 }
 
 .bulb-style-grid {
@@ -2713,24 +2724,29 @@ input:checked + .toggle-label:before {
 
 @media (max-width: 480px) {
   .bulb-style-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
 
   .bulb-style-card {
-    padding: 14px;
+    padding: 10px;
   }
 
   .style-preview {
-    height: 90px;
+    height: 60px;
+    margin-bottom: 4px;
   }
 
   .style-info .style-name {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .style-desc {
     font-size: 11px;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   #bulb-style-toggle {
