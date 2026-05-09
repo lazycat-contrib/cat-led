@@ -21,6 +21,8 @@ const $scheduleForm = document.getElementById('schedule-form');
 const $closeModalBtn = document.getElementById('close-modal-btn');
 const $cancelScheduleBtn = document.getElementById('cancel-schedule-btn');
 const $daySelects = document.querySelectorAll('.day-select');
+const $notifyViaLzc = document.getElementById('notify-via-lzc');
+const $testLzcNotifyBtn = document.getElementById('test-lzc-notify-btn');
 const $themeToggle = document.getElementById('theme-toggle'); // 主题切换按钮
 const $logoutBtn = document.getElementById('logout-btn'); // 登出按钮
 const $bulbStyleToggle = document.getElementById('bulb-style-toggle'); // 灯泡样式切换按钮
@@ -498,7 +500,11 @@ function renderSchedulesList() {
             </div>
             <div class="schedule-serverchan ${schedule.notifyViaServerChan ? 'enabled' : ''}" title="Server酱通知">
                 <i class="ri-notification-line"></i>
-                <span>${schedule.notifyViaServerChan ? '已启用通知' : '未启用通知'}</span>
+                <span>Server酱${schedule.notifyViaServerChan ? '已启用' : '未启用'}</span>
+            </div>
+            <div class="schedule-notify-lzc ${schedule.notifyViaLzc ? 'enabled' : ''}" title="懒猫内置通知">
+                <i class="ri-notification-badge-line"></i>
+                <span>懒猫内置${schedule.notifyViaLzc ? '已启用' : '未启用'}</span>
             </div>
             <div class="schedule-toggle">
                 <div class="toggle-switch small">
@@ -560,6 +566,7 @@ function openAddScheduleModal() {
 
     // 设置默认操作为开灯
     document.getElementById('operation').value = 'on';
+    updateLzcNotifyTestButton();
 
     // 显示模态框
     $scheduleModal.classList.add('show');
@@ -593,6 +600,10 @@ function openEditScheduleModal(scheduleId) {
     
     // 设置Server酱通知选项
     document.getElementById('notify-via-server-chan').checked = schedule.notifyViaServerChan || false;
+    
+    // 设置懒猫内置通知选项
+    document.getElementById('notify-via-lzc').checked = schedule.notifyViaLzc || false;
+    updateLzcNotifyTestButton();
 
     // 设置重复的星期几
     $daySelects.forEach(el => {
@@ -608,6 +619,41 @@ function openEditScheduleModal(scheduleId) {
 
     // 显示模态框
     $scheduleModal.classList.add('show');
+}
+
+function updateLzcNotifyTestButton() {
+    if (!$notifyViaLzc || !$testLzcNotifyBtn) return;
+    $testLzcNotifyBtn.hidden = !$notifyViaLzc.checked;
+}
+
+async function testLzcNotification() {
+    if (!$testLzcNotifyBtn) return;
+
+    const previousHTML = $testLzcNotifyBtn.innerHTML;
+    $testLzcNotifyBtn.disabled = true;
+    $testLzcNotifyBtn.innerHTML = '<i class="ri-loader-4-line"></i>';
+
+    try {
+        const response = await fetch('/api/lzc-notification/test', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.error || '发送测试通知失败');
+        }
+
+        showNotification(data.message || '测试通知已发送', 'success');
+    } catch (error) {
+        console.error('发送懒猫内置测试通知错误:', error);
+        showNotification(`测试通知失败: ${error.message}`, 'error');
+    } finally {
+        $testLzcNotifyBtn.disabled = false;
+        $testLzcNotifyBtn.innerHTML = previousHTML;
+    }
 }
 
 // 关闭模态框
@@ -633,6 +679,7 @@ async function saveSchedule(e) {
     const allowEdit = document.getElementById('allow-edit').checked;
     const enabled = document.getElementById('schedule-enabled').checked;
     const notifyViaServerChan = document.getElementById('notify-via-server-chan').checked;
+    const notifyViaLzc = document.getElementById('notify-via-lzc').checked;
 
     // 获取选中的星期
     const repeatDays = [];
@@ -654,6 +701,7 @@ async function saveSchedule(e) {
         allowEdit,
         enabled,
         notifyViaServerChan,
+        notifyViaLzc,
         operation
     };
 
@@ -711,6 +759,8 @@ async function toggleSchedule(scheduleId) {
         repeatDays: schedule.repeatDays || [],
         allowEdit: schedule.allowEdit,
         enabled: !schedule.enabled,
+        notifyViaServerChan: schedule.notifyViaServerChan || false,
+        notifyViaLzc: schedule.notifyViaLzc || false,
         operation: schedule.operation
     };
 
@@ -855,6 +905,14 @@ function initEventListeners() {
 
     // 保存任务
     $scheduleForm.addEventListener('submit', saveSchedule);
+
+    if ($notifyViaLzc) {
+        $notifyViaLzc.addEventListener('change', updateLzcNotifyTestButton);
+    }
+
+    if ($testLzcNotifyBtn) {
+        $testLzcNotifyBtn.addEventListener('click', testLzcNotification);
+    }
 
     // 重复日期选择
     $daySelects.forEach(el => {

@@ -1671,6 +1671,26 @@ html {
   align-items: center;
 }
 
+.notification-toggle-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notification-test-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 31px;
+  min-height: 31px;
+  padding: 0;
+  font-size: 16px;
+}
+
+.notification-test-button[hidden] {
+  display: none;
+}
+
 .toggle-switch {
   position: relative;
   display: inline-flex;
@@ -2070,8 +2090,9 @@ input:checked + .toggle-label:before {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-/* 定时任务中的Server酱通知样式 */
-.schedule-serverchan {
+/* 定时任务中的通知渠道样式 */
+.schedule-serverchan,
+.schedule-notify-lzc {
   display: flex;
   align-items: center;
   margin: 8px 0;
@@ -2079,25 +2100,30 @@ input:checked + .toggle-label:before {
   color: rgba(255, 255, 255, 0.7);
 }
 
-.schedule-serverchan i {
+.schedule-serverchan i,
+.schedule-notify-lzc i {
   margin-right: 8px;
   font-size: 16px;
 }
 
-.schedule-serverchan span {
+.schedule-serverchan span,
+.schedule-notify-lzc span {
   font-weight: 500;
 }
 
-[data-theme="light"] .schedule-serverchan {
+[data-theme="light"] .schedule-serverchan,
+[data-theme="light"] .schedule-notify-lzc {
   color: var(--text-secondary);
 }
 
-/* 当启用Server酱通知时的样式 */
-.schedule-serverchan.enabled {
+/* 当启用通知时的样式 */
+.schedule-serverchan.enabled,
+.schedule-notify-lzc.enabled {
   color: var(--success-color);
 }
 
-[data-theme="light"] .schedule-serverchan.enabled {
+[data-theme="light"] .schedule-serverchan.enabled,
+[data-theme="light"] .schedule-notify-lzc.enabled {
   color: var(--success-color);
 }
 /* ===================================

@@ -4,7 +4,7 @@ go 1.25.0
 
 require (
 	entgo.io/ent v0.14.5
-	gitee.com/linakesi/lzc-sdk v0.1.0
+	gitee.com/linakesi/lzc-sdk v0.1.1-0.20260506063113-fde83c5c266f
 	github.com/coreos/go-oidc/v3 v3.17.0
 	github.com/easychen/serverchan-sdk-golang v1.0.0
 	github.com/gin-gonic/gin v1.11.0
@@ -12,6 +12,7 @@ require (
 	github.com/lib-x/entsqlite v0.1.9
 	github.com/rs/zerolog v1.34.0
 	golang.org/x/oauth2 v0.36.0
+	google.golang.org/grpc v1.63.2
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
@@ -64,7 +65,6 @@ require (
 	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240227224415-6ceb2ff114de // indirect
-	google.golang.org/grpc v1.63.2 // indirect
 	google.golang.org/protobuf v1.36.9 // indirect
 	modernc.org/libc v1.67.6 // indirect
 	modernc.org/mathutil v1.7.1 // indirect

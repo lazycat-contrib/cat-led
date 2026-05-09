@@ -120,6 +120,7 @@ func (s *Server) setupAuthenticatedRoutes() {
 	authenticated.POST("/api/schedules", handlers.CreateSchedule)
 	authenticated.PUT("/api/schedules/:id", handlers.UpdateSchedule)
 	authenticated.DELETE("/api/schedules/:id", handlers.DeleteSchedule)
+	authenticated.POST("/api/lzc-notification/test", handlers.TestLzcNotification)
 
 	// ServerChan API
 	authenticated.GET("/api/serverchan/config", handlers.GetServerChanConfig)

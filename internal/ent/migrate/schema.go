@@ -20,6 +20,7 @@ var (
 		{Name: "enabled", Type: field.TypeBool, Default: true},
 		{Name: "allow_edit_by_others", Type: field.TypeBool},
 		{Name: "notify_via_server_chan", Type: field.TypeBool, Default: false},
+		{Name: "notify_via_lzc", Type: field.TypeBool, Default: false},
 	}
 	// SchedulesTable holds the schema information for the "schedules" table.
 	SchedulesTable = &schema.Table{

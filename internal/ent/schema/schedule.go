@@ -24,6 +24,7 @@ func (Schedule) Fields() []ent.Field {
 		field.Bool("enabled").Default(true),
 		field.Bool("allow_edit_by_others"),
 		field.Bool("notify_via_server_chan").Default(false).Comment("是否通过Server酱通知"),
+		field.Bool("notify_via_lzc").Default(false).Comment("是否通过懒猫内置通知"),
 	}
 }
 

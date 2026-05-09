@@ -89,6 +89,11 @@ func NotifyViaServerChan(v bool) predicate.Schedule {
 	return predicate.Schedule(sql.FieldEQ(FieldNotifyViaServerChan, v))
 }
 
+// NotifyViaLzc applies equality check predicate on the "notify_via_lzc" field. It's identical to NotifyViaLzcEQ.
+func NotifyViaLzc(v bool) predicate.Schedule {
+	return predicate.Schedule(sql.FieldEQ(FieldNotifyViaLzc, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.Schedule {
 	return predicate.Schedule(sql.FieldEQ(FieldName, v))
@@ -347,6 +352,16 @@ func NotifyViaServerChanEQ(v bool) predicate.Schedule {
 // NotifyViaServerChanNEQ applies the NEQ predicate on the "notify_via_server_chan" field.
 func NotifyViaServerChanNEQ(v bool) predicate.Schedule {
 	return predicate.Schedule(sql.FieldNEQ(FieldNotifyViaServerChan, v))
+}
+
+// NotifyViaLzcEQ applies the EQ predicate on the "notify_via_lzc" field.
+func NotifyViaLzcEQ(v bool) predicate.Schedule {
+	return predicate.Schedule(sql.FieldEQ(FieldNotifyViaLzc, v))
+}
+
+// NotifyViaLzcNEQ applies the NEQ predicate on the "notify_via_lzc" field.
+func NotifyViaLzcNEQ(v bool) predicate.Schedule {
+	return predicate.Schedule(sql.FieldNEQ(FieldNotifyViaLzc, v))
 }
 
 // And groups predicates with the AND operator between them.

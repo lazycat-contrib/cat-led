@@ -15,8 +15,8 @@ import (
 
 // Error messages for schedule operations.
 var (
-	ErrCreatorRequired     = errors.New("creator is required")
-	ErrPermissionDenied    = errors.New("you don't have permission to edit this schedule")
+	ErrCreatorRequired      = errors.New("creator is required")
+	ErrPermissionDenied     = errors.New("you don't have permission to edit this schedule")
 	ErrOnlyCreatorCanDelete = errors.New("only the creator can delete this schedule")
 )
 
@@ -80,6 +80,7 @@ func (s *ScheduleUsecase) CreateSchedule(ctx context.Context, sched *ent.Schedul
 		SetEnabled(sched.Enabled).
 		SetAllowEditByOthers(sched.AllowEditByOthers).
 		SetNotifyViaServerChan(sched.NotifyViaServerChan).
+		SetNotifyViaLzc(sched.NotifyViaLzc).
 		Save(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create schedule: %w", err)
@@ -135,7 +136,8 @@ func (s *ScheduleUsecase) UpdateSchedule(ctx context.Context, sched *ent.Schedul
 		SetMinute(sched.Minute).
 		SetOperation(sched.Operation).
 		SetEnabled(sched.Enabled).
-		SetNotifyViaServerChan(sched.NotifyViaServerChan)
+		SetNotifyViaServerChan(sched.NotifyViaServerChan).
+		SetNotifyViaLzc(sched.NotifyViaLzc)
 
 	// Only the creator can change the AllowEditByOthers setting
 	if existing.Creator == currentUser {

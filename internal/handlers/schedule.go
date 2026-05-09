@@ -11,6 +11,7 @@ import (
 	"cat-led/internal/biz"
 	"cat-led/internal/ent"
 	"cat-led/internal/ent/schedule"
+	"cat-led/internal/pkg/lzcnotify"
 	"cat-led/internal/pkg/serverchan"
 	"cat-led/internal/pkg/zlog"
 
@@ -86,6 +87,7 @@ func convertToEntSchedule(frontendSchedule map[string]interface{}, creatorID str
 	enabled, _ := frontendSchedule["enabled"].(bool)
 	allowEdit, _ := frontendSchedule["allowEdit"].(bool)
 	notifyViaServerChan, _ := frontendSchedule["notifyViaServerChan"].(bool)
+	notifyViaLzc, _ := frontendSchedule["notifyViaLzc"].(bool)
 
 	weekDays := extractWeekDays(frontendSchedule)
 	hour, minute := extractTime(frontendSchedule)
@@ -101,6 +103,7 @@ func convertToEntSchedule(frontendSchedule map[string]interface{}, creatorID str
 		Enabled:             enabled,
 		AllowEditByOthers:   allowEdit,
 		NotifyViaServerChan: notifyViaServerChan,
+		NotifyViaLzc:        notifyViaLzc,
 	}, nil
 }
 
@@ -163,6 +166,7 @@ func convertToFrontendSchedule(entSchedule *ent.Schedule) map[string]interface{}
 		"allowEdit":           entSchedule.AllowEditByOthers,
 		"operation":           string(entSchedule.Operation),
 		"notifyViaServerChan": entSchedule.NotifyViaServerChan,
+		"notifyViaLzc":        entSchedule.NotifyViaLzc,
 		"createdAt":           now,
 		"lastModified":        now,
 	}
@@ -451,6 +455,54 @@ func executeSchedule(ctx context.Context, logger *zlog.Logger, s *ent.Schedule) 
 	if s.NotifyViaServerChan {
 		sendServerChanNotification(ctx, logger, s.Name, status)
 	}
+	if s.NotifyViaLzc {
+		sendLzcNotification(ctx, logger, s.Creator, s.Name, operationName)
+	}
+}
+
+// TestLzcNotification sends a LazyCat built-in notification to the current user's clients.
+func TestLzcNotification(c *gin.Context) {
+	userID, ok := requireUserID(c)
+	if !ok {
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 15*time.Second)
+	defer cancel()
+
+	sent, err := lzcnotify.NotifyUser(ctx, userID, "懒猫小灯测试通知", "懒猫内置通知已启用", "")
+	if err != nil && sent == 0 {
+		c.JSON(500, gin.H{"error": fmt.Sprintf("发送测试通知失败: %v", err)})
+		return
+	}
+	if sent == 0 {
+		c.JSON(404, gin.H{"error": "没有找到可通知的在线客户端"})
+		return
+	}
+	if err != nil {
+		c.JSON(200, gin.H{"message": fmt.Sprintf("测试通知已发送到%d个客户端，部分客户端失败", sent)})
+		return
+	}
+
+	c.JSON(200, gin.H{"message": fmt.Sprintf("测试通知已发送到%d个客户端", sent)})
+}
+
+// sendLzcNotification sends a LazyCat built-in notification when a schedule is executed.
+func sendLzcNotification(ctx context.Context, logger *zlog.Logger, userID, taskName, operationName string) {
+	notifyCtx, cancel := context.WithTimeout(ctx, 15*time.Second)
+	defer cancel()
+
+	body := fmt.Sprintf("%s 任务执行成功，已%s", taskName, operationName)
+	sent, err := lzcnotify.NotifyUser(notifyCtx, userID, "懒猫小灯任务通知", body, "")
+	if err != nil {
+		logger.Error().Err(err).Str("任务名称", taskName).Int("已发送客户端数", sent).Msg("发送懒猫内置通知失败")
+		return
+	}
+	if sent == 0 {
+		logger.Warn().Str("任务名称", taskName).Msg("没有可通知的在线懒猫客户端")
+		return
+	}
+	logger.Info().Str("任务名称", taskName).Int("已发送客户端数", sent).Msg("发送懒猫内置通知成功")
 }
 
 // sendServerChanNotification sends a notification via ServerChan when a schedule is executed.

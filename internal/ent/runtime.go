@@ -25,6 +25,10 @@ func init() {
 	scheduleDescNotifyViaServerChan := scheduleFields[9].Descriptor()
 	// schedule.DefaultNotifyViaServerChan holds the default value on creation for the notify_via_server_chan field.
 	schedule.DefaultNotifyViaServerChan = scheduleDescNotifyViaServerChan.Default.(bool)
+	// scheduleDescNotifyViaLzc is the schema descriptor for notify_via_lzc field.
+	scheduleDescNotifyViaLzc := scheduleFields[10].Descriptor()
+	// schedule.DefaultNotifyViaLzc holds the default value on creation for the notify_via_lzc field.
+	schedule.DefaultNotifyViaLzc = scheduleDescNotifyViaLzc.Default.(bool)
 	// scheduleDescID is the schema descriptor for id field.
 	scheduleDescID := scheduleFields[0].Descriptor()
 	// schedule.DefaultID holds the default value on creation for the id field.

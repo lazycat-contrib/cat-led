@@ -50,6 +50,7 @@ type ScheduleMutation struct {
 	enabled                *bool
 	allow_edit_by_others   *bool
 	notify_via_server_chan *bool
+	notify_via_lzc         *bool
 	clearedFields          map[string]struct{}
 	done                   bool
 	oldValue               func(context.Context) (*Schedule, error)
@@ -539,6 +540,42 @@ func (m *ScheduleMutation) ResetNotifyViaServerChan() {
 	m.notify_via_server_chan = nil
 }
 
+// SetNotifyViaLzc sets the "notify_via_lzc" field.
+func (m *ScheduleMutation) SetNotifyViaLzc(b bool) {
+	m.notify_via_lzc = &b
+}
+
+// NotifyViaLzc returns the value of the "notify_via_lzc" field in the mutation.
+func (m *ScheduleMutation) NotifyViaLzc() (r bool, exists bool) {
+	v := m.notify_via_lzc
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNotifyViaLzc returns the old "notify_via_lzc" field's value of the Schedule entity.
+// If the Schedule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScheduleMutation) OldNotifyViaLzc(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNotifyViaLzc is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNotifyViaLzc requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNotifyViaLzc: %w", err)
+	}
+	return oldValue.NotifyViaLzc, nil
+}
+
+// ResetNotifyViaLzc resets all changes to the "notify_via_lzc" field.
+func (m *ScheduleMutation) ResetNotifyViaLzc() {
+	m.notify_via_lzc = nil
+}
+
 // Where appends a list predicates to the ScheduleMutation builder.
 func (m *ScheduleMutation) Where(ps ...predicate.Schedule) {
 	m.predicates = append(m.predicates, ps...)
@@ -573,7 +610,7 @@ func (m *ScheduleMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ScheduleMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.name != nil {
 		fields = append(fields, schedule.FieldName)
 	}
@@ -601,6 +638,9 @@ func (m *ScheduleMutation) Fields() []string {
 	if m.notify_via_server_chan != nil {
 		fields = append(fields, schedule.FieldNotifyViaServerChan)
 	}
+	if m.notify_via_lzc != nil {
+		fields = append(fields, schedule.FieldNotifyViaLzc)
+	}
 	return fields
 }
 
@@ -627,6 +667,8 @@ func (m *ScheduleMutation) Field(name string) (ent.Value, bool) {
 		return m.AllowEditByOthers()
 	case schedule.FieldNotifyViaServerChan:
 		return m.NotifyViaServerChan()
+	case schedule.FieldNotifyViaLzc:
+		return m.NotifyViaLzc()
 	}
 	return nil, false
 }
@@ -654,6 +696,8 @@ func (m *ScheduleMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldAllowEditByOthers(ctx)
 	case schedule.FieldNotifyViaServerChan:
 		return m.OldNotifyViaServerChan(ctx)
+	case schedule.FieldNotifyViaLzc:
+		return m.OldNotifyViaLzc(ctx)
 	}
 	return nil, fmt.Errorf("unknown Schedule field %s", name)
 }
@@ -725,6 +769,13 @@ func (m *ScheduleMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetNotifyViaServerChan(v)
+		return nil
+	case schedule.FieldNotifyViaLzc:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNotifyViaLzc(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Schedule field %s", name)
@@ -828,6 +879,9 @@ func (m *ScheduleMutation) ResetField(name string) error {
 		return nil
 	case schedule.FieldNotifyViaServerChan:
 		m.ResetNotifyViaServerChan()
+		return nil
+	case schedule.FieldNotifyViaLzc:
+		m.ResetNotifyViaLzc()
 		return nil
 	}
 	return fmt.Errorf("unknown Schedule field %s", name)

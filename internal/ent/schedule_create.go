@@ -98,6 +98,20 @@ func (_c *ScheduleCreate) SetNillableNotifyViaServerChan(v *bool) *ScheduleCreat
 	return _c
 }
 
+// SetNotifyViaLzc sets the "notify_via_lzc" field.
+func (_c *ScheduleCreate) SetNotifyViaLzc(v bool) *ScheduleCreate {
+	_c.mutation.SetNotifyViaLzc(v)
+	return _c
+}
+
+// SetNillableNotifyViaLzc sets the "notify_via_lzc" field if the given value is not nil.
+func (_c *ScheduleCreate) SetNillableNotifyViaLzc(v *bool) *ScheduleCreate {
+	if v != nil {
+		_c.SetNotifyViaLzc(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *ScheduleCreate) SetID(v uuid.UUID) *ScheduleCreate {
 	_c.mutation.SetID(v)
@@ -159,6 +173,10 @@ func (_c *ScheduleCreate) defaults() {
 		v := schedule.DefaultNotifyViaServerChan
 		_c.mutation.SetNotifyViaServerChan(v)
 	}
+	if _, ok := _c.mutation.NotifyViaLzc(); !ok {
+		v := schedule.DefaultNotifyViaLzc
+		_c.mutation.SetNotifyViaLzc(v)
+	}
 	if _, ok := _c.mutation.ID(); !ok {
 		v := schedule.DefaultID()
 		_c.mutation.SetID(v)
@@ -198,6 +216,9 @@ func (_c *ScheduleCreate) check() error {
 	}
 	if _, ok := _c.mutation.NotifyViaServerChan(); !ok {
 		return &ValidationError{Name: "notify_via_server_chan", err: errors.New(`ent: missing required field "Schedule.notify_via_server_chan"`)}
+	}
+	if _, ok := _c.mutation.NotifyViaLzc(); !ok {
+		return &ValidationError{Name: "notify_via_lzc", err: errors.New(`ent: missing required field "Schedule.notify_via_lzc"`)}
 	}
 	return nil
 }
@@ -269,6 +290,10 @@ func (_c *ScheduleCreate) createSpec() (*Schedule, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.NotifyViaServerChan(); ok {
 		_spec.SetField(schedule.FieldNotifyViaServerChan, field.TypeBool, value)
 		_node.NotifyViaServerChan = value
+	}
+	if value, ok := _c.mutation.NotifyViaLzc(); ok {
+		_spec.SetField(schedule.FieldNotifyViaLzc, field.TypeBool, value)
+		_node.NotifyViaLzc = value
 	}
 	return _node, _spec
 }
