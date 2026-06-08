@@ -412,9 +412,16 @@ func checkSchedules(logger *zlog.Logger) {
 	}
 }
 
-// shouldRunOnWeekday checks if the given weekday is in the schedule's weekdays list.
+// shouldRunOnWeekday checks if the schedule can run on the given weekday.
 func shouldRunOnWeekday(weekDays []int, currentWeekday int) bool {
+	if isOneTimeSchedule(weekDays) {
+		return true
+	}
 	return slices.Contains(weekDays, currentWeekday)
+}
+
+func isOneTimeSchedule(weekDays []int) bool {
+	return len(weekDays) == 0
 }
 
 // executeSchedule performs the scheduled operation and sends notifications if enabled.
@@ -458,6 +465,25 @@ func executeSchedule(ctx context.Context, logger *zlog.Logger, s *ent.Schedule) 
 	if s.NotifyViaLzc {
 		sendLzcNotification(ctx, logger, s.Creator, s.Name, operationName)
 	}
+
+	disableOneTimeScheduleAfterRun(ctx, logger, s)
+}
+
+func disableOneTimeScheduleAfterRun(ctx context.Context, logger *zlog.Logger, s *ent.Schedule) {
+	if !isOneTimeSchedule(s.WeekDays) {
+		return
+	}
+	if scheduleUseCase == nil {
+		logger.Warn().Str("任务名称", s.Name).Msg("定时任务服务未初始化，无法自动禁用单次任务")
+		return
+	}
+	if err := scheduleUseCase.SetScheduleEnabled(ctx, s.ID, false); err != nil {
+		logger.Error().Err(err).Str("任务名称", s.Name).Msg("自动禁用单次任务失败")
+		return
+	}
+
+	s.Enabled = false
+	logger.Info().Str("任务名称", s.Name).Msg("单次任务执行后已自动禁用")
 }
 
 // TestLzcNotification sends a LazyCat built-in notification to the current user's clients.

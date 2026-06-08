@@ -152,6 +152,16 @@ func (s *ScheduleUsecase) UpdateSchedule(ctx context.Context, sched *ent.Schedul
 	return result, nil
 }
 
+// SetScheduleEnabled updates a schedule's enabled state from trusted system flows.
+func (s *ScheduleUsecase) SetScheduleEnabled(ctx context.Context, id uuid.UUID, enabled bool) error {
+	if err := s.client.Schedule.UpdateOneID(id).
+		SetEnabled(enabled).
+		Exec(ctx); err != nil {
+		return fmt.Errorf("failed to set schedule enabled state: %w", err)
+	}
+	return nil
+}
+
 // canEdit checks if the user can edit the schedule.
 func (s *ScheduleUsecase) canEdit(sched *ent.Schedule, currentUser string) bool {
 	return sched.Creator == currentUser || sched.AllowEditByOthers
