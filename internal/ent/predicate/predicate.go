@@ -6,6 +6,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// NtfyConfig is the predicate function for ntfyconfig builders.
+type NtfyConfig func(*sql.Selector)
+
 // Schedule is the predicate function for schedule builders.
 type Schedule func(*sql.Selector)
 

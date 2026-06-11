@@ -34,6 +34,8 @@ const (
 	FieldNotifyViaServerChan = "notify_via_server_chan"
 	// FieldNotifyViaLzc holds the string denoting the notify_via_lzc field in the database.
 	FieldNotifyViaLzc = "notify_via_lzc"
+	// FieldNotifyViaNtfy holds the string denoting the notify_via_ntfy field in the database.
+	FieldNotifyViaNtfy = "notify_via_ntfy"
 	// Table holds the table name of the schedule in the database.
 	Table = "schedules"
 )
@@ -51,6 +53,7 @@ var Columns = []string{
 	FieldAllowEditByOthers,
 	FieldNotifyViaServerChan,
 	FieldNotifyViaLzc,
+	FieldNotifyViaNtfy,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -70,6 +73,8 @@ var (
 	DefaultNotifyViaServerChan bool
 	// DefaultNotifyViaLzc holds the default value on creation for the "notify_via_lzc" field.
 	DefaultNotifyViaLzc bool
+	// DefaultNotifyViaNtfy holds the default value on creation for the "notify_via_ntfy" field.
+	DefaultNotifyViaNtfy bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -153,4 +158,9 @@ func ByNotifyViaServerChan(opts ...sql.OrderTermOption) OrderOption {
 // ByNotifyViaLzc orders the results by the notify_via_lzc field.
 func ByNotifyViaLzc(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldNotifyViaLzc, opts...).ToFunc()
+}
+
+// ByNotifyViaNtfy orders the results by the notify_via_ntfy field.
+func ByNotifyViaNtfy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNotifyViaNtfy, opts...).ToFunc()
 }

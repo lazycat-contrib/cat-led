@@ -166,6 +166,20 @@ func (_u *ScheduleUpdate) SetNillableNotifyViaLzc(v *bool) *ScheduleUpdate {
 	return _u
 }
 
+// SetNotifyViaNtfy sets the "notify_via_ntfy" field.
+func (_u *ScheduleUpdate) SetNotifyViaNtfy(v bool) *ScheduleUpdate {
+	_u.mutation.SetNotifyViaNtfy(v)
+	return _u
+}
+
+// SetNillableNotifyViaNtfy sets the "notify_via_ntfy" field if the given value is not nil.
+func (_u *ScheduleUpdate) SetNillableNotifyViaNtfy(v *bool) *ScheduleUpdate {
+	if v != nil {
+		_u.SetNotifyViaNtfy(*v)
+	}
+	return _u
+}
+
 // Mutation returns the ScheduleMutation object of the builder.
 func (_u *ScheduleUpdate) Mutation() *ScheduleMutation {
 	return _u.mutation
@@ -257,6 +271,9 @@ func (_u *ScheduleUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.NotifyViaLzc(); ok {
 		_spec.SetField(schedule.FieldNotifyViaLzc, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.NotifyViaNtfy(); ok {
+		_spec.SetField(schedule.FieldNotifyViaNtfy, field.TypeBool, value)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -416,6 +433,20 @@ func (_u *ScheduleUpdateOne) SetNillableNotifyViaLzc(v *bool) *ScheduleUpdateOne
 	return _u
 }
 
+// SetNotifyViaNtfy sets the "notify_via_ntfy" field.
+func (_u *ScheduleUpdateOne) SetNotifyViaNtfy(v bool) *ScheduleUpdateOne {
+	_u.mutation.SetNotifyViaNtfy(v)
+	return _u
+}
+
+// SetNillableNotifyViaNtfy sets the "notify_via_ntfy" field if the given value is not nil.
+func (_u *ScheduleUpdateOne) SetNillableNotifyViaNtfy(v *bool) *ScheduleUpdateOne {
+	if v != nil {
+		_u.SetNotifyViaNtfy(*v)
+	}
+	return _u
+}
+
 // Mutation returns the ScheduleMutation object of the builder.
 func (_u *ScheduleUpdateOne) Mutation() *ScheduleMutation {
 	return _u.mutation
@@ -537,6 +568,9 @@ func (_u *ScheduleUpdateOne) sqlSave(ctx context.Context) (_node *Schedule, err 
 	}
 	if value, ok := _u.mutation.NotifyViaLzc(); ok {
 		_spec.SetField(schedule.FieldNotifyViaLzc, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.NotifyViaNtfy(); ok {
+		_spec.SetField(schedule.FieldNotifyViaNtfy, field.TypeBool, value)
 	}
 	_node = &Schedule{config: _u.config}
 	_spec.Assign = _node.assignValues

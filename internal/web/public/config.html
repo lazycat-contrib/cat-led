@@ -78,6 +78,46 @@
                 </form>
             </div>
         </section>
+
+        <!-- ntfy 通知配置 -->
+        <section class="config-section">
+            <h2 class="section-title">ntfy 通知配置</h2>
+            <div class="config-form-container">
+                <form id="ntfy-config-form">
+                    <div class="form-group toggle-group">
+                        <label for="ntfy-enabled">启用 ntfy 通知</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="ntfy-enabled">
+                            <label for="ntfy-enabled" class="toggle-label"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ntfy-server-url">服务器地址</label>
+                        <input type="text" id="ntfy-server-url" placeholder="https://ntfy.sh" value="https://ntfy.sh">
+                    </div>
+                    <div class="form-group">
+                        <label for="ntfy-topic">Topic</label>
+                        <input type="text" id="ntfy-topic" placeholder="请输入ntfy主题名称" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ntfy-token">访问令牌 (可选)</label>
+                        <input type="text" id="ntfy-token" placeholder="如果服务器需要认证请输入令牌">
+                    </div>
+                    <div class="form-group">
+                        <label for="ntfy-on-template">开灯通知模板</label>
+                        <textarea id="ntfy-on-template" rows="2">{{.Name}} 任务执行成功，灯已开启</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="ntfy-off-template">关灯通知模板</label>
+                        <textarea id="ntfy-off-template" rows="2">{{.Name}} 任务执行成功，灯已关闭</textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="secondary-button" id="test-ntfy-btn">测试连接</button>
+                        <button type="submit" class="primary-button" id="save-ntfy-btn">保存配置</button>
+                    </div>
+                </form>
+            </div>
+        </section>
     </div>
 
     <!-- Toast通知容器 -->

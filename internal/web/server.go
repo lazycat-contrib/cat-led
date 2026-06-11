@@ -126,6 +126,11 @@ func (s *Server) setupAuthenticatedRoutes() {
 	authenticated.GET("/api/serverchan/config", handlers.GetServerChanConfig)
 	authenticated.POST("/api/serverchan/config", handlers.SaveServerChanConfig)
 
+	// Ntfy API
+	authenticated.GET("/api/ntfy/config", handlers.GetNtfyConfig)
+	authenticated.POST("/api/ntfy/config", handlers.SaveNtfyConfig)
+	authenticated.POST("/api/ntfy/test", handlers.TestNtfyNotification)
+
 	// User Preference API
 	authenticated.GET("/api/user/preference", handlers.GetUserPreference)
 	authenticated.PUT("/api/user/preference", handlers.UpdateUserPreference)

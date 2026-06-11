@@ -8,6 +8,8 @@ gitee.com/linakesi/lzc-sdk v0.1.1-0.20260506063113-fde83c5c266f h1:6wmbHsVN3PyFE
 gitee.com/linakesi/lzc-sdk v0.1.1-0.20260506063113-fde83c5c266f/go.mod h1:m3ZKtvNp/wTikT3eVu+QtNYxPXJu/RWpERafKC8is4I=
 gitee.com/linakesi/remotesocks v0.0.0-20250225034155-8709b247f245 h1:9lJkHVHHoOaikCSNvyK07T/Gq0zQL8KFCuWJEIC9tzU=
 gitee.com/linakesi/remotesocks v0.0.0-20250225034155-8709b247f245/go.mod h1:RkY5CQgpDuk6CEiJWbFEQ2JiyRfFgxiVRSWhjiVexEo=
+github.com/AnthonyHewins/gotfy v0.0.11 h1:9eHAdrSS89CdV0HcMhSGdVSe5ajp+ydye0P/pSsWy1s=
+github.com/AnthonyHewins/gotfy v0.0.11/go.mod h1:xagLePvF3DVFCM8Zl1ebU7V8sb43gRJO7RrJz0N1Vec=
 github.com/DATA-DOG/go-sqlmock v1.5.0 h1:Shsta01QNfFxHCfpW6YH2STWB0MudeXXEWMr20OEh60=
 github.com/DATA-DOG/go-sqlmock v1.5.0/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
 github.com/agext/levenshtein v1.2.3 h1:YB2fHEn0UJagG8T1rrWknE3ZQzWM06O8AMAatNn7lmo=
@@ -56,6 +58,8 @@ github.com/go-test/deep v1.0.3 h1:ZrJSEWsXzPOxaZnFteGEfooLba+ju3FYIbOrS+rQd68=
 github.com/go-test/deep v1.0.3/go.mod h1:wGDj63lr65AM2AQyKZd/NYHGb0R+1RLqB8NKt3aSFNA=
 github.com/goccy/go-json v0.10.2 h1:CrxCmQqYDkv1z7lO7Wbh2HN93uovUHgrECaO5ZrCXAU=
 github.com/goccy/go-json v0.10.2/go.mod h1:6MelG93GURQebXPDq3khkgXZkazVtN9CRI+MGFi0w8I=
+github.com/goccy/go-json v0.10.4 h1:JSwxQzIqKfmFX1swYPpUThQZp/Ka4wzJdK0LWVytLPM=
+github.com/goccy/go-json v0.10.4/go.mod h1:oq7eo15ShAhp70Anwd5lgX2pLfOS3QCiwU/PULtXL6M=
 github.com/goccy/go-yaml v1.18.0 h1:8W7wMFS12Pcas7KU+VVkaiCng+kG8QiFeFwzFb+rwuw=
 github.com/goccy/go-yaml v1.18.0/go.mod h1:XBurs7gK8ATbW4ZPGKgcbrY1Br56PdM69F7LkFRi1kA=
 github.com/godbus/dbus/v5 v5.0.4/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=

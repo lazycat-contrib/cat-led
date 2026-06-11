@@ -23,6 +23,7 @@ const $cancelScheduleBtn = document.getElementById('cancel-schedule-btn');
 const $daySelects = document.querySelectorAll('.day-select');
 const $notifyViaLzc = document.getElementById('notify-via-lzc');
 const $testLzcNotifyBtn = document.getElementById('test-lzc-notify-btn');
+const $notifyViaNtfy = document.getElementById('notify-via-ntfy');
 const $themeToggle = document.getElementById('theme-toggle'); // 主题切换按钮
 const $logoutBtn = document.getElementById('logout-btn'); // 登出按钮
 const $bulbStyleToggle = document.getElementById('bulb-style-toggle'); // 灯泡样式切换按钮
@@ -482,29 +483,28 @@ function renderSchedulesList() {
                     </button>
                 </div>
             </div>
-            <div class="schedule-time">
-                <i class="ri-time-line"></i>
-                <span>${timeFormatted}</span>
+            <div class="schedule-meta">
+                <div class="schedule-time">
+                    <i class="ri-time-line"></i>
+                    <span>${timeFormatted}</span>
+                </div>
+                <div class="schedule-operation">
+                    <i class="${operationIcon}"></i>
+                    <span>${operationText}</span>
+                </div>
+                <div class="schedule-repeat">
+                    <i class="ri-repeat-line"></i>
+                    <span>${renderWeekdays(schedule.repeatDays)}</span>
+                </div>
             </div>
-            <div class="schedule-operation">
-                <i class="${operationIcon}"></i>
-                <span>${operationText}</span>
-            </div>
-            <div class="schedule-repeat">
-                <i class="ri-repeat-line"></i>
-                <span>${renderWeekdays(schedule.repeatDays)}</span>
+            <div class="schedule-notifications">
+                ${schedule.notifyViaServerChan ? '<span class="enabled"><i class="ri-notification-line"></i>Server酱</span>' : ''}
+                ${schedule.notifyViaLzc ? '<span class="enabled"><i class="ri-notification-badge-line"></i>懒猫</span>' : ''}
+                ${schedule.notifyViaNtfy ? '<span class="enabled"><i class="ri-notification-3-line"></i>ntfy</span>' : ''}
             </div>
             <div class="schedule-creator" title="创建者">
                 <i class="ri-user-line"></i>
                 <span>${schedule.creatorId || '未知'}</span>
-            </div>
-            <div class="schedule-serverchan ${schedule.notifyViaServerChan ? 'enabled' : ''}" title="Server酱通知">
-                <i class="ri-notification-line"></i>
-                <span>Server酱${schedule.notifyViaServerChan ? '已启用' : '未启用'}</span>
-            </div>
-            <div class="schedule-notify-lzc ${schedule.notifyViaLzc ? 'enabled' : ''}" title="懒猫内置通知">
-                <i class="ri-notification-badge-line"></i>
-                <span>懒猫内置${schedule.notifyViaLzc ? '已启用' : '未启用'}</span>
             </div>
             <div class="schedule-toggle">
                 <div class="toggle-switch small">
@@ -567,6 +567,7 @@ function openAddScheduleModal() {
     // 设置默认操作为开灯
     document.getElementById('operation').value = 'on';
     updateLzcNotifyTestButton();
+    document.getElementById('notify-via-ntfy').checked = false;
 
     // 显示模态框
     $scheduleModal.classList.add('show');
@@ -604,6 +605,9 @@ function openEditScheduleModal(scheduleId) {
     // 设置懒猫内置通知选项
     document.getElementById('notify-via-lzc').checked = schedule.notifyViaLzc || false;
     updateLzcNotifyTestButton();
+    
+    // 设置ntfy通知选项
+    document.getElementById('notify-via-ntfy').checked = schedule.notifyViaNtfy || false;
 
     // 设置重复的星期几
     $daySelects.forEach(el => {
@@ -680,6 +684,7 @@ async function saveSchedule(e) {
     const enabled = document.getElementById('schedule-enabled').checked;
     const notifyViaServerChan = document.getElementById('notify-via-server-chan').checked;
     const notifyViaLzc = document.getElementById('notify-via-lzc').checked;
+    const notifyViaNtfy = document.getElementById('notify-via-ntfy').checked;
 
     // 获取选中的星期
     const repeatDays = [];
@@ -702,6 +707,7 @@ async function saveSchedule(e) {
         enabled,
         notifyViaServerChan,
         notifyViaLzc,
+        notifyViaNtfy,
         operation
     };
 
@@ -761,6 +767,7 @@ async function toggleSchedule(scheduleId) {
         enabled: !schedule.enabled,
         notifyViaServerChan: schedule.notifyViaServerChan || false,
         notifyViaLzc: schedule.notifyViaLzc || false,
+        notifyViaNtfy: schedule.notifyViaNtfy || false,
         operation: schedule.operation
     };
 

@@ -8,6 +8,22 @@ import (
 )
 
 var (
+	// NtfyConfigsColumns holds the columns for the "ntfy_configs" table.
+	NtfyConfigsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "enabled", Type: field.TypeBool, Default: false},
+		{Name: "server_url", Type: field.TypeString, Default: "https://ntfy.sh"},
+		{Name: "topic", Type: field.TypeString, Default: ""},
+		{Name: "token", Type: field.TypeString, Default: ""},
+		{Name: "on_template", Type: field.TypeString, Default: "{{.Name}} 任务执行成功，灯已开启"},
+		{Name: "off_template", Type: field.TypeString, Default: "{{.Name}} 任务执行成功，灯已关闭"},
+	}
+	// NtfyConfigsTable holds the schema information for the "ntfy_configs" table.
+	NtfyConfigsTable = &schema.Table{
+		Name:       "ntfy_configs",
+		Columns:    NtfyConfigsColumns,
+		PrimaryKey: []*schema.Column{NtfyConfigsColumns[0]},
+	}
 	// SchedulesColumns holds the columns for the "schedules" table.
 	SchedulesColumns = []*schema.Column{
 		{Name: "uuid", Type: field.TypeUUID},
@@ -21,6 +37,7 @@ var (
 		{Name: "allow_edit_by_others", Type: field.TypeBool},
 		{Name: "notify_via_server_chan", Type: field.TypeBool, Default: false},
 		{Name: "notify_via_lzc", Type: field.TypeBool, Default: false},
+		{Name: "notify_via_ntfy", Type: field.TypeBool, Default: false},
 	}
 	// SchedulesTable holds the schema information for the "schedules" table.
 	SchedulesTable = &schema.Table{
@@ -65,6 +82,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		NtfyConfigsTable,
 		SchedulesTable,
 		ServerChanConfigsTable,
 		UserPreferencesTable,

@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"cat-led/internal/ent/ntfyconfig"
 	"cat-led/internal/ent/schedule"
 	"cat-led/internal/ent/schema"
 	"cat-led/internal/ent/serverchanconfig"
@@ -15,6 +16,32 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	ntfyconfigFields := schema.NtfyConfig{}.Fields()
+	_ = ntfyconfigFields
+	// ntfyconfigDescEnabled is the schema descriptor for enabled field.
+	ntfyconfigDescEnabled := ntfyconfigFields[0].Descriptor()
+	// ntfyconfig.DefaultEnabled holds the default value on creation for the enabled field.
+	ntfyconfig.DefaultEnabled = ntfyconfigDescEnabled.Default.(bool)
+	// ntfyconfigDescServerURL is the schema descriptor for server_url field.
+	ntfyconfigDescServerURL := ntfyconfigFields[1].Descriptor()
+	// ntfyconfig.DefaultServerURL holds the default value on creation for the server_url field.
+	ntfyconfig.DefaultServerURL = ntfyconfigDescServerURL.Default.(string)
+	// ntfyconfigDescTopic is the schema descriptor for topic field.
+	ntfyconfigDescTopic := ntfyconfigFields[2].Descriptor()
+	// ntfyconfig.DefaultTopic holds the default value on creation for the topic field.
+	ntfyconfig.DefaultTopic = ntfyconfigDescTopic.Default.(string)
+	// ntfyconfigDescToken is the schema descriptor for token field.
+	ntfyconfigDescToken := ntfyconfigFields[3].Descriptor()
+	// ntfyconfig.DefaultToken holds the default value on creation for the token field.
+	ntfyconfig.DefaultToken = ntfyconfigDescToken.Default.(string)
+	// ntfyconfigDescOnTemplate is the schema descriptor for on_template field.
+	ntfyconfigDescOnTemplate := ntfyconfigFields[4].Descriptor()
+	// ntfyconfig.DefaultOnTemplate holds the default value on creation for the on_template field.
+	ntfyconfig.DefaultOnTemplate = ntfyconfigDescOnTemplate.Default.(string)
+	// ntfyconfigDescOffTemplate is the schema descriptor for off_template field.
+	ntfyconfigDescOffTemplate := ntfyconfigFields[5].Descriptor()
+	// ntfyconfig.DefaultOffTemplate holds the default value on creation for the off_template field.
+	ntfyconfig.DefaultOffTemplate = ntfyconfigDescOffTemplate.Default.(string)
 	scheduleFields := schema.Schedule{}.Fields()
 	_ = scheduleFields
 	// scheduleDescEnabled is the schema descriptor for enabled field.
@@ -29,6 +56,10 @@ func init() {
 	scheduleDescNotifyViaLzc := scheduleFields[10].Descriptor()
 	// schedule.DefaultNotifyViaLzc holds the default value on creation for the notify_via_lzc field.
 	schedule.DefaultNotifyViaLzc = scheduleDescNotifyViaLzc.Default.(bool)
+	// scheduleDescNotifyViaNtfy is the schema descriptor for notify_via_ntfy field.
+	scheduleDescNotifyViaNtfy := scheduleFields[11].Descriptor()
+	// schedule.DefaultNotifyViaNtfy holds the default value on creation for the notify_via_ntfy field.
+	schedule.DefaultNotifyViaNtfy = scheduleDescNotifyViaNtfy.Default.(bool)
 	// scheduleDescID is the schema descriptor for id field.
 	scheduleDescID := scheduleFields[0].Descriptor()
 	// schedule.DefaultID holds the default value on creation for the id field.

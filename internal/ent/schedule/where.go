@@ -94,6 +94,11 @@ func NotifyViaLzc(v bool) predicate.Schedule {
 	return predicate.Schedule(sql.FieldEQ(FieldNotifyViaLzc, v))
 }
 
+// NotifyViaNtfy applies equality check predicate on the "notify_via_ntfy" field. It's identical to NotifyViaNtfyEQ.
+func NotifyViaNtfy(v bool) predicate.Schedule {
+	return predicate.Schedule(sql.FieldEQ(FieldNotifyViaNtfy, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.Schedule {
 	return predicate.Schedule(sql.FieldEQ(FieldName, v))
@@ -362,6 +367,16 @@ func NotifyViaLzcEQ(v bool) predicate.Schedule {
 // NotifyViaLzcNEQ applies the NEQ predicate on the "notify_via_lzc" field.
 func NotifyViaLzcNEQ(v bool) predicate.Schedule {
 	return predicate.Schedule(sql.FieldNEQ(FieldNotifyViaLzc, v))
+}
+
+// NotifyViaNtfyEQ applies the EQ predicate on the "notify_via_ntfy" field.
+func NotifyViaNtfyEQ(v bool) predicate.Schedule {
+	return predicate.Schedule(sql.FieldEQ(FieldNotifyViaNtfy, v))
+}
+
+// NotifyViaNtfyNEQ applies the NEQ predicate on the "notify_via_ntfy" field.
+func NotifyViaNtfyNEQ(v bool) predicate.Schedule {
+	return predicate.Schedule(sql.FieldNEQ(FieldNotifyViaNtfy, v))
 }
 
 // And groups predicates with the AND operator between them.
