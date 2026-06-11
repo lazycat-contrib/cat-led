@@ -5,6 +5,7 @@ go 1.25.0
 require (
 	entgo.io/ent v0.14.5
 	gitee.com/linakesi/lzc-sdk v0.1.1-0.20260506063113-fde83c5c266f
+	github.com/AnthonyHewins/gotfy v0.0.11
 	github.com/coreos/go-oidc/v3 v3.18.0
 	github.com/easychen/serverchan-sdk-golang v1.0.0
 	github.com/gin-gonic/gin v1.11.0
@@ -20,7 +21,6 @@ require (
 	ariga.io/atlas v0.32.1-0.20250325101103-175b25e1c1b9 // indirect
 	gitee.com/linakesi/lzc-baseos-protos v0.0.0-20240409034726-d8d3d3375144 // indirect
 	gitee.com/linakesi/remotesocks v0.0.0-20250225034155-8709b247f245 // indirect
-	github.com/AnthonyHewins/gotfy v0.0.11 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/bmatcuk/doublestar v1.3.4 // indirect
