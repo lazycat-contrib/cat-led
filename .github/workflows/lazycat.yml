@@ -1,0 +1,41 @@
+name: Build and publish LazyCat application
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  pull_request:
+    paths:
+      - .github/lazycat-action.yml
+      - .github/workflows/lazycat.yml
+      - cmd/**
+      - internal/**
+      - go.mod
+      - go.sum
+      - build.sh
+      - lzc-build.yml
+      - manifest.yml
+      - package.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  lazycat:
+    uses: ca-x/lazycat-github-action/.github/workflows/lazycat.yml@v1
+    with:
+      operation: auto
+      config: .github/lazycat-action.yml
+      dry-run: ${{ github.event_name == 'pull_request' }}
+      versioned-release-asset: true
+      toolchains: go
+      go-version: 1.25.x
+    secrets:
+      LAZYCAT_TOKEN: ${{ secrets.LAZYCAT_TOKEN }}
+      APPSTORE_URL: ${{ secrets.APPSTORE_URL }}
+      APPSTORE_TOKEN: ${{ secrets.APPSTORE_TOKEN }}
+      PRIVATE_STORE_GROUP_CODES: ${{ secrets.PRIVATE_STORE_GROUP_CODES }}
