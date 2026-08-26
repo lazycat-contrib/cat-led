@@ -1,6 +1,6 @@
 name: 懒猫小灯
 package: cloud.lazycat.app.czyt.lazy-cat-led-helper
-version: 0.1.8
+version: 0.1.9
 min_os_version: 1.5.0
 description: "懒猫设备灯控制助手"
 license: https://choosealicense.com/licenses/mit/

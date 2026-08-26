@@ -1487,7 +1487,7 @@ function drawLiquid() {
 
     liquidArr.push(splot);
     
-    while (liquidArr.length > 80) {
+    while (liquidArr.length > 48) {
         liquidArr.shift();
     }
     
@@ -1499,7 +1499,7 @@ function drawLiquid() {
         liquidCtx.fillStyle = rndCol();
         liquidCtx.beginPath();
         liquidCtx.arc(splot.x, splot.y, splot.r, 0, Math.PI * 2, true);
-        liquidCtx.shadowBlur = 80;
+        liquidCtx.shadowBlur = 54;
         liquidCtx.shadowOffsetX = 2;
         liquidCtx.shadowOffsetY = 2;
         liquidCtx.shadowColor = rndCol();
@@ -1513,10 +1513,10 @@ function drawLiquid() {
 }
 
 function rndCol() {
-    const r = Math.floor(Math.random() * 180);
-    const g = Math.floor(Math.random() * 60);
-    const b = Math.floor(Math.random() * 100);
-    return `rgb(${r}, ${g}, ${b})`;
+    // A restrained ember palette keeps the liquid effect luminous without neon noise.
+    const hue = 18 + Math.floor(Math.random() * 34);
+    const lightness = 52 + Math.floor(Math.random() * 18);
+    return `hsl(${hue} 92% ${lightness}%)`;
 }
 
 function rng(min, max) {
