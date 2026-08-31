@@ -6,7 +6,7 @@ require (
 	entgo.io/ent v0.14.5
 	gitee.com/linakesi/lzc-sdk v0.1.1-0.20260506063113-fde83c5c266f
 	github.com/AnthonyHewins/gotfy v0.0.11
-	github.com/coreos/go-oidc/v3 v3.18.0
+	github.com/coreos/go-oidc/v3 v3.20.0
 	github.com/easychen/serverchan-sdk-golang v1.0.0
 	github.com/gin-gonic/gin v1.11.0
 	github.com/google/uuid v1.6.0
