@@ -9,6 +9,16 @@ const $sendKey = document.getElementById('send-key');
 const $onTemplate = document.getElementById('on-template');
 const $offTemplate = document.getElementById('off-template');
 
+// ntfy DOM元素
+const $ntfyForm = document.getElementById('ntfy-config-form');
+const $ntfyEnabled = document.getElementById('ntfy-enabled');
+const $ntfyServerUrl = document.getElementById('ntfy-server-url');
+const $ntfyTopic = document.getElementById('ntfy-topic');
+const $ntfyToken = document.getElementById('ntfy-token');
+const $ntfyOnTemplate = document.getElementById('ntfy-on-template');
+const $ntfyOffTemplate = document.getElementById('ntfy-off-template');
+const $testNtfyBtn = document.getElementById('test-ntfy-btn');
+
 // 初始化应用
 document.addEventListener('DOMContentLoaded', () => {
     initApp();
@@ -21,6 +31,7 @@ async function initApp() {
     
     // 获取配置
     await fetchServerChanConfig();
+    await fetchNtfyConfig();
     
     // 初始化事件监听器
     initEventListeners();
@@ -83,6 +94,68 @@ async function saveServerChanConfig(e) {
     } catch (error) {
         console.error('保存Server酱配置错误:', error);
         showNotification(`配置保存失败: ${error.message}`, 'error');
+    }
+}
+
+// 获取ntfy配置
+async function fetchNtfyConfig() {
+    try {
+        const response = await fetch('/api/ntfy/config');
+        if (!response.ok) throw new Error('获取ntfy配置失败');
+        const config = await response.json();
+        $ntfyEnabled.checked = config.enabled || false;
+        $ntfyServerUrl.value = config.server_url || 'https://ntfy.sh';
+        $ntfyTopic.value = config.topic || '';
+        $ntfyToken.value = config.token || '';
+        $ntfyOnTemplate.value = config.on_template || '{{.Name}} 任务执行成功，灯已开启';
+        $ntfyOffTemplate.value = config.off_template || '{{.Name}} 任务执行成功，灯已关闭';
+    } catch (error) {
+        console.error('获取ntfy配置错误:', error);
+    }
+}
+
+// 保存ntfy配置
+async function saveNtfyConfig(e) {
+    e.preventDefault();
+    const config = {
+        enabled: $ntfyEnabled.checked,
+        server_url: $ntfyServerUrl.value,
+        topic: $ntfyTopic.value,
+        token: $ntfyToken.value,
+        on_template: $ntfyOnTemplate.value,
+        off_template: $ntfyOffTemplate.value
+    };
+    try {
+        const response = await fetch('/api/ntfy/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(config)
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || '保存配置失败');
+        }
+        showNotification('ntfy配置保存成功', 'success');
+    } catch (error) {
+        console.error('保存ntfy配置错误:', error);
+        showNotification(`配置保存失败: ${error.message}`, 'error');
+    }
+}
+
+// 测试ntfy连接
+async function testNtfyConnection() {
+    $testNtfyBtn.disabled = true;
+    $testNtfyBtn.textContent = '测试中...';
+    try {
+        const response = await fetch('/api/ntfy/test', { method: 'POST' });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || '测试失败');
+        showNotification(data.message || '测试通知已发送', 'success');
+    } catch (error) {
+        showNotification(`测试失败: ${error.message}`, 'error');
+    } finally {
+        $testNtfyBtn.disabled = false;
+        $testNtfyBtn.textContent = '测试连接';
     }
 }
 
@@ -163,6 +236,10 @@ function initEventListeners() {
     
     // 主题切换按钮
     $themeToggle.addEventListener('click', toggleTheme);
+    
+    // ntfy 配置
+    $ntfyForm.addEventListener('submit', saveNtfyConfig);
+    $testNtfyBtn.addEventListener('click', testNtfyConnection);
 }
 
 // 初始化主题

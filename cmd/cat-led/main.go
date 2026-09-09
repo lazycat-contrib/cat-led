@@ -11,6 +11,7 @@ import (
 
 	"cat-led/internal/handlers"
 	"cat-led/internal/pkg/zlog"
+	"cat-led/internal/scheduler"
 	"cat-led/internal/web"
 )
 
@@ -76,7 +77,8 @@ func initializeServices(logger *zlog.Logger) {
 	handlers.InitLedStatus(ctx, logger)
 	logger.Info().Msg("LED状态初始化完成")
 
-	handlers.InitScheduler(logger)
+	sched := scheduler.New(handlers.GetScheduleUseCase(), logger)
+	sched.Start()
 	logger.Info().Msg("定时任务调度器已启动")
 }
 

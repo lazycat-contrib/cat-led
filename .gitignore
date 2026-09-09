@@ -1,2 +1,5 @@
 /*.lpk
-/dist
+/distcat-led
+/dist/
+/.lazycat-build/
+/.lazycat-action/
