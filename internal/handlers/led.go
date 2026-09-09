@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"sync"
 
+	"cat-led/internal/pkg/launchericon"
 	"cat-led/internal/pkg/zlog"
 
 	gohelper "gitee.com/linakesi/lzc-sdk/lang/go"
@@ -20,6 +21,8 @@ var (
 
 // InitLedStatus initializes the LED status from the device at startup.
 func InitLedStatus(ctx context.Context, logger *zlog.Logger) {
+	ledMutex.Lock()
+	defer ledMutex.Unlock()
 	gw, err := gohelper.NewAPIGateway(ctx)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating API gateway for LED status initialization")
@@ -33,15 +36,18 @@ func InitLedStatus(ctx context.Context, logger *zlog.Logger) {
 		return
 	}
 
-	ledMutex.Lock()
 	ledStatus = boxInfo.PowerLed
-	ledMutex.Unlock()
+	if err := launchericon.Update(ledStatus); err != nil {
+		log.Printf("Update launcher icon: %v", err)
+	}
 
 	log.Printf("LED status initialized: %v", ledStatus)
 }
 
 // LedControl toggles the LED state and returns the new status.
 func LedControl(c *gin.Context) {
+	ledMutex.Lock()
+	defer ledMutex.Unlock()
 	ctx := c.Request.Context()
 
 	gw, err := gohelper.NewAPIGateway(ctx)
@@ -59,9 +65,6 @@ func LedControl(c *gin.Context) {
 
 	newStatus := !boxInfo.PowerLed
 
-	ledMutex.Lock()
-	defer ledMutex.Unlock()
-
 	if boxInfo.PowerLed {
 		log.Println("led is on, turning off")
 	} else {
@@ -77,11 +80,16 @@ func LedControl(c *gin.Context) {
 	}
 
 	ledStatus = newStatus
+	if err := launchericon.Update(ledStatus); err != nil {
+		log.Printf("Update launcher icon: %v", err)
+	}
 	c.JSON(http.StatusOK, gin.H{"status": ledStatus})
 }
 
 // GetLedStatus returns the current LED status from the device.
 func GetLedStatus(c *gin.Context) {
+	ledMutex.Lock()
+	defer ledMutex.Unlock()
 	ctx := c.Request.Context()
 
 	gw, err := gohelper.NewAPIGateway(ctx)
@@ -97,9 +105,30 @@ func GetLedStatus(c *gin.Context) {
 		return
 	}
 
-	ledMutex.Lock()
 	ledStatus = boxInfo.PowerLed
-	ledMutex.Unlock()
+	if err := launchericon.Update(ledStatus); err != nil {
+		log.Printf("Update launcher icon: %v", err)
+	}
 
 	c.JSON(http.StatusOK, gin.H{"status": ledStatus})
+}
+
+// SetLedStatus serializes scheduled changes with manual controls and status
+// reads so that an older observation cannot overwrite a newer launcher icon.
+func SetLedStatus(ctx context.Context, status bool) error {
+	ledMutex.Lock()
+	defer ledMutex.Unlock()
+	gw, err := gohelper.NewAPIGateway(ctx)
+	if err != nil {
+		return err
+	}
+	defer gw.Close()
+	if _, err := gw.Box.ChangePowerLed(ctx, &users.ChangePowerLedRequest{PowerLed: status}); err != nil {
+		return err
+	}
+	ledStatus = status
+	if err := launchericon.Update(status); err != nil {
+		log.Printf("Update launcher icon: %v", err)
+	}
+	return nil
 }

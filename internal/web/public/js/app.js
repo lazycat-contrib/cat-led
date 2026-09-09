@@ -2,6 +2,13 @@
 let currentUserInfo = null;
 let allUserInfos = [];
 let currentLedStatus = false;
+let ledPending = false;
+let ledKnown = false;
+let ledRevision = 0;
+let stylePending = false;
+const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+document.addEventListener("keydown", () => { document.documentElement.dataset.input = "keyboard"; }, true);
+document.addEventListener("pointerdown", () => { document.documentElement.dataset.input = "pointer"; }, true);
 let schedules = [];
 let currentEditingScheduleId = null;
 let statusRefreshInterval = null; // 新增：用于存储状态刷新的定时器ID
@@ -178,6 +185,8 @@ function updateUserInfoDisplay() {
 
 // 获取LED状态
 async function fetchLedStatus() {
+    if (ledPending) return;
+    const revision = ledRevision;
     try {
         const response = await fetch('/api/led-status');
         if (!response.ok) {
@@ -193,10 +202,10 @@ async function fetchLedStatus() {
             throw new Error('无效的LED状态数据');
         }
 
-        updateLedStatus(data.status);
+        if (!ledPending && revision === ledRevision) updateLedStatus(data.status);
     } catch (error) {
         console.error('获取LED状态错误:', error);
-        handleLedStatusError('获取状态失败');
+        if (!ledPending && revision === ledRevision) handleLedStatusError('获取状态失败');
     }
 }
 
@@ -209,32 +218,12 @@ function handleLedStatusError(errorMsg) {
     $ledStatus.textContent = '状态未知';
     $ledStatus.classList.add('error');
 
-    // 禁用开关
-    const classicToggle = document.querySelector('.bulb-classic #led-toggle');
-    if (classicToggle) {
-        classicToggle.disabled = true;
-        classicToggle.checked = false;
-    }
+    ledKnown = false;
+    document.querySelector('.lamp-stage').inert = true;
+    document.querySelector('.led-status-section').dataset.power = 'unknown';
+    document.querySelector('.led-status-section').setAttribute('aria-busy', 'false');
+    document.querySelectorAll('.lamp-stage input').forEach(input => { input.disabled = true; });
 
-    // 显示错误通知
-    showNotification('无法获取LED状态', 'error');
-
-    // 尝试在更长的延迟后重新获取
-    setTimeout(() => {
-        // 停止当前的刷新间隔（如果有）
-        stopStatusRefresh();
-
-        // 尝试重新获取
-        fetchLedStatus()
-            .then(() => {
-                // 如果成功，恢复正常的刷新间隔
-                restartStatusRefreshWithInterval(2000);
-            })
-            .catch(() => {
-                // 如果仍然失败，使用更长的刷新间隔
-                restartStatusRefreshWithInterval(5000);
-            });
-    }, 2000);
 }
 
 // 用指定间隔重启状态刷新
@@ -277,6 +266,15 @@ function stopStatusRefresh() {
 // 更新LED状态UI
 function updateLedStatus(status) {
     currentLedStatus = status;
+    ledKnown = true;
+    document.querySelector(".lamp-stage").inert = false;
+    const section = document.querySelector('.led-status-section');
+    section.dataset.power = status ? 'on' : 'off';
+    section.setAttribute('aria-busy', 'false');
+    document.querySelectorAll('.lamp-stage input').forEach(input => { input.disabled = false; });
+    document.querySelectorAll('.bulb-container[role="button"]').forEach(control => {
+        control.setAttribute('aria-pressed', String(status));
+    });
 
     // 更新经典灯泡的开关
     const classicToggle = document.querySelector('.bulb-classic #led-toggle');
@@ -351,6 +349,12 @@ function updateLedStatus(status) {
 
 // 切换LED状态
 async function toggleLedStatus() {
+    if (ledPending || !ledKnown) { syncBulbToggles(); return; }
+    ledPending = true;
+    document.querySelector(".lamp-stage").inert = true;
+    ledRevision++;
+    const section = document.querySelector('.led-status-section');
+    section.setAttribute('aria-busy', 'true');
     const newStatus = !currentLedStatus;
     const classicToggle = document.querySelector('.bulb-classic #led-toggle');
 
@@ -372,10 +376,12 @@ async function toggleLedStatus() {
         }
 
         // 更新UI
-        updateLedStatus(newStatus);
+        const result = await response.json();
+        if (typeof result.status !== 'boolean') throw new Error('无效的LED状态数据');
+        updateLedStatus(result.status);
 
         // 显示通知
-        showNotification(`灯已${newStatus ? '开启' : '关闭'}`, 'success');
+        showNotification(`灯已${currentLedStatus ? '开启' : '关闭'}`, 'success');
     } catch (error) {
         console.error('切换LED状态错误:', error);
 
@@ -385,6 +391,9 @@ async function toggleLedStatus() {
         // 显示错误通知
         showNotification('操作失败', 'error');
     } finally {
+        ledPending = false;
+        document.querySelector(".lamp-stage").inert = false;
+        section.setAttribute("aria-busy", "false");
         // 无论成功或失败，都重新启用开关
         if (classicToggle) {
             classicToggle.disabled = false;
@@ -958,6 +967,10 @@ function initEventListeners() {
     // 监听页面可见性变化
     document.addEventListener('visibilitychange', handleVisibilityChange);
     
+    motionPreference.addEventListener('change', () => {
+        stopLiquidAnimation();
+        startLiquidAnimation();
+    });
     // 主题切换按钮
     $themeToggle.addEventListener('click', toggleTheme);
     
@@ -988,18 +1001,8 @@ function initEventListeners() {
     // 灯泡样式卡片选择
     const bulbStyleCards = document.querySelectorAll('.bulb-style-card');
     bulbStyleCards.forEach(card => {
-        card.addEventListener('click', () => {
-            const style = card.dataset.style;
-            updateUserPreference(style);
-
-            // 更新选中状态
-            bulbStyleCards.forEach(c => c.classList.remove('active'));
-            card.classList.add('active');
-
-            // 延迟关闭模态框，让用户看到选中效果
-            setTimeout(() => {
-                closeBulbStyleModal();
-            }, 300);
+        card.addEventListener('click', async () => {
+            if (await updateUserPreference(card.dataset.style)) closeBulbStyleModal();
         });
     });
 
@@ -1060,6 +1063,7 @@ function initEventListeners() {
             toggleLedStatus();
         });
         vintageContainer.addEventListener('keydown', (e) => {
+            if (e.target !== e.currentTarget) return;
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 toggleLedStatus();
@@ -1121,6 +1125,7 @@ function initEventListeners() {
 
     if (singleLedContainer) {
         singleLedContainer.addEventListener('keydown', (e) => {
+            if (e.target !== e.currentTarget) return;
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 toggleLedStatus();
@@ -1224,6 +1229,9 @@ function toggleDaySelect(el) {
 // 处理页面可见性变化
 function handleVisibilityChange() {
     if (document.visibilityState === 'visible') {
+        document.documentElement.classList.remove('page-hidden');
+        startLiquidAnimation();
+        if (currentBulbStyle === 'analog') startAnalogClock();
         // 页面变为可见时，立即获取最新状态并重启定时刷新
         fetchLedStatus().catch(console.error);
         fetchSchedules().catch(console.error);
@@ -1233,6 +1241,9 @@ function handleVisibilityChange() {
             startStatusRefresh();
         }
     } else {
+        document.documentElement.classList.add("page-hidden");
+        stopLiquidAnimation();
+        stopAnalogClock();
         // 页面不可见时，停止刷新以节省资源
         stopStatusRefresh();
     }
@@ -1265,20 +1276,26 @@ async function fetchUserPreference() {
 
 // 应用灯泡样式
 function applyBulbStyle(style) {
+    if (!document.querySelector(`.bulb-style-card[data-style="${style}"]`)) style = 'classic';
     const containers = document.querySelectorAll('.bulb-container');
 
     // 隐藏所有灯泡
     containers.forEach(container => {
         container.classList.remove('active');
+        container.inert = true;
     });
 
     // 显示选中的灯泡
     const targetContainer = document.querySelector(`.bulb-${style}`);
     if (targetContainer) {
         targetContainer.classList.add('active');
+        targetContainer.inert = false;
     }
 
     currentBulbStyle = style;
+    document.getElementById('lamp-style-name').textContent = document.querySelector(`.bulb-style-card[data-style="${style}"] .style-name`).textContent;
+    document.querySelectorAll('.bulb-style-card').forEach(card => card.setAttribute('aria-pressed', String(card.dataset.style === style)));
+    if (style !== 'liquid') stopLiquidAnimation();
 
     // 更新样式选择器的激活状态（内联选择器，如果存在）
     const bulbStyleOptions = document.querySelectorAll('.bulb-style-option');
@@ -1334,6 +1351,8 @@ function syncBulbToggles() {
     const foxToggle = document.getElementById('fox-toggle');
 
     if (!classicToggle) return;
+    const lightbulbToggle = document.getElementById("lightbulb-toggle");
+    if (lightbulbToggle) lightbulbToggle.checked = currentLedStatus;
 
     // 根据经典灯泡的状态同步其他灯的显示
     if (classicToggle.checked) {
@@ -1361,6 +1380,13 @@ function syncBulbToggles() {
 
 // 更新用户偏好设置
 async function updateUserPreference(bulbStyle) {
+    if (stylePending) return false;
+    stylePending = true;
+    const cards = document.querySelectorAll('.bulb-style-card');
+    if ($bulbStyleModal.contains(document.activeElement)) $closeBulbStyleModalBtn.focus({preventScroll: true});
+    cards.forEach(card => { card.disabled = true; });
+    const status = document.getElementById('style-save-status');
+    status.textContent = '正在保存…';
     try {
         const response = await fetch('/api/user/preference', {
             method: 'PUT',
@@ -1381,10 +1407,15 @@ async function updateUserPreference(bulbStyle) {
 
         // 应用新样式
         applyBulbStyle(bulbStyle);
-        showNotification('灯泡样式已更新', 'success');
+        status.textContent = '';
+        return true;
     } catch (error) {
         console.error('更新用户偏好错误:', error);
-        showNotification('更新灯泡样式失败', 'error');
+        status.textContent = '保存失败，请重试';
+        return false;
+    } finally {
+        stylePending = false;
+        cards.forEach(card => { card.disabled = false; });
     }
 } 
 // ===================================
@@ -1393,7 +1424,7 @@ async function updateUserPreference(bulbStyle) {
 
 let liquidCanvas, liquidCtx, liquidW, liquidH;
 let liquidArr = [];
-let liquidCnt = 0;
+let liquidLastFrame = 0;
 let isLiquidRunning = false;
 let resizeTimeout = null;
 
@@ -1403,6 +1434,7 @@ function initLiquidCanvas() {
 
     liquidCtx = liquidCanvas.getContext('2d');
     resizeLiquidCanvas();
+    startLiquidAnimation();
 
     // Debounced resize handler
     window.addEventListener('resize', () => {
@@ -1431,7 +1463,7 @@ function resizeLiquidCanvas() {
 }
 
 function startLiquidAnimation() {
-    if (isLiquidRunning) return;
+    if (isLiquidRunning || !liquidCtx || !currentLedStatus || currentBulbStyle !== "liquid" || document.hidden) return;
 
     // Check for reduced motion preference
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -1439,7 +1471,7 @@ function startLiquidAnimation() {
     }
 
     isLiquidRunning = true;
-    liquidCnt = 0;
+    liquidLastFrame = 0;
     liquidArr = [];
     animateLiquid();
 }
@@ -1456,71 +1488,45 @@ function stopLiquidAnimation() {
     liquidArr = [];
 }
 
-function animateLiquid() {
+function animateLiquid(timestamp = 0) {
     if (!isLiquidRunning) return;
-
-    // Stop animation if canvas is not visible (performance)
-    if (liquidCanvas && liquidCanvas.offsetParent === null) {
+    if (document.hidden || currentBulbStyle !== 'liquid') {
         stopLiquidAnimation();
         return;
     }
-
-    liquidCnt++;
-    if (liquidCnt % 6 === 0) drawLiquid();
-
+    const elapsed = liquidLastFrame ? Math.min((timestamp - liquidLastFrame) / 1000, .05) : 0;
+    liquidLastFrame = timestamp;
+    drawLiquid(elapsed);
     liquidAnimationId = requestAnimationFrame(animateLiquid);
 }
 
-function drawLiquid() {
-    if (!liquidCtx) return;
-    
-    const _w = liquidW * 0.5;
-    const _h = liquidH * 0.5;
-    
-    const splot = {
-        x: rng(_w - 300, _w + 300),
-        y: rng(_h - 300, _h + 300),
-        r: rng(20, 60),
-        spX: rng(-1, 1),
-        spY: rng(-1, 1)
-    };
-
-    liquidArr.push(splot);
-    
-    while (liquidArr.length > 48) {
-        liquidArr.shift();
+function drawLiquid(elapsed) {
+    if (!liquidCtx || !liquidW || !liquidH) return;
+    if (!liquidArr.length) {
+        liquidArr = Array.from({length: 12}, (_, i) => ({
+            x: .15 + Math.random() * .7, y: Math.random(),
+            radius: 18 + Math.random() * 28,
+            speed: .025 + Math.random() * .025,
+            phase: i * Math.PI / 6,
+            color: `hsla(${25 + i * 2} 90% 67% / .55)`
+        }));
     }
-    
     liquidCtx.clearRect(0, 0, liquidW, liquidH);
-
-    for (let i = 0; i < liquidArr.length; i++) {
-        const splot = liquidArr[i];
-        
-        liquidCtx.fillStyle = rndCol();
+    liquidCtx.globalCompositeOperation = 'lighter';
+    for (const particle of liquidArr) {
+        particle.y -= particle.speed * elapsed;
+        particle.phase += elapsed * .3;
+        if (particle.y < -.15) particle.y = 1.15;
+        const x = (particle.x + Math.sin(particle.phase) * .06) * liquidW;
+        const y = particle.y * liquidH;
+        const glow = liquidCtx.createRadialGradient(x, y, 0, x, y, particle.radius * 2);
+        glow.addColorStop(0, particle.color);
+        glow.addColorStop(1, 'transparent');
+        liquidCtx.fillStyle = glow;
         liquidCtx.beginPath();
-        liquidCtx.arc(splot.x, splot.y, splot.r, 0, Math.PI * 2, true);
-        liquidCtx.shadowBlur = 54;
-        liquidCtx.shadowOffsetX = 2;
-        liquidCtx.shadowOffsetY = 2;
-        liquidCtx.shadowColor = rndCol();
-        liquidCtx.globalCompositeOperation = 'lighter';
+        liquidCtx.arc(x, y, particle.radius * 2, 0, Math.PI * 2);
         liquidCtx.fill();
-
-        splot.x = splot.x + splot.spX;
-        splot.y = splot.y + splot.spY;
-        splot.r = splot.r * 0.96;
     }
-}
-
-function rndCol() {
-    // A restrained ember palette keeps the liquid effect luminous without neon noise.
-    const hue = 18 + Math.floor(Math.random() * 34);
-    const lightness = 52 + Math.floor(Math.random() * 18);
-    return `hsl(${hue} 92% ${lightness}%)`;
-}
-
-function rng(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 // 在页面加载时初始化liquid canvas
@@ -1575,7 +1581,11 @@ function stopAnalogClock() {
 
 function openBulbStyleModal() {
     if ($bulbStyleModal) {
+        $bulbStyleModal.inert = false;
         $bulbStyleModal.classList.add('show');
+        $bulbStyleToggle.setAttribute('aria-expanded', 'true');
+        const selected = $bulbStyleModal.querySelector('.bulb-style-card.active');
+        (selected.disabled ? $closeBulbStyleModalBtn : selected).focus({preventScroll: true});
 
         // 更新模态框中卡片的选中状态
         const bulbStyleCards = document.querySelectorAll('.bulb-style-card');
@@ -1592,5 +1602,21 @@ function openBulbStyleModal() {
 function closeBulbStyleModal() {
     if ($bulbStyleModal) {
         $bulbStyleModal.classList.remove('show');
+        $bulbStyleModal.inert = true;
+        $bulbStyleToggle.setAttribute('aria-expanded', 'false');
+        $bulbStyleToggle.focus({preventScroll: true});
     }
 }
+
+// Keep keyboard focus inside the style picker until it closes.
+$bulbStyleModal.addEventListener('keydown', event => {
+    if (event.key === 'Escape') { event.preventDefault(); closeBulbStyleModal(); }
+    if (event.key !== 'Tab') return;
+    const controls = [...$bulbStyleModal.querySelectorAll('button:not(:disabled)')];
+    const first = controls[0], last = controls.at(-1);
+    if (event.shiftKey && (document.activeElement === first || !controls.includes(document.activeElement))) {
+        event.preventDefault(); last.focus();
+    } else if (!event.shiftKey && (document.activeElement === last || !controls.includes(document.activeElement))) {
+        event.preventDefault(); first.focus();
+    }
+});

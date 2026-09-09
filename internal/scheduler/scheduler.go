@@ -3,7 +3,6 @@ package scheduler
 import (
 	"context"
 	"fmt"
-	"log"
 	"slices"
 	"time"
 
@@ -234,23 +233,7 @@ func (s *Scheduler) sendNtfyNotification(ctx context.Context, taskName string, s
 
 // setLedStatus sets the LED power state.
 func setLedStatus(ctx context.Context, status bool) error {
-	gw, err := gohelper.NewAPIGateway(ctx)
-	if err != nil {
-		log.Printf("Error creating API gateway: %v", err)
-		return err
-	}
-	defer gw.Close()
-
-	_, err = gw.Box.ChangePowerLed(ctx, &users.ChangePowerLedRequest{
-		PowerLed: status,
-	})
-	if err != nil {
-		log.Printf("Error changing LED status to %v: %v", status, err)
-		return err
-	}
-
-	log.Printf("LED status changed to: %v", status)
-	return nil
+	return handlers.SetLedStatus(ctx, status)
 }
 
 // rebootDevice initiates a device reboot.

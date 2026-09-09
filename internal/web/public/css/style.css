@@ -5040,3 +5040,83 @@ input#fox-toggle[type=checkbox]:checked ~ .fox-window .the-fox:hover .fox-eyes {
   .lightbulb-switch:checked + .lightbulb-label:before { animation: none; }
   .bulb-lava.lamp-on .bubble { animation: none; }
 }
+
+/* A stable stage keeps the power control in place across all nine styles. */
+.led-status-section { isolation: isolate; overflow: hidden; }
+.led-status-section:hover { transform: none; }
+.lamp-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; text-align: left; }
+.lamp-heading h2 { margin: 0; font-size: 18px; color: var(--text-primary); }
+.lamp-heading p { margin: 6px 0 0; color: var(--text-secondary); font-size: 14px; }
+.lamp-hint { color: var(--text-secondary); font-size: 13px; }
+.lamp-stage { position: relative; display: grid; width: 100%; height: 440px; place-items: center; isolation: isolate; }
+.lamp-stage::before {
+  content: ''; position: absolute; inset: 8%; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse, rgba(239,174,91,.19), transparent 68%);
+  opacity: 0; transform: scale(.96);
+  transition: opacity 250ms var(--ease-out), transform 250ms var(--ease-out);
+}
+[data-power="on"] .lamp-stage::before { opacity: 1; transform: scale(1); }
+.lamp-stage .bulb-container {
+  display: flex; grid-area: 1 / 1; max-width: 100%; height: 100%; min-height: 0;
+  opacity: 0; visibility: hidden; pointer-events: none; transform: scale(.97);
+  transition: opacity 180ms var(--ease-out), transform 250ms var(--ease-out), visibility 180ms;
+  animation: none;
+}
+.lamp-stage .bulb-container.active { opacity: 1; visibility: visible; pointer-events: auto; transform: scale(1); animation: none; }
+.led-status-section[aria-busy="true"] .lamp-stage { pointer-events: none; }
+[data-power="unknown"] .lamp-stage { opacity: .5; }
+.led-status-text { margin-top: 12px; font-size: 16px; }
+#led-status { font-weight: 650; }
+#bulb-style-toggle { top: auto; bottom: 20px; width: 44px; height: 44px; transition: transform 160ms var(--ease-out); }
+#bulb-style-toggle:active { transform: scale(.97); }
+.bulb-classic .switch label .bulb { left: 10px; transform: translateX(0); transition: transform 250ms var(--ease-out); }
+.bulb-classic .switch input:checked ~ label .bulb { left: 10px; transform: translateX(110px); }
+.bulb-classic .switch label:active .bulb { transform: translateX(0) scale(.97); }
+.bulb-classic .switch input:checked ~ label:active .bulb { transform: translateX(110px) scale(.97); }
+.bulb-classic .switch input:checked ~ label .bulb > .bulb-center,
+.bulb-vintage.lamp-on .vintage-lamp,
+.lightbulb-switch:checked + .lightbulb-label:before { animation: none; }
+.bulb-liquid { border-radius: 24px; overflow: hidden; }
+.bulb-liquid::before { content: ''; position: absolute; inset: 15%; background: radial-gradient(ellipse, rgba(247,174,92,.32), transparent 70%); opacity: 0; transition: opacity 250ms var(--ease-out); pointer-events: none; }
+.bulb-liquid.lamp-on::before { opacity: 1; }
+.bulb-style-modal-content { background: var(--card-background); }
+#bulb-style-modal { display: flex; visibility: hidden; pointer-events: none; transition: opacity 180ms var(--ease-out), visibility 180ms; }
+#bulb-style-modal.show { visibility: visible; pointer-events: auto; }
+#bulb-style-modal .modal-content { transform: scale(.96); transition: transform 250ms var(--ease-out); }
+#bulb-style-modal.show .modal-content { transform: scale(1); }
+.style-guide { margin: 0 0 8px; color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+#style-save-status { min-height: 20px; margin: 0 0 8px; font-size: 14px; color: var(--text-primary); }
+.bulb-style-card { text-align: left; border: 1px solid var(--border-color); background: transparent; border-radius: 16px; transition: transform 160ms var(--ease-out); }
+.bulb-style-card:hover { transform: none; box-shadow: none; background: transparent; border-color: var(--border-color); }
+.bulb-style-card.active { background: rgba(211,154,86,.1); border-color: #b5824e; }
+.bulb-style-card.active::before { background: #936333; box-shadow: none; width: 24px; height: 24px; border-radius: 8px; }
+.bulb-style-card:active { transform: scale(.97); }
+.bulb-style-card:disabled { cursor: wait; opacity: .65; }
+.bulb-style-card .style-name { color: var(--text-primary); font-size: 15px; }
+.bulb-style-card .style-desc { color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
+.bulb-style-card .style-preview { background: rgba(127,127,127,.06); border-radius: 10px; }
+.preview-classic-bulb { background: radial-gradient(circle at 35% 30%, #ffe4aa, #b57842); box-shadow: 0 0 22px rgba(230,159,75,.28); }
+.preview-liquid-light { background: radial-gradient(circle at 30% 30%, #f3bf7b, #a65832 65%, #243348); }
+.bulb-container:not(.active) *, .page-hidden .bulb-container *,
+.bulb-style-modal-content * { animation-play-state: paused !important; }
+@media (hover: hover) and (pointer: fine) {
+  .bulb-style-card:hover { border-color: #b5824e; transform: translateY(-2px); }
+}
+@media (max-width: 480px) {
+  .lamp-stage { height: 340px; }
+  .lamp-heading { align-items: flex-start; }
+  .lamp-hint { max-width: 7em; text-align: right; line-height: 1.5; }
+  .bulb-style-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .bulb-style-card { padding: 12px; }
+  .bulb-style-card .style-preview { height: 88px; }
+}
+[data-input="keyboard"] .lamp-stage *, [data-input="keyboard"] .lamp-stage *::before,
+[data-input="keyboard"] .lamp-stage *::after, [data-input="keyboard"] .lamp-stage::before,
+[data-input="keyboard"] #bulb-style-modal, [data-input="keyboard"] #bulb-style-modal *,
+[data-input="keyboard"] #bulb-style-toggle { transition: none !important; animation: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .lamp-stage *, .lamp-stage *::before, .lamp-stage *::after { animation: none !important; transition: none !important; }
+  .lamp-stage::before { transform: none; transition: opacity 180ms ease; }
+  .lamp-stage .bulb-container { transform: none; transition: opacity 180ms ease, visibility 180ms !important; }
+  #bulb-style-modal .modal-content, .bulb-style-card:hover, .bulb-style-card:active { transform: none; transition: none; }
+}

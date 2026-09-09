@@ -152,11 +152,13 @@
             </section>
 
             <!-- LED当前状态展示 -->
-            <section class="led-status-section">
+            <section class="led-status-section" data-power="unknown" aria-busy="true">
+                <div class="lamp-heading"><div><h2>设备灯光</h2><p id="lamp-style-name">经典灯泡</p></div><span class="lamp-hint">轻触灯具，切换明暗</span></div>
+                <div class="lamp-stage" inert>
                 <!-- 经典灯泡样式 -->
                 <div class="bulb-container bulb-classic active">
                     <div class="switch">
-                        <input type="checkbox" name="toggle" id="led-toggle" />
+                        <input type="checkbox" name="toggle" id="led-toggle" aria-label="设备灯光" />
                         <label for="led-toggle">
                             <i class="bulb">
                                 <span class="bulb-center"></span>
@@ -659,12 +661,13 @@
                     </div>
                 </div>
 
-                <div class="led-status-text">
+                </div>
+                <div class="led-status-text" role="status" aria-live="polite">
                     当前状态: <span id="led-status">加载中…</span>
                 </div>
 
                 <!-- 灯泡样式切换按钮 -->
-                <button id="bulb-style-toggle" aria-label="选择灯泡样式">
+                <button id="bulb-style-toggle" aria-label="选择灯泡样式" aria-controls="bulb-style-modal" aria-expanded="false">
                     <svg
                         class="bulb-style-icon"
                         viewBox="0 0 1024 1024"
@@ -911,10 +914,10 @@
             </div>
 
             <!-- 灯泡样式选择模态框 -->
-            <div class="modal" id="bulb-style-modal">
+            <div class="modal" id="bulb-style-modal" role="dialog" aria-modal="true" aria-labelledby="bulb-style-title" inert>
                 <div class="modal-content bulb-style-modal-content">
                     <div class="modal-header">
-                        <h3>选择灯泡样式</h3>
+                        <h3 id="bulb-style-title">选择灯光样式</h3>
                         <button
                             id="close-bulb-style-modal-btn"
                             aria-label="关闭"
@@ -923,6 +926,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
+                        <p class="style-guide">选一种喜欢的光，开关状态始终与设备同步。</p><p id="style-save-status" role="status" aria-live="polite"></p>
                         <div class="bulb-style-grid">
                             <button
                                 class="bulb-style-card active"
@@ -934,7 +938,7 @@
                                 <div class="style-info">
                                     <h4 class="style-name">经典灯泡</h4>
                                     <p class="style-desc">
-                                        紫色渐变灯泡，带灯丝效果
+                                        暖色玻璃灯泡，细腻灯丝光晕
                                     </p>
                                 </div>
                             </button>
@@ -972,7 +976,7 @@
                                 <div class="style-info">
                                     <h4 class="style-name">液态光效</h4>
                                     <p class="style-desc">
-                                        动态粒子动画，流动光效
+                                        琥珀色光点，缓缓流动
                                     </p>
                                 </div>
                             </button>
@@ -1006,7 +1010,7 @@
                                     <div class="preview-single-led"></div>
                                 </div>
                                 <div class="style-info">
-                                    <h4 class="style-name">Single LED</h4>
+                                    <h4 class="style-name">微光灯泡</h4>
                                     <p class="style-desc">
                                         表情灯泡，可爱设计
                                     </p>
