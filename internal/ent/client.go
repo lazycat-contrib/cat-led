@@ -11,6 +11,7 @@ import (
 
 	"cat-led/internal/ent/migrate"
 
+	"cat-led/internal/ent/ntfyconfig"
 	"cat-led/internal/ent/schedule"
 	"cat-led/internal/ent/serverchanconfig"
 	"cat-led/internal/ent/userpreference"
@@ -26,6 +27,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// NtfyConfig is the client for interacting with the NtfyConfig builders.
+	NtfyConfig *NtfyConfigClient
 	// Schedule is the client for interacting with the Schedule builders.
 	Schedule *ScheduleClient
 	// ServerChanConfig is the client for interacting with the ServerChanConfig builders.
@@ -43,6 +46,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.NtfyConfig = NewNtfyConfigClient(c.config)
 	c.Schedule = NewScheduleClient(c.config)
 	c.ServerChanConfig = NewServerChanConfigClient(c.config)
 	c.UserPreference = NewUserPreferenceClient(c.config)
@@ -138,6 +142,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:              ctx,
 		config:           cfg,
+		NtfyConfig:       NewNtfyConfigClient(cfg),
 		Schedule:         NewScheduleClient(cfg),
 		ServerChanConfig: NewServerChanConfigClient(cfg),
 		UserPreference:   NewUserPreferenceClient(cfg),
@@ -160,6 +165,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:              ctx,
 		config:           cfg,
+		NtfyConfig:       NewNtfyConfigClient(cfg),
 		Schedule:         NewScheduleClient(cfg),
 		ServerChanConfig: NewServerChanConfigClient(cfg),
 		UserPreference:   NewUserPreferenceClient(cfg),
@@ -169,7 +175,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Schedule.
+//		NtfyConfig.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -191,6 +197,7 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.NtfyConfig.Use(hooks...)
 	c.Schedule.Use(hooks...)
 	c.ServerChanConfig.Use(hooks...)
 	c.UserPreference.Use(hooks...)
@@ -199,6 +206,7 @@ func (c *Client) Use(hooks ...Hook) {
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
+	c.NtfyConfig.Intercept(interceptors...)
 	c.Schedule.Intercept(interceptors...)
 	c.ServerChanConfig.Intercept(interceptors...)
 	c.UserPreference.Intercept(interceptors...)
@@ -207,6 +215,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *NtfyConfigMutation:
+		return c.NtfyConfig.mutate(ctx, m)
 	case *ScheduleMutation:
 		return c.Schedule.mutate(ctx, m)
 	case *ServerChanConfigMutation:
@@ -215,6 +225,139 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.UserPreference.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
+	}
+}
+
+// NtfyConfigClient is a client for the NtfyConfig schema.
+type NtfyConfigClient struct {
+	config
+}
+
+// NewNtfyConfigClient returns a client for the NtfyConfig from the given config.
+func NewNtfyConfigClient(c config) *NtfyConfigClient {
+	return &NtfyConfigClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `ntfyconfig.Hooks(f(g(h())))`.
+func (c *NtfyConfigClient) Use(hooks ...Hook) {
+	c.hooks.NtfyConfig = append(c.hooks.NtfyConfig, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `ntfyconfig.Intercept(f(g(h())))`.
+func (c *NtfyConfigClient) Intercept(interceptors ...Interceptor) {
+	c.inters.NtfyConfig = append(c.inters.NtfyConfig, interceptors...)
+}
+
+// Create returns a builder for creating a NtfyConfig entity.
+func (c *NtfyConfigClient) Create() *NtfyConfigCreate {
+	mutation := newNtfyConfigMutation(c.config, OpCreate)
+	return &NtfyConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of NtfyConfig entities.
+func (c *NtfyConfigClient) CreateBulk(builders ...*NtfyConfigCreate) *NtfyConfigCreateBulk {
+	return &NtfyConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *NtfyConfigClient) MapCreateBulk(slice any, setFunc func(*NtfyConfigCreate, int)) *NtfyConfigCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &NtfyConfigCreateBulk{err: fmt.Errorf("calling to NtfyConfigClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*NtfyConfigCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &NtfyConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for NtfyConfig.
+func (c *NtfyConfigClient) Update() *NtfyConfigUpdate {
+	mutation := newNtfyConfigMutation(c.config, OpUpdate)
+	return &NtfyConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *NtfyConfigClient) UpdateOne(_m *NtfyConfig) *NtfyConfigUpdateOne {
+	mutation := newNtfyConfigMutation(c.config, OpUpdateOne, withNtfyConfig(_m))
+	return &NtfyConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *NtfyConfigClient) UpdateOneID(id int) *NtfyConfigUpdateOne {
+	mutation := newNtfyConfigMutation(c.config, OpUpdateOne, withNtfyConfigID(id))
+	return &NtfyConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for NtfyConfig.
+func (c *NtfyConfigClient) Delete() *NtfyConfigDelete {
+	mutation := newNtfyConfigMutation(c.config, OpDelete)
+	return &NtfyConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *NtfyConfigClient) DeleteOne(_m *NtfyConfig) *NtfyConfigDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *NtfyConfigClient) DeleteOneID(id int) *NtfyConfigDeleteOne {
+	builder := c.Delete().Where(ntfyconfig.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &NtfyConfigDeleteOne{builder}
+}
+
+// Query returns a query builder for NtfyConfig.
+func (c *NtfyConfigClient) Query() *NtfyConfigQuery {
+	return &NtfyConfigQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeNtfyConfig},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a NtfyConfig entity by its id.
+func (c *NtfyConfigClient) Get(ctx context.Context, id int) (*NtfyConfig, error) {
+	return c.Query().Where(ntfyconfig.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *NtfyConfigClient) GetX(ctx context.Context, id int) *NtfyConfig {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *NtfyConfigClient) Hooks() []Hook {
+	return c.hooks.NtfyConfig
+}
+
+// Interceptors returns the client interceptors.
+func (c *NtfyConfigClient) Interceptors() []Interceptor {
+	return c.inters.NtfyConfig
+}
+
+func (c *NtfyConfigClient) mutate(ctx context.Context, m *NtfyConfigMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&NtfyConfigCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&NtfyConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&NtfyConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&NtfyConfigDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown NtfyConfig mutation op: %q", m.Op())
 	}
 }
 
@@ -620,9 +763,9 @@ func (c *UserPreferenceClient) mutate(ctx context.Context, m *UserPreferenceMuta
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Schedule, ServerChanConfig, UserPreference []ent.Hook
+		NtfyConfig, Schedule, ServerChanConfig, UserPreference []ent.Hook
 	}
 	inters struct {
-		Schedule, ServerChanConfig, UserPreference []ent.Interceptor
+		NtfyConfig, Schedule, ServerChanConfig, UserPreference []ent.Interceptor
 	}
 )

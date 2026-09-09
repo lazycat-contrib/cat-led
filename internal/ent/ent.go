@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"cat-led/internal/ent/ntfyconfig"
 	"cat-led/internal/ent/schedule"
 	"cat-led/internal/ent/serverchanconfig"
 	"cat-led/internal/ent/userpreference"
@@ -75,6 +76,7 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
+			ntfyconfig.Table:       ntfyconfig.ValidColumn,
 			schedule.Table:         schedule.ValidColumn,
 			serverchanconfig.Table: serverchanconfig.ValidColumn,
 			userpreference.Table:   userpreference.ValidColumn,

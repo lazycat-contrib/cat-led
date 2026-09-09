@@ -8,145 +8,209 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/remixicon.css">
     <style>
-        .login-container {
-            min-height: 100vh;
+        .login-page {
+            min-height: 100dvh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-page::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 30% 20%, rgba(255, 149, 0, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 80%, rgba(81, 72, 120, 0.2) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 50%, rgba(138, 127, 177, 0.1) 0%, transparent 70%);
+            animation: loginBgFloat 20s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes loginBgFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(2%, -2%) rotate(1deg); }
+            66% { transform: translate(-1%, 1%) rotate(-0.5deg); }
+        }
+
+        [data-theme="dark"] .login-page::before {
+            background: radial-gradient(ellipse at 30% 20%, rgba(255, 149, 0, 0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 80%, rgba(81, 72, 120, 0.12) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 50%, rgba(138, 127, 177, 0.06) 0%, transparent 70%);
         }
 
         .login-card {
-            background: rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.06);
             backdrop-filter: blur(40px) saturate(180%);
             -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 20px;
-            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 24px;
+            padding: 48px 40px;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             text-align: center;
-            box-shadow:
-                0 20px 60px rgba(0, 0, 0, 0.2),
-                0 8px 32px rgba(0, 0, 0, 0.12),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25),
+                        0 8px 32px rgba(0, 0, 0, 0.15),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 32px 100px rgba(0, 0, 0, 0.3),
+                        0 12px 40px rgba(0, 0, 0, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        [data-theme="light"] .login-card {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.08),
+                        0 8px 32px rgba(0, 0, 0, 0.04),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.9);
         }
 
         .login-logo {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 20px;
-            background: rgba(255, 255, 255, 0.15);
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 24px;
+            background: rgba(255, 149, 0, 0.15);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 149, 0, 0.25);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
-            color: white;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            font-size: 42px;
+            color: #FF9F0A;
+            box-shadow: 0 8px 32px rgba(255, 149, 0, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-logo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 40px rgba(255, 149, 0, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        [data-theme="light"] .login-logo {
+            background: rgba(255, 149, 0, 0.1);
+            border-color: rgba(255, 149, 0, 0.2);
         }
 
         .login-title {
             font-size: 28px;
-            font-weight: 600;
-            color: white;
-            margin-bottom: 10px;
+            font-weight: 700;
+            color: var(--header-text-color);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
 
         .login-subtitle {
-            font-size: 16px;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 30px;
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        [data-theme="light"] .login-subtitle {
+            color: var(--text-secondary);
         }
 
         .login-button {
             width: 100%;
-            padding: 16px;
+            padding: 16px 24px;
             font-size: 16px;
             font-weight: 600;
             color: white;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.9) 0%, rgba(255, 120, 0, 0.9) 100%);
+            border: 1px solid rgba(255, 149, 0, 0.3);
+            border-radius: 14px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(255, 149, 0, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .login-button:hover::before {
+            left: 100%;
         }
 
         .login-button:hover {
-            background: rgba(255, 255, 255, 0.25);
-            border-color: rgba(255, 255, 255, 0.5);
+            background: linear-gradient(135deg, rgba(255, 160, 20, 1) 0%, rgba(255, 130, 10, 1) 100%);
+            border-color: rgba(255, 149, 0, 0.5);
             transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(255, 149, 0, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
 
         .login-button:active {
             transform: translateY(0);
+            box-shadow: 0 2px 12px rgba(255, 149, 0, 0.3);
         }
 
         .login-button i {
             font-size: 20px;
         }
 
+        .login-button--disabled {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: not-allowed;
+            color: var(--text-tertiary);
+            box-shadow: none;
+        }
+
+        .login-button--disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        [data-theme="light"] .login-button--disabled {
+            background: rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 0, 0, 0.08);
+            color: var(--text-tertiary);
+        }
+
         .login-footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        /* 暗色主题适配 */
-        [data-theme="dark"] .login-container {
-            background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
-        }
-
-        /* 明亮主题适配 */
-        [data-theme="light"] .login-container {
-            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
-        }
-
-        [data-theme="light"] .login-card {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-        }
-
-        [data-theme="light"] .login-title {
-            color: #2d3436;
-        }
-
-        [data-theme="light"] .login-subtitle {
-            color: #636e72;
-        }
-
-        [data-theme="light"] .login-button {
-            color: #2d3436;
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        [data-theme="light"] .login-button:hover {
-            background: rgba(255, 255, 255, 0.95);
-            border-color: rgba(0, 0, 0, 0.2);
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 13px;
+            color: var(--text-tertiary);
+            line-height: 1.6;
         }
 
         [data-theme="light"] .login-footer {
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-            color: #636e72;
+            border-top-color: rgba(0, 0, 0, 0.06);
         }
 
-        /* 加载动画 */
         .loading {
             display: none;
         }
@@ -161,31 +225,38 @@
             to { transform: rotate(360deg); }
         }
 
-        /* 错误提示 */
         .error-message {
-            background: rgba(231, 76, 60, 0.1);
-            border: 1px solid rgba(231, 76, 60, 0.3);
-            border-radius: 8px;
-            padding: 12px;
+            background: rgba(255, 59, 48, 0.1);
+            border: 1px solid rgba(255, 59, 48, 0.2);
+            border-radius: 12px;
+            padding: 14px 16px;
             margin-bottom: 20px;
-            color: #e74c3c;
+            color: #FF453A;
             font-size: 14px;
             display: none;
+            align-items: center;
+            gap: 8px;
+            text-align: left;
+        }
+
+        .error-message i {
+            font-size: 18px;
+            flex-shrink: 0;
         }
 
         .error-message.show {
-            display: block;
+            display: flex;
+        }
+
+        [data-theme="light"] .error-message {
+            background: rgba(255, 59, 48, 0.06);
+            border-color: rgba(255, 59, 48, 0.15);
+            color: #D70015;
         }
     </style>
 </head>
 <body>
-    <!-- 动效背景容器 -->
-    <div class="background-container">
-        <div class="background-1"></div>
-        <div class="background-2"></div>
-    </div>
-    
-    <div class="login-container">
+    <div class="login-page">
         <div class="login-card">
             <div class="login-logo">
                 <i class="ri-lightbulb-flash-line"></i>
@@ -206,7 +277,7 @@
                 <i class="ri-loader-4-line loading" id="loading-icon"></i>
             </a>
             {{else}}
-            <div class="login-button" style="background: rgba(231, 76, 60, 0.2); border-color: rgba(231, 76, 60, 0.3); cursor: not-allowed;">
+            <div class="login-button login-button--disabled">
                 <i class="ri-error-warning-line"></i>
                 <span>OIDC 未配置</span>
             </div>
@@ -225,11 +296,9 @@
     </div>
 
     <script>
-        // 主题管理
         let currentTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', currentTheme);
 
-        // 登录按钮点击处理
         const loginBtn = document.getElementById('login-btn');
         if (loginBtn) {
             loginBtn.addEventListener('click', function(e) {
@@ -237,15 +306,11 @@
                 const loadingIcon = document.getElementById('loading-icon');
                 const errorMessage = document.getElementById('error-message');
                 
-                // 隐藏错误信息
                 errorMessage.classList.remove('show');
-                
-                // 显示加载状态
                 loginText.textContent = '正在跳转…';
                 loadingIcon.classList.add('show');
                 loginBtn.style.pointerEvents = 'none';
                 
-                // 如果5秒后还没跳转，显示错误信息
                 setTimeout(() => {
                     if (loginBtn.style.pointerEvents === 'none') {
                         loginText.textContent = '使用 OIDC 登录';
@@ -259,7 +324,6 @@
             });
         }
 
-        // 检查URL参数中的错误信息
         const urlParams = new URLSearchParams(window.location.search);
         const error = urlParams.get('error');
         if (error) {
@@ -278,7 +342,6 @@
                     break;
                 case 'oidc_not_configured':
                     errorText.textContent = 'OIDC认证未配置，请联系管理员或使用Header认证';
-                    // 隐藏登录按钮（如果存在）
                     const loginButton = document.getElementById('login-btn');
                     if (loginButton) {
                         loginButton.style.display = 'none';
@@ -290,8 +353,6 @@
             
             errorMessage.classList.add('show');
         }
-
-        // Note: Removed right-click and F12 blocking for better accessibility and developer experience
     </script>
 </body>
 </html>

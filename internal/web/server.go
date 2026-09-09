@@ -120,10 +120,16 @@ func (s *Server) setupAuthenticatedRoutes() {
 	authenticated.POST("/api/schedules", handlers.CreateSchedule)
 	authenticated.PUT("/api/schedules/:id", handlers.UpdateSchedule)
 	authenticated.DELETE("/api/schedules/:id", handlers.DeleteSchedule)
+	authenticated.POST("/api/lzc-notification/test", handlers.TestLzcNotification)
 
 	// ServerChan API
 	authenticated.GET("/api/serverchan/config", handlers.GetServerChanConfig)
 	authenticated.POST("/api/serverchan/config", handlers.SaveServerChanConfig)
+
+	// Ntfy API
+	authenticated.GET("/api/ntfy/config", handlers.GetNtfyConfig)
+	authenticated.POST("/api/ntfy/config", handlers.SaveNtfyConfig)
+	authenticated.POST("/api/ntfy/test", handlers.TestNtfyNotification)
 
 	// User Preference API
 	authenticated.GET("/api/user/preference", handlers.GetUserPreference)

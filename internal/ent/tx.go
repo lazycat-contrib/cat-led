@@ -12,6 +12,8 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// NtfyConfig is the client for interacting with the NtfyConfig builders.
+	NtfyConfig *NtfyConfigClient
 	// Schedule is the client for interacting with the Schedule builders.
 	Schedule *ScheduleClient
 	// ServerChanConfig is the client for interacting with the ServerChanConfig builders.
@@ -149,6 +151,7 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.NtfyConfig = NewNtfyConfigClient(tx.config)
 	tx.Schedule = NewScheduleClient(tx.config)
 	tx.ServerChanConfig = NewServerChanConfigClient(tx.config)
 	tx.UserPreference = NewUserPreferenceClient(tx.config)
@@ -161,7 +164,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Schedule.QueryXXX(), the query will be executed
+// applies a query, for example: NtfyConfig.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

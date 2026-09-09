@@ -36,21 +36,21 @@
 
 /* 暗色主题变量 */
 [data-theme="dark"] {
-  --background-color: #000000;
-  --card-background: #1C1C1E;
-  --text-primary: #FFFFFF;
-  --text-secondary: #AEAEB2;
-  --text-tertiary: #6E6E73;
-  --border-color: #38383A;
-  --toggle-off-bg: #48484A;
-  --modal-background: rgba(0, 0, 0, 0.75);
-  --header-background: #2C3E50;
-  --header-text-color: #FFFFFF;
+  --background-color: #0a0a0f;
+  --card-background: #141419;
+  --text-primary: #F0F0F5;
+  --text-secondary: #9A9AAE;
+  --text-tertiary: #5A5A6E;
+  --border-color: #2A2A35;
+  --toggle-off-bg: #3A3A45;
+  --modal-background: rgba(0, 0, 0, 0.8);
+  --header-background: #1A1A25;
+  --header-text-color: #F0F0F5;
   --led-on-color: #FF9F0A;
   --success-color: #FF9F0A;
-  --box-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --box-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --box-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --box-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
   --focus-ring: 0 0 0 3px rgba(255, 159, 10, 0.4);
 }
 
@@ -306,9 +306,11 @@ html {
 
 /* 暗色主题下的头部样式 */
 [data-theme="dark"] .app-header {
-  background: rgba(44, 62, 80, 0.35);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: rgba(20, 20, 30, 0.6);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 /* 明亮主题下的头部样式 */
@@ -1224,33 +1226,68 @@ html {
   font-weight: 600;
   margin-bottom: 16px;
   padding-left: 4px;
-  color: var(--header-text-color);
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
 }
 
 /* 定时任务列表 - 增强磨砂玻璃效果 */
 .schedules-list {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(30px) saturate(180%);
   -webkit-backdrop-filter: blur(30px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--border-radius-lg);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2),
+              0 2px 8px rgba(0, 0, 0, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.08);
   overflow: hidden;
 }
 
+[data-theme="light"] .schedules-list {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06),
+              0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
 .schedule-item {
-  display: flex;
-  flex-direction: column;
-  padding: 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  transition: background-color var(--transition), transform var(--transition);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 16px;
+  row-gap: 10px;
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.2s ease;
   cursor: pointer;
+  position: relative;
+}
+
+.schedule-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--led-on-color);
+  opacity: 0.75;
+  transition: opacity 0.2s ease;
 }
 
 .schedule-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-  transform: translateX(4px);
-  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.schedule-item:hover::before {
+  opacity: 1;
+}
+
+[data-theme="light"] .schedule-item {
+  border-bottom-color: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .schedule-item:hover {
+  background: rgba(0, 0, 0, 0.02);
 }
 
 .schedule-item:last-child {
@@ -1261,22 +1298,244 @@ html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  gap: 12px;
+  grid-column: 1 / -1;
+  margin-bottom: 0;
 }
 
 .schedule-name {
-  font-weight: 500;
+  font-weight: 600;
   font-size: 16px;
-  color: var(--header-text-color);
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
-.schedule-times {
+.schedule-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.schedule-actions button {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  transition: all 0.15s ease;
+  font-size: 16px;
+}
+
+.schedule-actions button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .schedule-actions button:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.schedule-actions .delete-btn:hover {
+  color: var(--danger-color);
+  background: rgba(255, 59, 48, 0.1);
+}
+
+.schedule-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
+.schedule-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.schedule-time i {
+  font-size: 16px;
+  color: var(--led-on-color);
+}
+
+.schedule-operation {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(255, 149, 0, 0.12);
+  color: var(--led-on-color);
+}
+
+.schedule-operation i {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 8px;
+}
+
+[data-theme="light"] .schedule-operation {
+  background: rgba(255, 149, 0, 0.1);
+}
+
+.schedule-repeat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.schedule-repeat i {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.schedule-notifications {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  grid-column: 1;
+  min-width: 0;
+  margin-top: 0;
+}
+
+.schedule-notifications span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  padding: 3px 8px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  white-space: nowrap;
+}
+
+.schedule-notifications span.enabled {
+  color: var(--led-on-color);
+  background: rgba(255, 149, 0, 0.1);
+}
+
+[data-theme="light"] .schedule-notifications span {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="light"] .schedule-notifications span.enabled {
+  background: rgba(255, 149, 0, 0.08);
+}
+
+.schedule-creator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  grid-column: 1;
+  min-width: 0;
+  margin-top: 0;
+}
+
+.schedule-creator span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.schedule-creator i {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.schedule-toggle {
+  position: static;
+  grid-column: 2;
+  grid-row: 3 / span 2;
+  align-self: end;
+  justify-self: end;
+}
+
+.schedule-item.disabled {
+  background: rgba(142, 142, 147, 0.10);
+}
+
+.schedule-item.disabled::before,
+.schedule-item.disabled:hover::before {
+  background: var(--text-tertiary);
+  opacity: 1;
+}
+
+.schedule-item.disabled:hover {
+  background: rgba(142, 142, 147, 0.14);
+}
+
+[data-theme="light"] .schedule-item.disabled {
+  background: rgba(142, 142, 147, 0.12);
+}
+
+[data-theme="light"] .schedule-item.disabled:hover {
+  background: rgba(142, 142, 147, 0.16);
+}
+
+.schedule-item.disabled .schedule-name {
+  color: var(--text-secondary);
+}
+
+.schedule-item.disabled .schedule-name::after {
+  content: "已停用";
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(142, 142, 147, 0.16);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0;
+  vertical-align: middle;
+}
+
+.schedule-item.disabled .schedule-time,
+.schedule-item.disabled .schedule-repeat,
+.schedule-item.disabled .schedule-creator {
+  color: var(--text-tertiary);
+}
+
+.schedule-item.disabled .schedule-time i,
+.schedule-item.disabled .schedule-repeat i,
+.schedule-item.disabled .schedule-creator i {
+  color: var(--text-tertiary);
+  opacity: 0.9;
+}
+
+.schedule-item.disabled .schedule-operation,
+.schedule-item.disabled .schedule-notifications span.enabled {
+  background: rgba(142, 142, 147, 0.14);
+  color: var(--text-secondary);
+}
+
+.schedule-item.disabled .schedule-actions button {
+  opacity: 0.75;
+}
+
+.schedule-item.disabled .schedule-toggle {
+  filter: grayscale(1);
 }
 
 .empty-state {
@@ -1284,19 +1543,21 @@ html {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 30px 20px;
-  color: rgba(255, 255, 255, 0.7);
+  padding: 48px 24px;
+  color: var(--text-tertiary);
 }
 
 .empty-state i {
-  font-size: 32px;
-  margin-bottom: 12px;
-  opacity: 0.7;
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.4;
+  color: var(--led-on-color);
 }
 
 .empty-state p {
   font-size: 15px;
   text-align: center;
+  line-height: 1.6;
 }
 
 /* 模态框样式 */
@@ -1374,11 +1635,11 @@ html {
 
 /* 暗色主题下的模态框 */
 [data-theme="dark"] .modal-content {
-  background: rgba(44, 62, 80, 0.6);
+  background: rgba(20, 20, 30, 0.85);
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 /* 明亮主题下的模态框 */
@@ -1397,6 +1658,63 @@ html {
 /* 表单样式 */
 .form-group {
   margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--header-text-color);
+  letter-spacing: -0.1px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="time"] {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  -webkit-appearance: none;
+  font-family: inherit;
+  background-color: rgba(255, 255, 255, 0.06);
+  color: var(--header-text-color);
+}
+
+.form-group input[type="text"]:hover,
+.form-group input[type="time"]:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="time"]:focus {
+  outline: none;
+  border-color: rgba(255, 149, 0, 0.5);
+  box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.15);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* 明亮主题下的表单样式 */
+[data-theme="light"] .form-group input[type="text"],
+[data-theme="light"] .form-group input[type="time"] {
+  background-color: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .form-group input[type="text"]:hover,
+[data-theme="light"] .form-group input[type="time"]:hover {
+  border-color: rgba(0, 0, 0, 0.15);
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .form-group input[type="text"]:focus,
+[data-theme="light"] .form-group input[type="time"]:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
 }
 
 .form-group label {
@@ -1569,36 +1887,9 @@ html {
   box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
 }
 
-.schedule-operation {
-  display: flex;
-  align-items: center;
-  margin: 8px 0;
-}
-
-.schedule-operation i {
-  margin-right: 8px;
-  font-size: 18px;
-}
-
 .repeat-days {
   display: flex;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.schedule-operation {
-  display: flex;
   align-items: center;
-  margin: 8px 0;
-}
-
-.schedule-operation i {
-  margin-right: 8px;
-  font-size: 18px;
-}
-
-.repeat-days {
-  display: flex;
   justify-content: space-between;
   gap: 8px;
 }
@@ -1671,6 +1962,26 @@ html {
   align-items: center;
 }
 
+.notification-toggle-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notification-test-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 31px;
+  min-height: 31px;
+  padding: 0;
+  font-size: 16px;
+}
+
+.notification-test-button[hidden] {
+  display: none;
+}
+
 .toggle-switch {
   position: relative;
   display: inline-flex;
@@ -1735,17 +2046,16 @@ input:checked + .toggle-label:before {
   .time-picker, .operation-picker {
     width: 100%;
   }
-}
 
-.schedule-toggle {
-  position: relative;
-}
+  .schedule-item {
+    grid-template-columns: 1fr;
+  }
 
-.schedule-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 8px;
+  .schedule-toggle {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+  }
 }
 
 .schedule-action-btn {
@@ -1884,6 +2194,132 @@ input:checked + .toggle-label:before {
     0 8px 32px rgba(0, 0, 0, 0.08),
     0 2px 8px rgba(0, 0, 0, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* =========================================================
+   Liquid Glass refresh
+   A calmer, layered system shared by the dashboard and config page.
+   ========================================================= */
+:root {
+  --background-color: #eef2f7;
+  --card-background: rgba(255, 255, 255, 0.58);
+  --text-primary: #142033;
+  --text-secondary: #526176;
+  --text-tertiary: #8290a3;
+  --border-color: rgba(255, 255, 255, 0.72);
+  --header-background: rgba(255, 255, 255, 0.56);
+  --header-text-color: #142033;
+  --led-on-color: #22a06b;
+  --success-color: #22a06b;
+  --focus-ring: 0 0 0 3px rgba(34, 160, 107, 0.28);
+  --glass-shadow: 0 20px 50px rgba(28, 42, 61, 0.12), 0 2px 8px rgba(28, 42, 61, 0.06);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+[data-theme="dark"] {
+  --background-color: #0d1420;
+  --card-background: rgba(24, 34, 49, 0.66);
+  --text-primary: #f5f7fb;
+  --text-secondary: #aab7c8;
+  --text-tertiary: #708096;
+  --border-color: rgba(255, 255, 255, 0.14);
+  --header-background: rgba(15, 24, 37, 0.68);
+  --header-text-color: #f5f7fb;
+  --led-on-color: #45d39a;
+  --success-color: #45d39a;
+  --focus-ring: 0 0 0 3px rgba(69, 211, 154, 0.32);
+  --glass-shadow: 0 24px 60px rgba(0, 0, 0, 0.34), 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+body {
+  background: var(--background-color);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.background-container {
+  background: var(--background-color);
+}
+
+.background-1,
+.background-2 {
+  inset: auto;
+  width: 42vw;
+  height: 42vw;
+  max-width: 560px;
+  max-height: 560px;
+  border-radius: 999px;
+  filter: blur(90px);
+  opacity: 0.24;
+  animation: ambient-float 22s ease-in-out infinite alternate;
+}
+
+.background-1 { top: -12%; left: -12%; background: #6da8ff; }
+.background-2 { right: -12%; bottom: -16%; background: #74d8b0; animation-delay: -8s; }
+[data-theme="dark"] .background-1 { opacity: 0.2; background: #3478e5; }
+[data-theme="dark"] .background-2 { opacity: 0.16; background: #1c9b72; }
+
+@keyframes ambient-float {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(5%, 4%, 0) scale(1.08); }
+}
+
+#app { max-width: 760px; padding-bottom: 48px; }
+
+.app-header {
+  margin: 14px 16px 0;
+  padding: 10px 12px 10px 18px;
+  border: 1px solid var(--border-color);
+  border-radius: 22px;
+  background: var(--header-background);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,.72);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+}
+
+.header-title { color: var(--text-primary) !important; font-size: 17px; letter-spacing: -0.2px; }
+.header-actions { gap: 6px; }
+.header-actions button,
+.header-actions a {
+  width: 42px; height: 42px; border-radius: 14px;
+  color: var(--text-secondary); background: rgba(255,255,255,.34);
+  border: 1px solid rgba(255,255,255,.58);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.75);
+  transition: transform 160ms var(--ease-out), background 160ms ease, color 160ms ease;
+}
+[data-theme="dark"] .header-actions button,
+[data-theme="dark"] .header-actions a { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.12); }
+.header-actions button:hover, .header-actions a:hover { transform: translateY(-1px); color: var(--text-primary); background: rgba(255,255,255,.64); }
+.header-actions button:active, .header-actions a:active { transform: scale(.97); }
+
+.user-info-section, .led-status-section, .schedules-list {
+  background: var(--card-background) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,.62) !important;
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+}
+.user-info-section, .led-status-section { margin: 18px 16px; border-radius: 24px; }
+.user-info-section:hover, .led-status-section:hover { transform: translateY(-1px); }
+.user-name, .led-status-text { color: var(--text-primary) !important; }
+.user-role, .device-info { color: var(--text-secondary) !important; }
+.device-info { border-top-color: rgba(127, 145, 169, .2); }
+.schedules-section { margin: 24px 16px; }
+.section-title { color: var(--text-primary); font-size: 18px; margin-bottom: 12px; }
+.schedule-item { transition: background 160ms ease, transform 160ms var(--ease-out); }
+.schedule-item:hover { transform: translateX(2px); }
+.schedule-time { color: var(--text-primary); }
+
+.primary-button, .secondary-button, .logout-button { transition: transform 160ms var(--ease-out), background 160ms ease, box-shadow 160ms ease; }
+.primary-button:active, .secondary-button:active, .logout-button:active { transform: scale(.97); }
+
+@media (max-width: 560px) {
+  .app-header { margin: 10px 10px 0; }
+  .user-info-section, .led-status-section, .schedules-section { margin-left: 10px; margin-right: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .background-1, .background-2 { animation: none; }
+  .user-info-section:hover, .led-status-section:hover, .schedule-item:hover { transform: none; }
 }
 
 [data-theme="light"] .schedules-list {
@@ -2070,8 +2506,9 @@ input:checked + .toggle-label:before {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-/* 定时任务中的Server酱通知样式 */
-.schedule-serverchan {
+/* 定时任务中的通知渠道样式 */
+.schedule-serverchan,
+.schedule-notify-lzc {
   display: flex;
   align-items: center;
   margin: 8px 0;
@@ -2079,27 +2516,59 @@ input:checked + .toggle-label:before {
   color: rgba(255, 255, 255, 0.7);
 }
 
-.schedule-serverchan i {
+.schedule-serverchan i,
+.schedule-notify-lzc i {
   margin-right: 8px;
   font-size: 16px;
 }
 
-.schedule-serverchan span {
+.schedule-serverchan span,
+.schedule-notify-lzc span {
   font-weight: 500;
 }
 
-[data-theme="light"] .schedule-serverchan {
+[data-theme="light"] .schedule-serverchan,
+[data-theme="light"] .schedule-notify-lzc {
   color: var(--text-secondary);
 }
 
-/* 当启用Server酱通知时的样式 */
-.schedule-serverchan.enabled {
+/* 当启用通知时的样式 */
+.schedule-serverchan.enabled,
+.schedule-notify-lzc.enabled {
   color: var(--success-color);
 }
 
-[data-theme="light"] .schedule-serverchan.enabled {
+[data-theme="light"] .schedule-serverchan.enabled,
+[data-theme="light"] .schedule-notify-lzc.enabled {
   color: var(--success-color);
 }
+
+/* ntfy通知样式 */
+.schedule-notify-ntfy {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 4px;
+}
+
+.schedule-notify-ntfy i {
+  font-size: 14px;
+}
+
+[data-theme="light"] .schedule-notify-ntfy {
+  color: var(--text-secondary);
+}
+
+.schedule-notify-ntfy.enabled {
+  color: var(--led-on-color);
+}
+
+[data-theme="light"] .schedule-notify-ntfy.enabled {
+  color: var(--success-color);
+}
+
 /* ===================================
    灯泡容器管理
    =================================== */
@@ -2174,12 +2643,18 @@ input:checked + .toggle-label:before {
   background: rgba(85, 85, 255, 0);
   filter: blur(100px);
   border-radius: 50%;
-  transition: all 0.7s ease;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: -1;
 }
 
 .bulb-lava.lamp-on .glow-lava {
-  background: rgba(85, 85, 255, 0.7);
+  background: rgba(120, 80, 255, 0.6);
+  animation: lavaGlowPulse 4s ease-in-out infinite;
+}
+
+@keyframes lavaGlowPulse {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
 }
 
 .glow-lava::after {
@@ -2191,11 +2666,12 @@ input:checked + .toggle-label:before {
   background: rgba(85, 85, 255, 0);
   filter: blur(5px);
   border-radius: 50%;
-  transition: all 0.7s ease;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .bulb-lava.lamp-on .glow-lava::after {
-  background: #5555ff;
+  background: #8866ff;
+  box-shadow: 0 0 60px rgba(136, 102, 255, 0.4);
 }
 
 .frame-lava {
@@ -2211,14 +2687,15 @@ input:checked + .toggle-label:before {
   position: relative;
   width: 300px;
   height: 450px;
-  background: radial-gradient(#001122, rgba(0, 255, 255, 0.2));
+  background: radial-gradient(circle at 50% 30%, #001a2e, rgba(0, 200, 255, 0.15));
   clip-path: polygon(25% 0%, 75% 0%, 100% 75%, 75% 100%, 25% 100%, 0 75%);
   overflow: hidden;
-  transition: all 0.7s ease;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .bulb-lava.lamp-on .body-lamp {
-  background: radial-gradient(#001122, rgba(0, 255, 255, 0.35));
+  background: radial-gradient(circle at 50% 30%, #001a2e, rgba(0, 200, 255, 0.3));
+  box-shadow: inset 0 0 60px rgba(0, 200, 255, 0.15);
 }
 
 /* Base Lamp / Top */
@@ -2256,15 +2733,15 @@ input:checked + .toggle-label:before {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.6);
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  filter: blur(15px) contrast(30);
-  opacity: 0.3;
-  transition: all 0.7s ease;
+  filter: blur(12px) contrast(25);
+  opacity: 0.2;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .bulb-lava.lamp-on .gooey {
@@ -2985,9 +3462,9 @@ input:checked + .toggle-label:before {
 .liquid-title {
   text-align: center;
   width: 100%;
-  color: hsla(0, 50%, 50%, 1);
+  color: hsla(30, 80%, 60%, 0.9);
   font-size: 3em;
-  text-shadow: 1px 1px hsla(0, 0%, 5%, 1), -1px -1px hsla(0, 0%, 5%, 1);
+  text-shadow: 0 0 20px rgba(255, 149, 0, 0.5), 1px 1px hsla(0, 0%, 5%, 1), -1px -1px hsla(0, 0%, 5%, 1);
   font-family: 'Poiret One', 'SF Pro Display', -apple-system, cursive;
   letter-spacing: 6px;
   text-align: center;
@@ -3151,14 +3628,17 @@ input:checked + .toggle-label:before {
 
 /* Checked State */
 .lightbulb-switch:checked + .lightbulb-label {
-  background-color: rgba(0,0,0,0.45);
-  box-shadow: 0.125em 0.125em 0 0.125em rgba(0,0,0,0.1) inset;
+  background-color: rgba(0,0,0,0.4);
+  box-shadow: 0.125em 0.125em 0 0.125em rgba(0,0,0,0.1) inset,
+              0 0 40px rgba(253, 234, 123, 0.15);
 }
 
 .lightbulb-switch:checked + .lightbulb-label:before {
   background-color: currentColor;
   transform: translateX(125%);
-  box-shadow: 0 0 20px rgba(253, 234, 123, 0.8);
+  box-shadow: 0 0 12px rgba(253, 234, 123, 0.9),
+              0 0 30px rgba(253, 234, 123, 0.6),
+              0 0 60px rgba(253, 234, 123, 0.3);
 }
 
 .lightbulb-switch:checked + .lightbulb-label:after {
@@ -3286,8 +3766,9 @@ input:checked + .toggle-label:before {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Hours - Green/Lime */
@@ -3307,8 +3788,9 @@ input:checked + .toggle-label:before {
 .analog-clock[data-time$="30"] .analog-row:nth-child(2) .dot:nth-child(3),
 .analog-clock[data-time$="40"] .analog-row:nth-child(3) .dot:nth-child(3),
 .analog-clock[data-time$="50"] .analog-row:nth-child(4) .dot:nth-child(3) {
-  background: lime;
-  box-shadow: 0 0 20px lime, 0 0 40px lime;
+  background: #00ff88;
+  box-shadow: 0 0 8px #00ff88, 0 0 20px rgba(0, 255, 136, 0.5), 0 0 40px rgba(0, 255, 136, 0.2);
+  border-color: transparent;
 }
 
 /* Minutes - Yellow/Orange/Gold gradient */
@@ -3318,8 +3800,9 @@ input:checked + .toggle-label:before {
 .analog-clock[data-time*="3"] .analog-row:nth-child(3) .dot:nth-child(5),
 .analog-clock[data-time*="4"] .analog-row:nth-child(4) .dot:nth-child(5),
 .analog-clock[data-time*="5"] .analog-row:nth-child(5) .dot:nth-child(5) {
-  background: linear-gradient(135deg, yellow, orange, gold);
-  box-shadow: 0 0 20px yellow, 0 0 40px orange;
+  background: linear-gradient(135deg, #ffcc00, #ff8800);
+  box-shadow: 0 0 8px #ffcc00, 0 0 20px rgba(255, 200, 0, 0.5), 0 0 40px rgba(255, 136, 0, 0.2);
+  border-color: transparent;
 }
 
 /* Seconds - Red gradient */
@@ -3333,8 +3816,9 @@ input:checked + .toggle-label:before {
 .analog-clock[data-time$="7"] .analog-row:nth-child(7) .dot:nth-child(6),
 .analog-clock[data-time$="8"] .analog-row:nth-child(7) .dot:nth-child(5),
 .analog-clock[data-time$="9"] .analog-row:nth-child(7) .dot:nth-child(4) {
-  background: linear-gradient(135deg, red, darkred, crimson);
-  box-shadow: 0 0 20px red, 0 0 40px darkred;
+  background: linear-gradient(135deg, #ff3344, #cc0022);
+  box-shadow: 0 0 8px #ff3344, 0 0 20px rgba(255, 51, 68, 0.5), 0 0 40px rgba(204, 0, 34, 0.2);
+  border-color: transparent;
 }
 
 /* Preview style */
@@ -3572,14 +4056,38 @@ input:checked + .toggle-label:before {
 
 /* 亮起状态 */
 .single-led-bulb.light_up {
-  box-shadow: 0 -10px 100px #ffff00;
-  background: #ffff79;
+  background: linear-gradient(180deg, #fffde0 0%, #fff176 40%, #ffeb3b 100%);
+  box-shadow: 0 -10px 80px rgba(255, 235, 59, 0.6),
+              0 0 120px rgba(255, 235, 59, 0.3),
+              0 10px 40px rgba(255, 235, 59, 0.4),
+              inset 0 -20px 40px rgba(255, 193, 7, 0.2);
+  animation: singleLedGlow 3s ease-in-out infinite;
+}
+
+@keyframes singleLedGlow {
+  0%, 100% { box-shadow: 0 -10px 80px rgba(255, 235, 59, 0.6), 0 0 120px rgba(255, 235, 59, 0.3), 0 10px 40px rgba(255, 235, 59, 0.4); }
+  50% { box-shadow: 0 -10px 100px rgba(255, 235, 59, 0.8), 0 0 150px rgba(255, 235, 59, 0.4), 0 10px 50px rgba(255, 235, 59, 0.5); }
+}
+
+.single-led-bulb.light_up .single-led-eyes span {
+  background-color: #5d4037;
 }
 
 .single-led-bulb.light_up .single-led-mouth {
-  background: #657883;
+  background: #5d4037;
   border: none;
   border-radius: 20% 20% 60% 60%;
+}
+
+.single-led-bulb.light_up + .single-led-button {
+  border-color: #ff9800;
+  color: #ff9800;
+}
+
+.single-led-bulb.light_up + .single-led-button:hover {
+  background: #ff9800;
+  color: white;
+  box-shadow: 0 4px 20px rgba(255, 152, 0, 0.4);
 }
 
 /* POWER 按钮 */
@@ -3854,6 +4362,8 @@ input:checked + .toggle-label:before {
     0 -0.125em 0.125em hsl(var(--neon-on-hue1),90%,40%) inset,
     0 -0.25em 0.25em hsla(var(--neon-on-hue1),90%,70%,0.3),
     0 0.25em 0.25em hsla(var(--neon-on-hue1),90%,70%,0.3),
+    0 0 0.5em hsla(var(--neon-on-hue1),90%,70%,0.6),
+    0 0 1em hsla(var(--neon-on-hue1),90%,70%,0.3),
     0.25em 0.25em 0.25em hsla(0,0%,0%,0.5);
 }
 
@@ -3942,11 +4452,13 @@ input:checked + .toggle-label:before {
   height: 235px;
   margin: 0 auto;
   border-radius: 100%;
-  border: 8px solid #34A87C;
-  background: #DDDDDD;
-  box-shadow: 0px 0px 5px rgba(0,0,0,0.25) inset;
+  border: 6px solid #2d8a63;
+  background: linear-gradient(180deg, #87CEEB 0%, #B0E0E6 60%, #90EE90 100%);
+  box-shadow: 0 0 0 4px rgba(45, 138, 99, 0.2),
+              0 8px 32px rgba(0, 0, 0, 0.2),
+              inset 0 0 30px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  transition: background-color 0.5s linear;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 太阳 */
@@ -3956,10 +4468,13 @@ input:checked + .toggle-label:before {
   top: 18px;
   height: 40px;
   width: 40px;
-  background: #FFE067;
+  background: radial-gradient(circle, #FFE067 40%, #FFB300 100%);
   border-radius: 100%;
   margin: 0 auto;
   left: 30px;
+  box-shadow: 0 0 20px rgba(255, 224, 103, 0.6),
+              0 0 40px rgba(255, 179, 0, 0.3);
+  transition: all 0.6s ease;
 }
 
 /* 月亮 */
@@ -3967,9 +4482,11 @@ input:checked + .toggle-label:before {
   position: relative;
   height: 24px;
   width: 24px;
-  background: #EEE;
+  background: radial-gradient(circle, #f0f0f0 40%, #ddd 100%);
   border-radius: 100%;
   display: none;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5),
+              0 0 30px rgba(200, 200, 255, 0.2);
 }
 
 /* 狐狸 */
@@ -4304,4 +4821,222 @@ input#fox-toggle[type=checkbox]:checked ~ .fox-window .the-fox:hover .fox-eyes {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
   border-radius: 25px;
+}
+
+/* Final cascade pass: keep the refreshed glass surfaces above legacy theme rules. */
+.app-header,
+.user-info-section,
+.led-status-section,
+.schedules-list {
+  background: var(--card-background) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,.62) !important;
+}
+.app-header { background: var(--header-background) !important; }
+.header-title, .user-name, .led-status-text, .section-title { color: var(--text-primary) !important; }
+.user-role, .device-info { color: var(--text-secondary) !important; }
+[data-theme="dark"] .app-header { background: var(--header-background) !important; }
+
+/* Schedule readability pass */
+:root {
+  --text-secondary: #4b5d73;
+  --text-tertiary: #6d7e92;
+}
+[data-theme="dark"] {
+  --text-secondary: #b5c2d2;
+  --text-tertiary: #91a0b4;
+}
+.schedule-name { color: var(--text-primary) !important; font-weight: 650; }
+.schedule-repeat { color: var(--text-secondary) !important; font-weight: 500; }
+.schedule-repeat i, .schedule-time i { color: var(--led-on-color) !important; }
+.schedule-creator { color: var(--text-tertiary) !important; }
+.schedule-operation {
+  color: #16784f !important;
+  background: rgba(34, 160, 107, 0.13) !important;
+  border: 1px solid rgba(34, 160, 107, 0.16);
+}
+[data-theme="dark"] .schedule-operation {
+  color: #78e6b7 !important;
+  background: rgba(69, 211, 154, 0.14) !important;
+  border-color: rgba(69, 211, 154, 0.2);
+}
+.schedule-notifications span {
+  color: var(--text-secondary) !important;
+  background: rgba(82, 97, 118, 0.09) !important;
+}
+.schedule-notifications span.enabled {
+  color: #16784f !important;
+  background: rgba(34, 160, 107, 0.11) !important;
+}
+[data-theme="dark"] .schedule-notifications span { background: rgba(255,255,255,.07) !important; }
+[data-theme="dark"] .schedule-notifications span.enabled {
+  color: #78e6b7 !important;
+  background: rgba(69, 211, 154, 0.14) !important;
+}
+
+/* Light mode uses a muted sage accent instead of a bright status green. */
+:root {
+  --led-on-color: #4f8f7a;
+  --success-color: #4f8f7a;
+}
+[data-theme="light"] .background-2 { opacity: 0.11; }
+[data-theme="light"] .schedule-item::before { background: #4f8f7a; opacity: .48; }
+[data-theme="light"] .schedule-item:hover::before { opacity: .72; }
+[data-theme="light"] .schedule-operation {
+  color: #536f89 !important;
+  background: rgba(83, 111, 137, .09) !important;
+  border-color: rgba(83, 111, 137, .14);
+}
+[data-theme="light"] .schedule-notifications span.enabled {
+  color: #536f89 !important;
+  background: rgba(83, 111, 137, .075) !important;
+}
+[data-theme="light"] .schedule-time i,
+[data-theme="light"] .schedule-repeat i { color: #5c7d99 !important; }
+[data-theme="light"] .schedule-item::before { background: #7895ad; }
+[data-theme="dark"] .schedule-operation {
+  color: #a8c2d8 !important;
+  background: rgba(126, 165, 196, .14) !important;
+  border-color: rgba(126, 165, 196, .2);
+}
+[data-theme="dark"] .schedule-notifications span.enabled {
+  color: #a8c2d8 !important;
+  background: rgba(126, 165, 196, .12) !important;
+}
+[data-theme="dark"] .schedule-time i,
+[data-theme="dark"] .schedule-repeat i { color: #8db1cf !important; }
+[data-theme="dark"] .schedule-item::before { background: #7ea5c4; opacity: .7; }
+
+/* Classic bulb: keep the familiar interaction, refine it into warm glass and metal. */
+.bulb-classic .switch label {
+  background: linear-gradient(180deg, #26384c, #172638);
+  border: 1px solid rgba(255,255,255,.16);
+  box-shadow: inset 0 2px 5px rgba(255,255,255,.08), inset 0 -8px 18px rgba(5,14,24,.28), 0 14px 30px rgba(20,35,52,.14);
+  transition: background 220ms ease, box-shadow 220ms ease;
+}
+.bulb-classic .switch label .bulb {
+  background: radial-gradient(circle at 35% 30%, #526b82, #2a4057 68%);
+  box-shadow: inset 0 0 1px 3px #456078, inset 0 0 12px 8px #1c3044, 0 16px 26px -10px rgba(6,16,28,.46);
+  transition: left 220ms var(--ease-out), background 220ms ease, box-shadow 220ms ease;
+}
+.bulb-classic .switch label .bulb .bulb-center {
+  background: #9aabba;
+  box-shadow: inset 0 0 0 4px #71889c;
+  transition: background 220ms ease, box-shadow 220ms ease;
+}
+.bulb-classic .switch label .bulb .bulb-center:after {
+  background: #b9c7d1;
+  box-shadow: 0 0 2px 4px #70879a;
+  transition: background 220ms ease, box-shadow 220ms ease;
+}
+.bulb-classic .switch input:checked ~ label {
+  background: linear-gradient(180deg, #3e4650, #222d38);
+  box-shadow: inset 0 2px 5px rgba(255,255,255,.09), inset 0 -8px 18px rgba(7,13,20,.3), 0 16px 34px rgba(214,145,66,.12);
+}
+.bulb-classic .switch input:checked ~ label .bulb {
+  background: radial-gradient(circle at 34% 28%, #e9b56f, #a96d49 70%);
+  box-shadow: inset 0 0 1px 3px #c58a5d, inset 0 0 12px 8px #774c43, 0 16px 26px -10px rgba(70,38,27,.42), 0 0 34px rgba(241,177,83,.22);
+}
+.bulb-classic .switch input:checked ~ label .bulb > .bulb-center {
+  background: #f4b85f;
+  box-shadow: inset 0 0 0 4px #f9d486, 0 0 12px 10px rgba(244,184,95,.68), 0 0 26px 14px rgba(231,133,67,.24);
+  animation: classicGlow 2.8s ease-in-out infinite;
+}
+.bulb-classic .switch input:checked ~ label .bulb > .bulb-center:after {
+  background: #ffe1a0;
+  box-shadow: 0 0 2px 4px #f7c977;
+}
+.bulb-classic .switch input:checked ~ label .bulb > .filament-1:before,
+.bulb-classic .switch input:checked ~ label .bulb > .filament-2:before,
+.bulb-classic .switch input:checked ~ label .bulb > .filament-1:after,
+.bulb-classic .switch input:checked ~ label .bulb > .filament-2:after { border-color: #f2b866; }
+@keyframes classicGlow {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.08); }
+}
+.bulb-classic .switch label:active .bulb { transform: scale(.98); }
+
+@media (prefers-reduced-motion: reduce) {
+  .bulb-classic .switch input:checked ~ label .bulb > .bulb-center { animation: none; }
+}
+
+/* In light mode the track should recede into the page instead of reading as a black bar. */
+[data-theme="light"] .bulb-classic .switch label {
+  background: linear-gradient(180deg, #dbe3eb, #c3cfdb);
+  border-color: rgba(81, 103, 124, .18);
+  box-shadow: inset 0 2px 5px rgba(255,255,255,.7), inset 0 -8px 18px rgba(89,111,132,.16), 0 14px 28px rgba(66,88,108,.16);
+}
+[data-theme="light"] .bulb-classic .switch input:checked ~ label {
+  background: linear-gradient(180deg, #e6ebef, #cfd9e2);
+  box-shadow: inset 0 2px 5px rgba(255,255,255,.8), inset 0 -8px 18px rgba(89,111,132,.13), 0 14px 30px rgba(214,145,66,.12);
+}
+
+/* Non-classic lamp polish: state-led motion and restrained material language. */
+.bulb-lava {
+  --lava-ink: #172538;
+  --lava-glow: #f29b62;
+  isolation: isolate;
+}
+.bulb-lava .glow-lava {
+  width: 330px; height: 330px; filter: blur(76px);
+  transition: opacity 220ms var(--ease-out), transform 220ms var(--ease-out), background 220ms ease;
+}
+.bulb-lava.lamp-on .glow-lava {
+  background: rgba(242, 155, 98, .46);
+  animation: lavaGlowPulse 3.6s ease-in-out infinite;
+}
+.bulb-lava .body-lamp {
+  background: radial-gradient(circle at 50% 26%, #243b55 0%, #101d2d 68%);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: inset 0 0 44px rgba(113, 169, 205, .16), 0 18px 42px rgba(12, 26, 43, .2);
+  transition: background 220ms ease, box-shadow 220ms ease;
+}
+.bulb-lava.lamp-on .body-lamp {
+  background: radial-gradient(circle at 50% 28%, #364d60 0%, #15263a 64%);
+  box-shadow: inset 0 0 60px rgba(242, 155, 98, .2), 0 20px 50px rgba(242, 155, 98, .16);
+}
+.bulb-lava .base-lamp, .bulb-lava .base-lava, .bulb-lava .top-lava { background: #18283b; }
+.bulb-lava .gooey { filter: blur(10px) contrast(20); transition: opacity 220ms ease; }
+.bulb-lava.lamp-on .bubble {
+  background: #f4a16d;
+  box-shadow: 0 0 24px rgba(244, 161, 109, .38);
+  animation-duration: 6.2s;
+}
+
+.bulb-vintage .vintage-lamp { transition: filter 220ms var(--ease-out), transform 220ms var(--ease-out); }
+.bulb-vintage.lamp-on .vintage-lamp {
+  filter: drop-shadow(0 12px 24px rgba(246, 181, 104, .2));
+  animation: vintageBreath 3.8s ease-in-out infinite;
+}
+.bulb-vintage .cord--main,
+.bulb-vintage .shade__opening,
+.bulb-vintage .lamp__mouth,
+.bulb-vintage .lamp__light,
+.bulb-vintage .lamp__eye,
+.bulb-vintage .base__top,
+.bulb-vintage .base__side,
+.bulb-vintage .post__body,
+.bulb-vintage .top__body { transition: opacity 180ms ease, fill 220ms ease, transform 220ms var(--ease-out); }
+@keyframes vintageBreath { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+
+.bulb-liquid { background: linear-gradient(145deg, #172536, #0b1420) !important; border: 1px solid rgba(255,255,255,.12); }
+.bulb-liquid::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle at 25% 18%, rgba(255,195,128,.16), transparent 38%), linear-gradient(120deg, transparent 35%, rgba(255,255,255,.06), transparent 65%);
+  mix-blend-mode: screen; opacity: .7;
+}
+.bulb-liquid.lamp-on { box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 20px 44px rgba(205, 104, 51, .16); }
+.bulb-liquid .liquid-title { color: #f5c28e; text-shadow: 0 0 22px rgba(245, 174, 101, .34); letter-spacing: 4px; }
+
+.lightbulb-label { transition: background-color 180ms ease, box-shadow 180ms ease; }
+.lightbulb-switch:checked + .lightbulb-label:before { animation: bulbGlow 2.8s ease-in-out infinite; }
+@keyframes bulbGlow { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.08); } }
+
+.analog-clock { box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 18px 36px rgba(0,0,0,.22); }
+.dot { transition: background 180ms ease-out, box-shadow 220ms ease-out, opacity 180ms ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bulb-lava.lamp-on .glow-lava, .bulb-vintage.lamp-on .vintage-lamp,
+  .lightbulb-switch:checked + .lightbulb-label:before { animation: none; }
+  .bulb-lava.lamp-on .bubble { animation: none; }
 }

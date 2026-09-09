@@ -1,7 +1,10 @@
 #!/bin/bash
+set -euo pipefail
+
 echo "prepare go mod"
-go mod tidy && go mod download
+go mod download
 echo "building dist"
-GOOS=linux GOARCH=amd64 go build -o dist/cat-led ./cmd/cat-led
+mkdir -p dist
+GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -o dist/cat-led ./cmd/cat-led
 echo "ensure permission"
 chmod +x dist/cat-led
