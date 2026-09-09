@@ -47,6 +47,9 @@ func (m *Manager) Status(ctx context.Context) (Status, error) {
 func (m *Manager) Save(ctx context.Context, spec Spec, creator string, now time.Time) (State, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
+	if !spec.HasShutdown() && !spec.HasWake() {
+		return m.cancel(ctx, now)
+	}
 	off, on, err := spec.Next(now.Add(2 * time.Minute))
 	if err != nil {
 		return State{}, err
@@ -68,14 +71,16 @@ func (m *Manager) Save(ctx context.Context, spec Spec, creator string, now time.
 		old.WakeAt = time.Time{}
 		old.PreviousWakeAt = time.Time{}
 	}
-	if err = m.device.Probe(); err != nil {
-		return old, err
+	if spec.HasWake() {
+		if err = m.device.Probe(); err != nil {
+			return old, err
+		}
 	}
 	state := State{Spec: spec, Phase: "preparing", PreviousWakeAt: old.WakeAt, ShutdownAt: off, WakeAt: on, Creator: creator, UpdatedAt: now}
 	if err = m.store.Save(ctx, state); err != nil {
 		return old, err
 	}
-	if err = m.device.Arm(on, old.WakeAt); err != nil {
+	if err = m.prepareAlarm(state, old.WakeAt); err != nil {
 		return state, m.fail(ctx, state, err)
 	}
 	state.Phase = "active"
@@ -89,6 +94,10 @@ func (m *Manager) Save(ctx context.Context, spec Spec, creator string, now time.
 func (m *Manager) Cancel(ctx context.Context, now time.Time) (State, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
+	return m.cancel(ctx, now)
+}
+
+func (m *Manager) cancel(ctx context.Context, now time.Time) (State, error) {
 	state, err := m.store.Load(ctx)
 	if err != nil {
 		return state, err
@@ -142,9 +151,23 @@ func (m *Manager) Step(ctx context.Context, now time.Time, recovering bool) erro
 	case "preparing":
 		return m.fail(ctx, state, errors.New("上次设置未完成，请重新保存计划"))
 	case "active":
-		if now.Before(state.ShutdownAt) {
+		if !state.Spec.HasShutdown() {
+			if !state.Spec.HasWake() {
+				return m.fail(ctx, state, errors.New("计划未启用任何电源操作"))
+			}
+			if !now.Before(state.WakeAt) {
+				return m.advance(ctx, state, now, "")
+			}
 			if recovering {
-				if err = m.device.Arm(state.WakeAt, state.WakeAt); err != nil {
+				if err = m.rearm(ctx, state); err != nil {
+					return m.fail(ctx, state, err)
+				}
+			}
+			return nil
+		}
+		if now.Before(state.ShutdownAt) {
+			if recovering && state.Spec.HasWake() {
+				if err = m.rearm(ctx, state); err != nil {
 					return m.fail(ctx, state, err)
 				}
 			}
@@ -153,20 +176,21 @@ func (m *Manager) Step(ctx context.Context, now time.Time, recovering bool) erro
 		if recovering || now.Sub(state.ShutdownAt) > 45*time.Second {
 			return m.advance(ctx, state, now, "已跳过错过的关机时间")
 		}
-		allowed, err := m.admin(ctx, state.Creator)
-		if err != nil {
-			return m.fail(ctx, state, errors.New("无法核实计划创建者的懒猫管理员权限，已停止计划"))
-		}
-		if !allowed {
-			return m.fail(ctx, state, errors.New("计划创建者已不是懒猫管理员，已停止计划"))
-		}
-		if state.WakeAt.Sub(now) < time.Minute {
-			return m.fail(ctx, state, errors.New("距离开机时间不足一分钟，已阻止关机"))
-		}
-		if err = m.device.Arm(state.WakeAt, state.WakeAt); err != nil {
+		if err = m.authorize(ctx, state.Creator); err != nil {
 			return m.fail(ctx, state, err)
 		}
+		if state.Spec.HasWake() {
+			if state.WakeAt.Sub(now) < time.Minute {
+				return m.fail(ctx, state, errors.New("距离开机时间不足一分钟，已阻止关机"))
+			}
+			if err = m.device.Arm(state.WakeAt, state.WakeAt); err != nil {
+				return m.fail(ctx, state, err)
+			}
+		}
 		state.Phase = "waiting_wake"
+		if !state.Spec.HasWake() {
+			state.Phase = "shutdown_sent"
+		}
 		state.UpdatedAt = now
 		if err = m.store.Save(ctx, state); err != nil {
 			return err
@@ -175,6 +199,9 @@ func (m *Manager) Step(ctx context.Context, now time.Time, recovering bool) erro
 		if err = m.shutdown(ctx); err != nil {
 			return m.fail(ctx, state, err)
 		}
+	case "shutdown_sent":
+		// Never replay the previous shutdown, including an ambiguous RPC response.
+		return m.advance(ctx, state, now, "")
 	case "waiting_wake":
 		if !now.Before(state.WakeAt) {
 			return m.advance(ctx, state, now, "")
@@ -192,6 +219,9 @@ func (m *Manager) advance(ctx context.Context, state State, now time.Time, messa
 		state.UpdatedAt = now
 		return m.store.Save(ctx, state)
 	}
+	if err := m.authorize(ctx, state.Creator); err != nil {
+		return m.fail(ctx, state, err)
+	}
 	off, on, err := state.Spec.Next(now.Add(2 * time.Minute))
 	if err != nil {
 		return m.fail(ctx, state, err)
@@ -206,10 +236,39 @@ func (m *Manager) advance(ctx context.Context, state State, now time.Time, messa
 	if err = m.store.Save(ctx, state); err != nil {
 		return err
 	}
-	if err = m.device.Arm(on, previous); err != nil {
+	if err = m.prepareAlarm(state, previous); err != nil {
 		return m.fail(ctx, state, err)
 	}
 	state.Phase = "active"
 	state.PreviousWakeAt = time.Time{}
 	return m.store.Save(ctx, state)
+}
+
+// prepareAlarm performs no RTC access for a new shutdown-only schedule. When
+// removing a wake operation, its previous owned alarm must be cleared first.
+func (m *Manager) prepareAlarm(state State, previous time.Time) error {
+	if state.Spec.HasWake() {
+		return m.device.Arm(state.WakeAt, previous)
+	}
+	if !previous.IsZero() {
+		return m.device.Clear(previous)
+	}
+	return nil
+}
+
+func (m *Manager) authorize(ctx context.Context, creator string) error {
+	allowed, err := m.admin(ctx, creator)
+	if err != nil {
+		return errors.New("无法核实计划创建者的懒猫管理员权限，已停止计划")
+	}
+	if !allowed {
+		return errors.New("计划创建者已不是懒猫管理员，已停止计划")
+	}
+	return nil
+}
+func (m *Manager) rearm(ctx context.Context, state State) error {
+	if err := m.authorize(ctx, state.Creator); err != nil {
+		return err
+	}
+	return m.device.Arm(state.WakeAt, state.WakeAt)
 }

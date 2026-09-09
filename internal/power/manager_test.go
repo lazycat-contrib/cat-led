@@ -3,6 +3,7 @@ package power
 import (
 	"context"
 	"errors"
+	"fmt"
 	"path/filepath"
 	"sync"
 	"testing"
@@ -29,9 +30,11 @@ type fakeRTC struct {
 	target           time.Time
 	armErr, clearErr error
 	arms, clears     int
+	probes           int
+	probeErr         error
 }
 
-func (d *fakeRTC) Probe() error { return nil }
+func (d *fakeRTC) Probe() error { d.probes++; return d.probeErr }
 func (d *fakeRTC) Arm(target, previous time.Time) error {
 	d.arms++
 	if d.armErr != nil {
@@ -302,5 +305,165 @@ func TestMinimumGapAllowsNormalTickerDelay(t *testing.T) {
 	}
 	if *calls != 1 {
 		t.Fatal("valid minimum interval skipped")
+	}
+}
+
+func boolPointer(value bool) *bool { return &value }
+
+func TestShutdownOnlyDoesNotRequireRTC(t *testing.T) {
+	m, store, d, calls, now, spec := fixture(t)
+	spec.WakeEnabled = boolPointer(false)
+	spec.WakeAt = time.Time{}
+	d.probeErr = errors.New("no RTC device")
+	d.armErr = d.probeErr
+	if _, err := m.Save(t.Context(), spec, "admin", now); err != nil {
+		t.Fatal(err)
+	}
+	if d.probes != 0 || d.arms != 0 || d.clears != 0 {
+		t.Fatal("shutdown-only plan accessed RTC")
+	}
+	if err := m.Step(t.Context(), now, true); err != nil {
+		t.Fatal(err)
+	}
+	if err := m.Step(t.Context(), spec.ShutdownAt, false); err != nil {
+		t.Fatal(err)
+	}
+	if *calls != 1 || store.state.Phase != "shutdown_sent" {
+		t.Fatalf("%d %s", *calls, store.state.Phase)
+	}
+	if err := m.Step(t.Context(), spec.ShutdownAt.Add(time.Second), true); err != nil {
+		t.Fatal(err)
+	}
+	if *calls != 1 || store.state.Phase != "completed" {
+		t.Fatal("shutdown replayed after recovery")
+	}
+}
+func TestWakeOnlyNeverShutsDown(t *testing.T) {
+	m, store, d, calls, now, spec := fixture(t)
+	spec.ShutdownEnabled = boolPointer(false)
+	spec.ShutdownAt = time.Time{}
+	if _, err := m.Save(t.Context(), spec, "admin", now); err != nil {
+		t.Fatal(err)
+	}
+	if !store.state.ShutdownAt.IsZero() || !d.target.Equal(spec.WakeAt) {
+		t.Fatal("incorrect independent wake target")
+	}
+	if err := m.Step(t.Context(), now, true); err != nil {
+		t.Fatal(err)
+	}
+	if err := m.Step(t.Context(), spec.WakeAt, false); err != nil {
+		t.Fatal(err)
+	}
+	if *calls != 0 || store.state.Phase != "completed" {
+		t.Fatal("wake-only triggered shutdown")
+	}
+}
+func TestWeeklyIndependentOperations(t *testing.T) {
+	for _, wake := range []bool{false, true} {
+		t.Run(map[bool]string{false: "shutdown", true: "wake"}[wake], func(t *testing.T) {
+			m, store, d, calls, now, _ := fixture(t)
+			spec := Spec{Mode: "weekly", Timezone: "Asia/Shanghai", Weekdays: []int{3}, ShutdownEnabled: boolPointer(!wake), WakeEnabled: boolPointer(wake), ShutdownTime: "23:00", WakeTime: "10:00"}
+			first, err := m.Save(t.Context(), spec, "admin", now)
+			if err != nil {
+				t.Fatal(err)
+			}
+			target := first.ShutdownAt
+			if wake {
+				target = first.WakeAt
+				if target.Hour() != 2 {
+					t.Fatal("wake-only was shifted to the next day")
+				}
+			}
+			if err := m.Step(t.Context(), target, false); err != nil {
+				t.Fatal(err)
+			}
+			if !wake {
+				if err := m.Step(t.Context(), target.Add(time.Second), true); err != nil {
+					t.Fatal(err)
+				}
+			}
+			next := store.state.ShutdownAt
+			if wake {
+				next = store.state.WakeAt
+			}
+			if next.Sub(target) != 7*24*time.Hour || store.state.Phase != "active" {
+				t.Fatalf("%+v", store.state)
+			}
+			if wake && (*calls != 0 || !d.target.Equal(next)) {
+				t.Fatal("wake recurrence incorrect")
+			}
+			if !wake && (*calls != 1 || d.arms != 0) {
+				t.Fatal("shutdown recurrence touched RTC or repeated shutdown")
+			}
+		})
+	}
+}
+func TestRemovingWakeClearsPreviousAlarm(t *testing.T) {
+	m, store, d, _, now, spec := fixture(t)
+	_, err := m.Save(t.Context(), spec, "admin", now)
+	if err != nil {
+		t.Fatal(err)
+	}
+	old := spec.WakeAt
+	spec.WakeEnabled = boolPointer(false)
+	d.clearErr = errors.New("device unavailable")
+	if _, err := m.Save(t.Context(), spec, "admin", now); err == nil {
+		t.Fatal("failed removal enabled shutdown")
+	}
+	if store.state.Phase != "error" || !store.state.PreviousWakeAt.Equal(old) {
+		t.Fatal("previous alarm ownership lost")
+	}
+	d.clearErr = nil
+	if _, err := m.Save(t.Context(), spec, "admin", now); err != nil {
+		t.Fatal(err)
+	}
+	if !d.target.IsZero() || !store.state.WakeAt.IsZero() || store.state.Phase != "active" {
+		t.Fatal("old RTC alarm still armed")
+	}
+}
+func TestBothDisabledCancelsWithoutTimeFields(t *testing.T) {
+	m, store, d, _, now, spec := fixture(t)
+	_, err := m.Save(t.Context(), spec, "admin", now)
+	if err != nil {
+		t.Fatal(err)
+	}
+	disabled := Spec{ShutdownEnabled: boolPointer(false), WakeEnabled: boolPointer(false)}
+	if _, err := m.Save(t.Context(), disabled, "admin", now); err != nil {
+		t.Fatal(err)
+	}
+	if store.state.Phase != "disabled" || !d.target.IsZero() {
+		t.Fatal("off switches failed to cancel")
+	}
+}
+
+func TestWakeRearmChecksCurrentAdmin(t *testing.T) {
+	for _, recovery := range []bool{true, false} {
+		for _, lookupError := range []bool{true, false} {
+			t.Run(fmt.Sprintf("recovery=%t/error=%t", recovery, lookupError), func(t *testing.T) {
+				m, store, d, _, now, _ := fixture(t)
+				spec := Spec{Mode: "weekly", Timezone: "UTC", Weekdays: []int{3}, ShutdownEnabled: boolPointer(false), WakeTime: "07:00"}
+				first, err := m.Save(t.Context(), spec, "admin", now)
+				if err != nil {
+					t.Fatal(err)
+				}
+				arms := d.arms
+				m.admin = func(context.Context, string) (bool, error) {
+					if lookupError {
+						return false, errors.New("offline")
+					}
+					return false, nil
+				}
+				when := first.WakeAt
+				if recovery {
+					when = now
+				}
+				if err := m.Step(t.Context(), when, recovery); err == nil {
+					t.Fatal("revoked or unverified administrator accepted")
+				}
+				if d.arms != arms || store.state.Phase != "error" {
+					t.Fatal("unauthorized plan rearmed")
+				}
+			})
+		}
 	}
 }

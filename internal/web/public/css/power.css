@@ -1,12 +1,8 @@
 :root { --power-surface: #ffffff; --power-on-ink: #ffffff; }
 [data-theme="dark"] { --power-surface: #182231; --power-on-ink: #182231; }
 /* Power scheduling follows the existing surface and typography tokens. */
-.power-entry[hidden], .power-dialog [hidden] { display: none !important; }
-.power-entry { display:flex; align-items:center; gap:14px; width:100%; margin:0 0 24px; padding:18px 20px; border:1px solid var(--border-color); border-radius:16px; background:var(--card-background); color:var(--text-primary); text-align:left; cursor:pointer; transition:transform 160ms var(--ease-out); }
-.power-entry > i { font-size:24px; }
-.power-entry > i:last-child { margin-left:auto; color:var(--text-secondary); }
-.power-entry strong { display:block; font-size:16px; font-weight:600; }
-.power-entry small { display:block; margin-top:3px; font-size:13px; color:var(--text-secondary); }
+#power-plan-button[hidden], .power-dialog [hidden] { display: none !important; }
+#power-plan-button[data-active="true"] { color:var(--primary-color); border-color:var(--primary-color); }
 .power-dialog { color-scheme:light; width:min(560px, calc(100% - 32px)); max-height:calc(100dvh - 32px); margin:auto; padding:28px; overflow:auto; border:1px solid var(--border-color); border-radius:22px; background:var(--power-surface); color:var(--text-primary); box-shadow:var(--box-shadow-lg); }
 .power-dialog::backdrop { background:var(--modal-background); }
 .power-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:22px; }
@@ -34,24 +30,62 @@
 .power-weekdays input:focus-visible + span { outline:2px solid var(--primary-color); outline-offset:3px; }
 .power-hint { color:var(--text-secondary); font-size:13px; line-height:1.6; margin:0 0 18px; }
 .power-field .power-hint { margin:0; }
-.power-confirm { display:flex; gap:10px; align-items:flex-start; padding:12px 0; min-height:44px; font-size:14px; line-height:1.65; cursor:pointer; }
-.power-confirm input { flex:none; width:18px; height:18px; margin-top:3px; accent-color:var(--primary-color); }
 .power-note { margin:8px 0 22px; }
 .power-error { color:var(--text-primary); background:var(--background-color); border:1px solid var(--border-color); border-radius:10px; padding:12px; font-size:14px; line-height:1.6; margin-bottom:16px; overflow-wrap:anywhere; }
 .power-actions { display:flex; justify-content:flex-end; gap:12px; }
 .power-actions button { min-height:46px; padding:10px 18px; border-radius:12px; font-weight:600; font-size:14px; cursor:pointer; transition:transform 160ms var(--ease-out); }
 .power-primary { background:var(--text-primary); color:var(--power-on-ink); border:1px solid var(--text-primary); }
 .power-secondary { background:transparent; color:var(--text-primary); border:1px solid var(--border-color); margin-right:auto; }
-.power-entry:active, .power-actions button:active, .power-icon-button:active { transform:scale(.97); }
-.power-dialog :focus-visible, .power-entry:focus-visible { outline:2px solid var(--primary-color); outline-offset:3px; }
+.power-actions button:active, .power-icon-button:active { transform:scale(.97); }
+.power-dialog :focus-visible { outline:2px solid var(--primary-color); outline-offset:3px; }
 .power-dialog button:disabled, .power-dialog fieldset:disabled { opacity:.55; cursor:not-allowed; }
-@media (hover:hover) and (pointer:fine) { .power-entry:hover,.power-icon-button:hover { background:var(--background-color); } }
+@media (hover:hover) and (pointer:fine) { .power-icon-button:hover { background:var(--background-color); } }
 @media (max-width:480px) { .power-dialog { padding:20px; } .power-times { grid-template-columns:1fr; gap:10px; } .power-weekdays { display:grid; grid-template-columns:repeat(4,minmax(44px,1fr)); gap:8px; } .power-actions { flex-wrap:wrap; } }
-@media (prefers-reduced-motion:no-preference) {
- .power-dialog[open] { opacity:1; transform:scale(1); transition:opacity 180ms ease-out,transform 220ms cubic-bezier(.23,1,.32,1); }
- @starting-style { .power-dialog[open] { opacity:0; transform:scale(.97); } }
+/* The RTC sheet reveals downward like paper and retracts along the same path. */
+.power-dialog {
+  clip-path:inset(0 0 100% 0 round 22px);
+  transform:translateY(-2%);
+  opacity:0;
+  transition:clip-path 220ms var(--ease-out), transform 220ms var(--ease-out), opacity 160ms var(--ease-out);
 }
-[data-input="keyboard"] .power-dialog, [data-input="keyboard"] .power-dialog *, [data-input="keyboard"] .power-entry { transition:none !important; transform:none !important; }
-@media (prefers-reduced-motion:reduce) { .power-entry,.power-dialog * { transition:none !important; transform:none !important; } }
+.power-dialog[data-paper="open"] {
+  clip-path:inset(0 0 0 0 round 22px);
+  transform:translateY(0);
+  opacity:1;
+  transition-duration:280ms,280ms,180ms;
+}
+.power-dialog::backdrop { opacity:0; transition:opacity 180ms var(--ease-out); }
+.power-dialog[data-paper="open"]::backdrop { opacity:1; }
+@media (prefers-reduced-motion:reduce) {
+ .power-dialog, .power-dialog[data-paper="open"] { clip-path:none; transform:none; transition:opacity 160ms var(--ease-out); }
+}
+[data-input="keyboard"] .power-dialog, [data-input="keyboard"] .power-dialog *, [data-input="keyboard"] #power-plan-button { transition:none !important; transform:none !important; }
+@media (prefers-reduced-motion:reduce) {  .power-dialog * { transition:none !important; transform:none !important; } }
 
 [data-theme="dark"] .power-dialog { color-scheme:dark; }
+
+.power-switches { margin-bottom:22px; }
+.power-switch-row { display:flex; align-items:center; gap:12px; min-height:72px; padding:12px 0; cursor:pointer; }
+.power-switch-row + .power-switch-row { border-top:1px solid var(--border-color); }
+.power-switch-row > i { font-size:22px; }
+.power-switch-copy { flex:1; min-width:0; }
+.power-switch-copy strong { display:block; font-size:16px; font-weight:600; }
+.power-switch { position:relative; display:grid; align-items:center; width:52px; height:44px; flex:none; }
+.power-switch input { position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; z-index:1; cursor:pointer; }
+.power-switch > span { width:52px; height:30px; border-radius:20px; background:var(--toggle-off-bg); border:1px solid var(--border-color); }
+.power-switch > span::after { content:''; display:block; width:24px; height:24px; margin:2px; border-radius:50%; background:var(--text-secondary); transform:translateX(0); transition:transform 180ms cubic-bezier(.23,1,.32,1); }
+.power-switch input:checked + span { background:var(--text-primary); border-color:var(--text-primary); }
+.power-switch input:checked + span::after { background:var(--power-surface); transform:translateX(22px); }
+.power-switch input:focus-visible + span { outline:2px solid var(--primary-color); outline-offset:3px; }
+.power-switch input:disabled { cursor:wait; }
+.power-times:has(> [hidden]) { grid-template-columns:1fr; }
+.schedule-title { display:flex; align-items:center; flex-wrap:wrap; gap:8px; min-width:0; }
+.power-task-state { font-size:13px; color:var(--text-secondary); margin-top:8px; }
+.power-task-error { font-size:13px; color:var(--text-primary); line-height:1.6; margin-top:8px; overflow-wrap:anywhere; }
+.power-task .schedule-actions button { min-width:44px; min-height:44px; }
+.power-task .schedule-meta { flex-wrap:wrap; }
+.power-task .schedule-time span { font-variant-numeric:tabular-nums; }
+.power-task .schedule-repeat { flex-wrap:wrap; }
+.power-task .schedule-name { font-size:16px; }
+[data-input="keyboard"] .power-switch > span::after { transition:none; }
+@media (prefers-reduced-motion:reduce) { .power-switch > span::after { transition:none; } }

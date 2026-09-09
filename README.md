@@ -53,5 +53,16 @@ trusted identity headers through its gateway. Do not expose the internal port
 through an additional unauthenticated proxy.
 
 Validation: `go test -race ./...`, `go vet ./...`, and `./build.sh`. Browser checks
-use a mock backend and never schedule a real shutdown. The application version
-is updated without creating an application tag.
+use a mock backend and never schedule a real shutdown.
+
+
+## 0.3.1
+
+- Move the administrator-only power button into the existing top toolbar.
+- Add independent shutdown and RTC wake switches; show settings only when enabled.
+- Display power plans alongside existing tasks, with distinct timer/alarm icons.
+- Add a paper-like RTC dialog entrance and reverse exit with reduced-motion support.
+- Keep older paired plans compatible and recheck administrator roles before rearming.
+
+Power-off uses LazyCat SDK `Poweroff`. RTC alarm readback cannot verify successful
+OS boot or network recovery.

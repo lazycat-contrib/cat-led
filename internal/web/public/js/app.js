@@ -438,6 +438,7 @@ function renderSchedulesList() {
                 <p>暂无定时任务，点击右上角添加</p>
             </div>
         `;
+        document.dispatchEvent(new Event('schedules-rendered'));
         return;
     }
 
@@ -545,6 +546,7 @@ function renderSchedulesList() {
         const deleteBtn = scheduleElement.querySelector('.delete-btn');
         deleteBtn.addEventListener('click', () => deleteSchedule(schedule.id));
     });
+    document.dispatchEvent(new Event('schedules-rendered'));
 }
 
 // 渲染星期几
