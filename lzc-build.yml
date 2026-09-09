@@ -31,3 +31,14 @@ devshell:
   setupscript: |
     export npm_config_registry=https://registry.npmmirror.com
     export GOPROXY=https://goproxy.cn,direct
+
+# RTC wake alarms are set by the binary in the main app container.
+# Shutdown uses the LazyCat SDK, so host PID access is unnecessary.
+compose_override:
+  services:
+    app:
+      devices:
+        - /dev/rtc0:/dev/rtc0
+      cap_add:
+        - SYS_TIME
+        - WAKE_ALARM

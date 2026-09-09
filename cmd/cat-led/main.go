@@ -9,8 +9,10 @@ import (
 	"syscall"
 	"time"
 
+	"cat-led/internal/auth"
 	"cat-led/internal/handlers"
 	"cat-led/internal/pkg/zlog"
+	"cat-led/internal/power"
 	"cat-led/internal/scheduler"
 	"cat-led/internal/web"
 )
@@ -39,7 +41,11 @@ func main() {
 
 	initializeServices(logger)
 
-	server := createServer(logger)
+	ctx, stopPower := context.WithCancel(context.Background())
+	powerManager, closePower := initializePower(ctx, logger)
+	defer closePower()
+	defer stopPower()
+	server := createServer(logger, powerManager)
 
 	port := getEnvOrDefault("PORT", defaultPort)
 	go startServer(server, port, logger)
@@ -83,12 +89,13 @@ func initializeServices(logger *zlog.Logger) {
 }
 
 // createServer creates and configures the web server.
-func createServer(logger *zlog.Logger) *web.Server {
+func createServer(logger *zlog.Logger, manager *power.Manager) *web.Server {
 	server, err := web.NewServer()
 	if err != nil {
 		logger.Fatal().Err(err).Msg("无法创建Web服务器")
 	}
 
+	server.SetPowerManager(manager)
 	if err := server.SetupRoutes(); err != nil {
 		logger.Fatal().Err(err).Msg("无法设置路由")
 	}
@@ -98,7 +105,7 @@ func createServer(logger *zlog.Logger) *web.Server {
 
 // startServer starts the web server in a goroutine.
 func startServer(server *web.Server, port string, logger *zlog.Logger) {
-	addr := fmt.Sprintf(":%s", port)
+	addr := fmt.Sprintf("127.0.0.1:%s", port)
 	logger.Info().Str("port", port).Msg("准备启动Web服务器")
 
 	if err := server.Run(addr); err != nil {
@@ -128,4 +135,16 @@ func getEnvOrDefault(key, defaultValue string) string {
 		return value
 	}
 	return defaultValue
+}
+
+func initializePower(ctx context.Context, logger *zlog.Logger) (*power.Manager, func()) {
+	store, err := power.OpenStore(getEnvOrDefault("DB_PATH", defaultDBPath))
+	if err != nil {
+		logger.Error().Err(err).Msg("RTC计划存储初始化失败")
+		return nil, func() {}
+	}
+	manager := power.New(store, power.LinuxRTC{Path: "/dev/rtc0"}, auth.IsLazyCatAdmin, handlers.ShutdownForPowerPlan)
+	done := make(chan struct{})
+	go func() { defer close(done); manager.Run(ctx) }()
+	return manager, func() { <-done; _ = store.Close() }
 }

@@ -6,6 +6,7 @@ import (
 	"slices"
 	"time"
 
+	"cat-led/internal/auth"
 	"cat-led/internal/biz"
 	"cat-led/internal/ent"
 	"cat-led/internal/ent/schedule"
@@ -85,6 +86,13 @@ func shouldRunOnWeekday(weekDays []int, currentWeekday int) bool {
 
 // executeSchedule performs the scheduled operation and sends notifications if enabled.
 func (s *Scheduler) executeSchedule(ctx context.Context, sched *ent.Schedule) {
+	if sched.Operation == schedule.OperationShutdown || sched.Operation == schedule.OperationReboot {
+		allowed, err := auth.IsLazyCatAdmin(ctx, sched.Creator)
+		if err != nil || !allowed {
+			s.logger.Warn().Msg("电源任务创建者的懒猫管理员权限验证失败，跳过执行")
+			return
+		}
+	}
 	var err error
 	var status bool
 	var operationName string

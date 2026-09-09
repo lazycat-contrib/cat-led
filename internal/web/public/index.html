@@ -151,6 +151,12 @@
                 </div>
             </section>
 
+            <button id="power-plan-button" class="power-entry" type="button" aria-haspopup="dialog" hidden>
+                <i class="ri-timer-line" aria-hidden="true"></i>
+                <span><strong>定时开关机</strong><small id="power-entry-status">安排设备的休息时间</small></span>
+                <i class="ri-arrow-right-s-line" aria-hidden="true"></i>
+            </button>
+
             <!-- LED当前状态展示 -->
             <section class="led-status-section" data-power="unknown" aria-busy="true">
                 <div class="lamp-heading"><div><h2>设备灯光</h2><p id="lamp-style-name">经典灯泡</p></div><span class="lamp-hint">轻触灯具，切换明暗</span></div>
@@ -1052,6 +1058,37 @@
             aria-atomic="true"
         ></div>
 
+        <dialog id="power-dialog" class="power-dialog" aria-labelledby="power-title" aria-describedby="power-description">
+            <div class="power-heading">
+                <div><h2 id="power-title">定时开关机</h2><p id="power-description">让设备按时休息，也按时醒来。</p></div>
+                <button id="power-close" type="button" class="power-icon-button" aria-label="关闭定时开关机"><i class="ri-close-line" aria-hidden="true"></i></button>
+            </div>
+            <div class="power-status" aria-live="polite">
+                <span id="power-phase">正在读取设备…</span>
+                <dl id="power-next" hidden><div><dt>下次关机</dt><dd id="power-next-off"></dd></div><div><dt>下次开机</dt><dd id="power-next-on"></dd></div></dl>
+            </div>
+            <p id="power-device-error" class="power-error" role="status" hidden></p>
+            <form id="power-form">
+                <fieldset id="power-fields" disabled>
+                    <div class="power-field"><label for="power-mode">重复方式</label><select id="power-mode"><option value="once">仅一次</option><option value="weekly">每周重复</option></select></div>
+                    <fieldset id="power-weekdays" class="power-weekdays" hidden><legend>在哪些天关机</legend>
+                        <label><input type="checkbox" value="1"><span>一</span></label><label><input type="checkbox" value="2"><span>二</span></label><label><input type="checkbox" value="3"><span>三</span></label><label><input type="checkbox" value="4"><span>四</span></label><label><input type="checkbox" value="5"><span>五</span></label><label><input type="checkbox" value="6"><span>六</span></label><label><input type="checkbox" value="0"><span>日</span></label>
+                    </fieldset>
+                    <div class="power-times">
+                        <div class="power-field"><label for="power-off"><i class="ri-shut-down-line" aria-hidden="true"></i> 关机时间</label><input id="power-off" type="datetime-local" required></div>
+                        <div class="power-field"><label for="power-on"><i class="ri-sun-line" aria-hidden="true"></i> 开机时间</label><input id="power-on" type="datetime-local" required></div>
+                    </div>
+                    <p id="power-time-hint" class="power-hint">关机至少提前两分钟，开机至少晚五分钟。</p>
+                    <div class="power-field"><label for="power-timezone">计划时区</label><input id="power-timezone" type="text" required list="power-timezones" aria-describedby="power-zone-hint"><datalist id="power-timezones"><option value="Asia/Shanghai"><option value="UTC"><option value="Asia/Tokyo"><option value="America/New_York"><option value="Europe/London"></datalist><p id="power-zone-hint" class="power-hint">每周计划按此时区执行；单次日期使用当前浏览器时区。</p></div>
+                    <label class="power-confirm"><input type="checkbox" id="power-confirm" required><span>我已确认关机时设备可停止服务，并已开启设备的 RTC 唤醒支持。</span></label>
+                </fieldset>
+                <p id="power-form-error" class="power-error" role="alert" tabindex="-1" hidden></p>
+                <p class="power-hint power-note">开机需要设备持续接通电源。计划影响整台微服，仅懒猫管理员可修改。</p>
+                <div class="power-actions"><button type="button" id="power-cancel-plan" class="power-secondary" hidden>取消计划</button><button type="submit" id="power-save" class="power-primary" disabled>保存并启用</button></div>
+            </form>
+        </dialog>
+        <link rel="stylesheet" href="/static/css/power.css" />
+        <script src="/static/js/power.js"></script>
         <script src="/static/js/app.js"></script>
     </body>
 </html>

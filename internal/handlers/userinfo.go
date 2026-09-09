@@ -18,8 +18,9 @@ type BasicInfo struct {
 
 // LazyCatUser represents a user with basic and detailed information.
 type LazyCatUser struct {
-	BasicInfo BasicInfo `json:"CurrentUserInfo"`
-	Detail    *users.UserInfo
+	BasicInfo      BasicInfo `json:"CurrentUserInfo"`
+	Detail         *users.UserInfo
+	CanManagePower bool `json:"CanManagePower"`
 }
 
 // GetUserInfo returns the current user's information.
@@ -45,6 +46,7 @@ func GetUserInfo(c *gin.Context) {
 	userInfo, err := gw.Users.QueryUserInfo(ctx, &users.UserID{Uid: basicInfo.UserId})
 	if err == nil {
 		catUser.Detail = userInfo
+		catUser.CanManagePower = userInfo != nil && userInfo.Role == users.Role_ROLE_ADMIN
 	}
 
 	c.JSON(http.StatusOK, catUser)

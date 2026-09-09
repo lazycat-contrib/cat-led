@@ -251,8 +251,8 @@ func (p *OIDCProvider) HandleCallback(c *gin.Context) {
 	}
 
 	// Set session cookies
-	c.SetCookie(cookieUserID, userID, cookieMaxAge, "/", "", false, true)
-	c.SetCookie(cookieUserRole, userRole, cookieMaxAge, "/", "", false, true)
+	c.SetSameSite(http.SameSiteStrictMode)
+	c.SetCookie(sessionCookie, encodeSession(userID, userRole), cookieMaxAge, "/", "", true, true)
 
 	c.Redirect(http.StatusFound, "/")
 }
@@ -322,6 +322,7 @@ func extractUserIdentity(userInfo map[string]interface{}) (userID, userRole stri
 
 // HandleLogout clears session cookies and redirects to login.
 func HandleLogout(c *gin.Context) {
+	c.SetCookie(sessionCookie, "", -1, "/", "", true, true)
 	c.SetCookie(cookieUserID, "", -1, "/", "", false, true)
 	c.SetCookie(cookieUserRole, "", -1, "/", "", false, true)
 	c.Redirect(http.StatusFound, "/login")
@@ -330,10 +331,10 @@ func HandleLogout(c *gin.Context) {
 // SessionMiddleware restores user information from cookies into the request context.
 func SessionMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if userID, err := c.Cookie(cookieUserID); err == nil && userID != "" {
-			c.Set("user_id", userID)
-			if userRole, err := c.Cookie(cookieUserRole); err == nil && userRole != "" {
-				c.Set("user_role", userRole)
+		if value, err := c.Cookie(sessionCookie); err == nil {
+			if identity, valid := decodeSession(value); valid {
+				c.Set("user_id", identity.ID)
+				c.Set("user_role", identity.Role)
 			}
 		}
 		c.Next()

@@ -1,4 +1,6 @@
 application:
+  background_task: true
+  multi_instance: false
   subdomain: lazy-cat-led-helper
   oidc_redirect_path: /auth/oidc/callback
   public_path:

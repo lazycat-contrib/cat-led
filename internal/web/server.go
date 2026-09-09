@@ -9,6 +9,7 @@ import (
 
 	"cat-led/internal/auth"
 	"cat-led/internal/handlers"
+	"cat-led/internal/power"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,6 +21,7 @@ var staticFS embed.FS
 type Server struct {
 	engine       *gin.Engine
 	oidcProvider *auth.OIDCProvider
+	powerManager *power.Manager
 }
 
 // NewServer creates a new web server instance.
@@ -38,6 +40,9 @@ func NewServer() (*Server, error) {
 		oidcProvider: oidcProvider,
 	}, nil
 }
+
+// SetPowerManager wires the device-wide RTC schedule before routes are installed.
+func (s *Server) SetPowerManager(m *power.Manager) { s.powerManager = m }
 
 // SetupRoutes configures all routes and static file serving.
 func (s *Server) SetupRoutes() error {
@@ -115,11 +120,13 @@ func (s *Server) setupAuthenticatedRoutes() {
 	authenticated.GET("/api/led-status", handlers.GetLedStatus)
 	authenticated.GET("/userinfo", handlers.GetUserInfo)
 
+	handlers.RegisterPowerRoutes(authenticated, s.powerManager)
+
 	// Schedule API
 	authenticated.GET("/api/schedules", handlers.GetSchedules)
-	authenticated.POST("/api/schedules", handlers.CreateSchedule)
-	authenticated.PUT("/api/schedules/:id", handlers.UpdateSchedule)
-	authenticated.DELETE("/api/schedules/:id", handlers.DeleteSchedule)
+	authenticated.POST("/api/schedules", auth.RequireSameOrigin(), handlers.CreateSchedule)
+	authenticated.PUT("/api/schedules/:id", auth.RequireSameOrigin(), handlers.UpdateSchedule)
+	authenticated.DELETE("/api/schedules/:id", auth.RequireSameOrigin(), handlers.DeleteSchedule)
 	authenticated.POST("/api/lzc-notification/test", handlers.TestLzcNotification)
 
 	// ServerChan API

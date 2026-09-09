@@ -185,14 +185,15 @@ function showNotification(message, type = 'info') {
             <i class="${icon}"></i>
         </div>
         <div class="toast-content">
-            <p>${message}</p>
+            <p></p>
         </div>
         <button class="toast-close" aria-label="关闭">
             <i class="ri-close-line"></i>
         </button>
     `;
 
-    // 添加到容器
+    toast.querySelector('.toast-content p').textContent = message;
+    // Append the notification after its text is populated.
     const container = document.getElementById('toast-container');
     container.appendChild(toast);
 

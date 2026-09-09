@@ -85,6 +85,8 @@ async function fetchUserInfo() {
         }
 
         currentUserInfo = data.CurrentUserInfo || {};
+ document.dispatchEvent(new CustomEvent("lazycat-role", {detail: data.CanManagePower === true}));
+ document.querySelectorAll('#operation option[value="shutdown"], #operation option[value="reboot"]').forEach(option => { option.disabled = data.CanManagePower !== true; option.hidden = data.CanManagePower !== true; });
         detailInfo = data.Detail || {};
 
         // 更新用户信息显示
@@ -105,7 +107,10 @@ function updateUserInfoDisplay() {
     const userAvatarElem = document.querySelector('.user-avatar');
     if (detailInfo && detailInfo.avatar) {
         // 如果有头像，替换默认图标为图片
-        userAvatarElem.innerHTML = `<img src="${detailInfo.avatar}" alt="用户头像">`;
+        const avatar = document.createElement('img');
+        avatar.src = detailInfo.avatar;
+        avatar.alt = '用户头像';
+        userAvatarElem.replaceChildren(avatar);
     } else {
         // 没有头像时使用默认图标
         userAvatarElem.innerHTML = `<i class="ri-user-3-line"></i>`;
@@ -482,7 +487,7 @@ function renderSchedulesList() {
 
         scheduleElement.innerHTML = `
             <div class="schedule-header">
-                <h3 class="schedule-name">${schedule.name}</h3>
+                <h3 class="schedule-name"></h3>
                 <div class="schedule-actions">
                     <button class="edit-btn" data-id="${schedule.id}" aria-label="编辑任务">
                         <i class="ri-edit-line"></i>
@@ -513,7 +518,7 @@ function renderSchedulesList() {
             </div>
             <div class="schedule-creator" title="创建者">
                 <i class="ri-user-line"></i>
-                <span>${schedule.creatorId || '未知'}</span>
+                <span></span>
             </div>
             <div class="schedule-toggle">
                 <div class="toggle-switch small">
@@ -523,7 +528,9 @@ function renderSchedulesList() {
             </div>
         `;
 
-        // 添加到列表
+        scheduleElement.querySelector('.schedule-name').textContent = schedule.name;
+        scheduleElement.querySelector('.schedule-creator span').textContent = schedule.creatorId || '未知';
+        // Add only text for values controlled by other users.
         $schedulesList.appendChild(scheduleElement);
 
         // 添加事件监听器
@@ -650,7 +657,8 @@ async function testLzcNotification() {
         const response = await fetch('/api/lzc-notification/test', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-Cat-Led-Request': '1'
             }
         });
 
@@ -728,7 +736,8 @@ async function saveSchedule(e) {
             response = await fetch(`/api/schedules/${currentEditingScheduleId}`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                'X-Cat-Led-Request': '1'
                 },
                 body: JSON.stringify(scheduleData)
             });
@@ -737,7 +746,8 @@ async function saveSchedule(e) {
             response = await fetch('/api/schedules', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                'X-Cat-Led-Request': '1'
                 },
                 body: JSON.stringify(scheduleData)
             });
@@ -784,7 +794,8 @@ async function toggleSchedule(scheduleId) {
         const response = await fetch(`/api/schedules/${scheduleId}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-Cat-Led-Request': '1'
             },
             body: JSON.stringify(updatedSchedule)
         });
@@ -816,7 +827,7 @@ async function deleteSchedule(scheduleId) {
 
     try {
         const response = await fetch(`/api/schedules/${scheduleId}`, {
-            method: 'DELETE'
+            method: 'DELETE', headers: {'X-Cat-Led-Request': '1'}
         });
 
         if (!response.ok) {
@@ -860,14 +871,15 @@ function showNotification(message, type = 'info') {
             <i class="${icon}"></i>
         </div>
         <div class="toast-content">
-            <p>${message}</p>
+            <p></p>
         </div>
         <button class="toast-close" aria-label="关闭">
             <i class="ri-close-line"></i>
         </button>
     `;
 
-    // 添加到容器
+    toast.querySelector('.toast-content p').textContent = message;
+    // Append the notification after its text is populated.
     const container = document.getElementById('toast-container');
     container.appendChild(toast);
 
@@ -1391,7 +1403,8 @@ async function updateUserPreference(bulbStyle) {
         const response = await fetch('/api/user/preference', {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-Cat-Led-Request': '1'
             },
             body: JSON.stringify({
                 bulb_style: bulbStyle

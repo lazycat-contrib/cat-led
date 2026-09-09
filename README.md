@@ -21,3 +21,37 @@ PC端![image-20250331161932400](https://lzc-playground-1301583638.cos.ap-chengdu
 两张状态图片位于 `internal/pkg/launchericon/`，通过 Go embed 编入程序。启动读取设备状态、手动开关、定时任务及页面状态刷新后，会按需原子更新 `/lzcapp/run/launcher-icon/icon.png`。此目录由系统管理，重启后由程序重新生成图标；写入失败只记录日志，不回滚灯光操作。
 
 验证：`go test -race ./...`，`./build.sh`。发布 tag 使用 `v0.2.0`，GitHub Actions 沿用现有流程构建并发布 LPK。
+
+## 0.3.0
+
+- Add a separate main-page power-schedule entry for LazyCat administrators.
+- Support one-time and weekly shutdown/wake pairs, IANA timezones, overnight wake,
+  cancellation, persistent recovery, and visible device/plan errors.
+- Use `github.com/lib-x/rtc v0.1.0` for RTC alarm writes and readback. Shutdown
+  uses the existing LazyCat SDK poweroff API.
+- Reuse SQLite with a separate `rtc_power_plan` table; no database service is needed.
+- Sign OIDC sessions, verify current LazyCat roles, protect power mutations from
+  cross-origin requests, and render shared user text safely.
+
+The application remains Linux-only on the LazyCat server; Windows/macOS browsers
+can use the interface. The RTC library itself exposes native platform capabilities
+separately. This application requires `/dev/rtc0` and a hardware clock maintained
+in UTC. The package maps the device into the main `app` container and runs the
+scheduler as a background task. Host PID access is not required.
+
+Before using automatic power-on, enable the relevant firmware wake setting and
+verify S5 wake on the target machine while keeping power connected. RTC readback
+confirms the alarm, not physical wake capability. The application must remain
+running until shutdown; reinstall/restart recovery never replays missed shutdowns.
+One shared plan is supported per device. Other software must not overwrite its
+hardware alarm. Single-use wake targets are limited to the next 28 days; driver
+limits can be shorter and are reported as errors.
+
+Old unsigned OIDC cookies are rejected. Existing OIDC users sign in again after
+upgrade or process restart. The service binds to loopback because LazyCat injects
+trusted identity headers through its gateway. Do not expose the internal port
+through an additional unauthenticated proxy.
+
+Validation: `go test -race ./...`, `go vet ./...`, and `./build.sh`. Browser checks
+use a mock backend and never schedule a real shutdown. The application version
+is updated without creating an application tag.

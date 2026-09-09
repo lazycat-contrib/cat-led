@@ -11,6 +11,7 @@ require (
 	github.com/gin-gonic/gin v1.12.0
 	github.com/google/uuid v1.6.0
 	github.com/lib-x/entsqlite v0.2.4
+	github.com/lib-x/rtc v0.1.0
 	github.com/rs/zerolog v1.35.1
 	golang.org/x/oauth2 v0.36.0
 	google.golang.org/grpc v1.83.2

@@ -7,13 +7,12 @@ import (
 	"sync"
 	"time"
 
+	"cat-led/internal/auth"
 	"cat-led/internal/biz"
 	"cat-led/internal/ent"
 	"cat-led/internal/ent/schedule"
 	"cat-led/internal/pkg/zlog"
 
-	gohelper "gitee.com/linakesi/lzc-sdk/lang/go"
-	users "gitee.com/linakesi/lzc-sdk/lang/go/common"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -39,22 +38,7 @@ func GetScheduleUseCase() *biz.ScheduleUsecase {
 }
 
 func getUserID(c *gin.Context) string {
-	userID := c.GetHeader("x-hc-user-id")
-	if userID != "" {
-		return userID
-	}
-
-	gw, err := gohelper.NewAPIGateway(c.Request.Context())
-	if err != nil {
-		return ""
-	}
-	defer gw.Close()
-
-	userInfo, err := gw.Users.QueryUserInfo(c.Request.Context(), &users.UserID{Uid: userID})
-	if err == nil && userInfo != nil && userInfo.Uid != "" {
-		return userInfo.Uid
-	}
-	return ""
+	return auth.UserID(c)
 }
 
 func requireUserID(c *gin.Context) (string, bool) {
@@ -226,6 +210,11 @@ func CreateSchedule(c *gin.Context) {
 		return
 	}
 
+	if op, _ := frontendSchedule["operation"].(string); op == "shutdown" || op == "reboot" {
+		if !requirePowerAdmin(c) {
+			return
+		}
+	}
 	entSchedule, err := convertToEntSchedule(frontendSchedule, userID)
 	if err != nil {
 		c.JSON(400, gin.H{"error": fmt.Sprintf("解析任务数据失败: %v", err)})
@@ -258,12 +247,25 @@ func UpdateSchedule(c *gin.Context) {
 		return
 	}
 
+	existing, err := scheduleUseCase.GetSchedule(c.Request.Context(), scheduleUUID)
+	if err != nil {
+		c.JSON(404, gin.H{"error": "任务不存在"})
+		return
+	}
+	if (existing.Operation == "shutdown" || existing.Operation == "reboot") && !requirePowerAdmin(c) {
+		return
+	}
 	var frontendSchedule map[string]interface{}
 	if err := c.ShouldBindJSON(&frontendSchedule); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
+	if op, _ := frontendSchedule["operation"].(string); op == "shutdown" || op == "reboot" {
+		if !requirePowerAdmin(c) {
+			return
+		}
+	}
 	entSchedule, err := convertToEntSchedule(frontendSchedule, userID)
 	if err != nil {
 		c.JSON(400, gin.H{"error": fmt.Sprintf("解析任务数据失败: %v", err)})
@@ -297,6 +299,14 @@ func DeleteSchedule(c *gin.Context) {
 		return
 	}
 
+	existing, err := scheduleUseCase.GetSchedule(c.Request.Context(), scheduleUUID)
+	if err != nil {
+		c.JSON(404, gin.H{"error": "任务不存在"})
+		return
+	}
+	if (existing.Operation == "shutdown" || existing.Operation == "reboot") && !requirePowerAdmin(c) {
+		return
+	}
 	ctx := context.Background()
 	if err := scheduleUseCase.DeleteSchedule(ctx, scheduleUUID, userID); err != nil {
 		c.JSON(500, gin.H{"error": fmt.Sprintf("删除任务失败: %v", err)})
@@ -304,4 +314,17 @@ func DeleteSchedule(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{"message": "任务已删除"})
+}
+
+func requirePowerAdmin(c *gin.Context) bool {
+	allowed, err := auth.IsLazyCatAdmin(c.Request.Context(), auth.UserID(c))
+	if err != nil {
+		c.JSON(503, gin.H{"error": "暂时无法核实懒猫管理员身份"})
+		return false
+	}
+	if !allowed {
+		c.JSON(403, gin.H{"error": "仅懒猫管理员可设置电源操作"})
+		return false
+	}
+	return true
 }
