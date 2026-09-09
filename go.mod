@@ -3,7 +3,7 @@ module cat-led
 go 1.25.0
 
 require (
-	entgo.io/ent v0.14.5
+	entgo.io/ent v0.14.6
 	gitee.com/linakesi/lzc-sdk v0.1.1-0.20260506063113-fde83c5c266f
 	github.com/AnthonyHewins/gotfy v0.0.11
 	github.com/coreos/go-oidc/v3 v3.20.0
@@ -18,7 +18,7 @@ require (
 )
 
 require (
-	ariga.io/atlas v0.32.1-0.20250325101103-175b25e1c1b9 // indirect
+	ariga.io/atlas v0.36.2-0.20250730182955-2c6300d0a3e1 // indirect
 	gitee.com/linakesi/lzc-baseos-protos v0.0.0-20240409034726-d8d3d3375144 // indirect
 	gitee.com/linakesi/remotesocks v0.0.0-20250225034155-8709b247f245 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
@@ -66,6 +66,7 @@ require (
 	golang.org/x/text v0.41.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 	modernc.org/libc v1.74.4 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
