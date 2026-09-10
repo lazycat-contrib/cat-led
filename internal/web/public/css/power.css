@@ -27,7 +27,7 @@
 .power-weekdays legend { margin-bottom:10px; }
 .power-weekdays label { position:relative; flex:1; min-width:0; }
 .power-weekdays input { position:absolute; opacity:0; width:100%; height:100%; cursor:pointer; }
-.power-weekdays span { display:grid; place-items:center; min-height:44px; border:1px solid var(--border-color); border-radius:10px; font-size:14px; }
+.power-weekdays label > span { display:grid; place-items:center; min-height:44px; border:1px solid var(--border-color); border-radius:10px; font-size:14px; }
 .power-weekdays input:checked + span { background:var(--text-primary); color:var(--power-on-ink); border-color:var(--text-primary); }
 .power-weekdays input:focus-visible + span { outline:2px solid var(--primary-color); outline-offset:3px; }
 .power-hint { color:var(--text-secondary); font-size:13px; line-height:1.6; margin:0 0 18px; }
