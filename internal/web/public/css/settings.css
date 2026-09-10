@@ -1,0 +1,72 @@
+.settings-dialog {
+  width:min(460px, calc(100vw - 32px)); max-height:calc(100dvh - 32px);
+  margin:auto; padding:0; border:1px solid var(--border-color); border-radius:22px;
+  background:var(--card-background); color:var(--text-primary); box-shadow:var(--glass-shadow);
+}
+.settings-dialog::backdrop { background:rgba(12,20,32,.4); backdrop-filter:blur(6px); }
+.settings-heading { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; }
+.settings-heading h2 { margin:0; font-size:18px; }
+#settings-form { padding:0 22px 22px; }
+#settings-fields { padding:0; margin:18px 0; border:0; min-width:0; }
+.settings-row { display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:52px; font-size:14px; }
+.settings-row > span:first-child { min-width:0; }
+.settings-hint { margin:4px 0 14px; font-size:13px; line-height:1.6; color:var(--text-secondary); }
+#settings-minutes { width:88px; min-height:40px; padding:8px; border:1px solid var(--border-color); border-radius:10px; background:var(--input-background); color:var(--text-primary); }
+.settings-actions { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.settings-actions a { color:var(--primary-color); font-size:14px; }
+.upcoming-reminders { margin:16px; padding:14px 18px; border:1px solid var(--border-color); border-radius:16px; background:var(--card-background); color:var(--text-primary); }
+.upcoming-reminders p { margin:4px 0; font-size:14px; line-height:1.5; overflow-wrap:anywhere; }
+.upcoming-reminders strong { display:block; margin-bottom:6px; font-size:14px; }
+.upcoming-reminders[hidden], .schedules-section[hidden] { display:none; }
+@media(max-width:480px) {
+  .header-actions { gap:4px; }
+  .upcoming-reminders { margin:12px 10px; }
+}
+
+/* Quiet surface hierarchy and feedback, using the existing glass palette. */
+.settings-dialog { background:var(--background-color, #eef2f6); box-shadow:0 24px 80px rgba(12,20,32,.22), inset 0 1px 0 rgba(255,255,255,.35); }
+.settings-heading { padding:18px 20px 8px; }
+.settings-heading h2 { font-weight:650; letter-spacing:-.02em; }
+.settings-heading .power-icon-button { border:1px solid var(--border-color); background:var(--card-background); }
+#settings-fields { padding:6px 16px 2px; border:1px solid var(--border-color); border-radius:16px; background:var(--card-background); }
+#settings-fields > .settings-hint { font-size:12px; margin-bottom:16px; }
+#settings-fields > .settings-row:nth-of-type(2) { border-top:1px solid var(--border-color); padding-top:8px; }
+#settings-status { min-height:21px; margin-bottom:12px; }
+.settings-actions .primary-button { min-height:44px; }
+.settings-dialog :focus-visible { outline:2px solid var(--primary-color); outline-offset:3px; }
+.settings-dialog[data-motion="pointer"] {
+  opacity:0; transform:scale(.96);
+  transition:opacity 200ms var(--ease-out), transform 200ms var(--ease-out), display 200ms allow-discrete, overlay 200ms allow-discrete;
+}
+.settings-dialog[data-motion="pointer"][open] { opacity:1; transform:scale(1); }
+.settings-dialog[data-motion="pointer"]::backdrop { opacity:0; transition:opacity 200ms var(--ease-out), display 200ms allow-discrete, overlay 200ms allow-discrete; }
+.settings-dialog[data-motion="pointer"][open]::backdrop { opacity:1; }
+@starting-style {
+  .settings-dialog[data-motion="pointer"][open] { opacity:0; transform:scale(.96); }
+  .settings-dialog[data-motion="pointer"][open]::backdrop { opacity:0; }
+}
+.app-header .header-actions > button { transition:transform 160ms var(--ease-out), background 160ms ease, color 160ms ease; }
+.header-actions > button > i, .header-actions > button > svg, .header-actions > button > span {
+  display:inline-block; transform-origin:center; transition:transform 180ms var(--ease-out);
+}
+@media (hover:hover) and (pointer:fine) {
+  .app-header .header-actions > button:hover { transform:translateY(-1px); }
+  #settings-button:hover > i { transform:rotate(30deg); }
+  #theme-toggle:hover > svg { transform:rotate(18deg); }
+  #power-plan-button:hover > i { transform:rotate(-12deg); }
+  #add-schedule-btn:hover > i { transform:rotate(90deg); }
+  .header-actions .language-switch:hover > span { transform:translateY(-1px); }
+}
+.app-header .header-actions > button:active { transform:scale(.96); }
+@media (hover:none) {
+  .app-header .header-actions > button:hover { transform:none; }
+  .app-header .header-actions > button:active { transform:scale(.96); }
+}
+@media (prefers-reduced-motion:reduce) {
+  .settings-dialog[data-motion="pointer"], .settings-dialog[data-motion="pointer"][open] { transform:none; transition:none; }
+  .settings-dialog[data-motion="pointer"]::backdrop { transition:none; }
+  .app-header .header-actions > button, .header-actions > button > i, .header-actions > button > svg, .header-actions > button > span { transition:none; }
+  .app-header .header-actions > button:hover, .app-header .header-actions > button:active,
+  .app-header .header-actions > button:hover > i, .app-header .header-actions > button:hover > svg,
+  .app-header .header-actions > button:hover > span { transform:none; }
+}

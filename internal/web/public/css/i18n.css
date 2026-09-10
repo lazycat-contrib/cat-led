@@ -5,6 +5,10 @@
   font-size:13px; font-weight:600; cursor:pointer;
 }
 .language-switch:focus-visible { outline:2px solid var(--primary-color); outline-offset:3px; }
+.header-actions .language-switch {
+  flex-shrink:0; min-width:0; min-height:0; padding:0;
+  font-size:13px; line-height:1; white-space:nowrap;
+}
 .login-language { display:flex; justify-content:flex-end; margin:-12px -12px 8px; }
 html[lang="en"] .schedule-item.disabled .schedule-name::after { content:"Disabled"; }
 html[lang="en"] .lamp-hint { max-width:13em; }

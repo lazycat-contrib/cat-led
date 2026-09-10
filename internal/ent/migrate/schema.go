@@ -64,6 +64,9 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "user_id", Type: field.TypeString},
 		{Name: "bulb_style", Type: field.TypeString, Default: "classic"},
+		{Name: "show_schedules", Type: field.TypeBool, Default: true},
+		{Name: "reminders_enabled", Type: field.TypeBool, Default: true},
+		{Name: "reminder_minutes", Type: field.TypeInt, Default: 5},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 	}

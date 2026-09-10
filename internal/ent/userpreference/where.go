@@ -64,6 +64,21 @@ func BulbStyle(v string) predicate.UserPreference {
 	return predicate.UserPreference(sql.FieldEQ(FieldBulbStyle, v))
 }
 
+// ShowSchedules applies equality check predicate on the "show_schedules" field. It's identical to ShowSchedulesEQ.
+func ShowSchedules(v bool) predicate.UserPreference {
+	return predicate.UserPreference(sql.FieldEQ(FieldShowSchedules, v))
+}
+
+// RemindersEnabled applies equality check predicate on the "reminders_enabled" field. It's identical to RemindersEnabledEQ.
+func RemindersEnabled(v bool) predicate.UserPreference {
+	return predicate.UserPreference(sql.FieldEQ(FieldRemindersEnabled, v))
+}
+
+// ReminderMinutes applies equality check predicate on the "reminder_minutes" field. It's identical to ReminderMinutesEQ.
+func ReminderMinutes(v int) predicate.UserPreference {
+	return predicate.UserPreference(sql.FieldEQ(FieldReminderMinutes, v))
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.UserPreference {
 	return predicate.UserPreference(sql.FieldEQ(FieldCreatedAt, v))
@@ -202,6 +217,66 @@ func BulbStyleEqualFold(v string) predicate.UserPreference {
 // BulbStyleContainsFold applies the ContainsFold predicate on the "bulb_style" field.
 func BulbStyleContainsFold(v string) predicate.UserPreference {
 	return predicate.UserPreference(sql.FieldContainsFold(FieldBulbStyle, v))
+}
+
+// ShowSchedulesEQ applies the EQ predicate on the "show_schedules" field.
+func ShowSchedulesEQ(v bool) predicate.UserPreference {
+	return predicate.UserPreference(sql.FieldEQ(FieldShowSchedules, v))
+}
+
+// ShowSchedulesNEQ applies the NEQ predicate on the "show_schedules" field.
+func ShowSchedulesNEQ(v bool) predicate.UserPreference {
+	return predicate.UserPreference(sql.FieldNEQ(FieldShowSchedules, v))
+}
+
+// RemindersEnabledEQ applies the EQ predicate on the "reminders_enabled" field.
+func RemindersEnabledEQ(v bool) predicate.UserPreference {
+	return predicate.UserPreference(sql.FieldEQ(FieldRemindersEnabled, v))
+}
+
+// RemindersEnabledNEQ applies the NEQ predicate on the "reminders_enabled" field.
+func RemindersEnabledNEQ(v bool) predicate.UserPreference {
+	return predicate.UserPreference(sql.FieldNEQ(FieldRemindersEnabled, v))
+}
+
+// ReminderMinutesEQ applies the EQ predicate on the "reminder_minutes" field.
+func ReminderMinutesEQ(v int) predicate.UserPreference {
+	return predicate.UserPreference(sql.FieldEQ(FieldReminderMinutes, v))
+}
+
+// ReminderMinutesNEQ applies the NEQ predicate on the "reminder_minutes" field.
+func ReminderMinutesNEQ(v int) predicate.UserPreference {
+	return predicate.UserPreference(sql.FieldNEQ(FieldReminderMinutes, v))
+}
+
+// ReminderMinutesIn applies the In predicate on the "reminder_minutes" field.
+func ReminderMinutesIn(vs ...int) predicate.UserPreference {
+	return predicate.UserPreference(sql.FieldIn(FieldReminderMinutes, vs...))
+}
+
+// ReminderMinutesNotIn applies the NotIn predicate on the "reminder_minutes" field.
+func ReminderMinutesNotIn(vs ...int) predicate.UserPreference {
+	return predicate.UserPreference(sql.FieldNotIn(FieldReminderMinutes, vs...))
+}
+
+// ReminderMinutesGT applies the GT predicate on the "reminder_minutes" field.
+func ReminderMinutesGT(v int) predicate.UserPreference {
+	return predicate.UserPreference(sql.FieldGT(FieldReminderMinutes, v))
+}
+
+// ReminderMinutesGTE applies the GTE predicate on the "reminder_minutes" field.
+func ReminderMinutesGTE(v int) predicate.UserPreference {
+	return predicate.UserPreference(sql.FieldGTE(FieldReminderMinutes, v))
+}
+
+// ReminderMinutesLT applies the LT predicate on the "reminder_minutes" field.
+func ReminderMinutesLT(v int) predicate.UserPreference {
+	return predicate.UserPreference(sql.FieldLT(FieldReminderMinutes, v))
+}
+
+// ReminderMinutesLTE applies the LTE predicate on the "reminder_minutes" field.
+func ReminderMinutesLTE(v int) predicate.UserPreference {
+	return predicate.UserPreference(sql.FieldLTE(FieldReminderMinutes, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

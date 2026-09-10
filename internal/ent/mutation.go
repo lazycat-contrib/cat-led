@@ -2078,17 +2078,21 @@ func (m *ServerChanConfigMutation) ResetEdge(name string) error {
 // UserPreferenceMutation represents an operation that mutates the UserPreference nodes in the graph.
 type UserPreferenceMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	user_id       *string
-	bulb_style    *string
-	created_at    *time.Time
-	updated_at    *time.Time
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*UserPreference, error)
-	predicates    []predicate.UserPreference
+	op                  Op
+	typ                 string
+	id                  *int
+	user_id             *string
+	bulb_style          *string
+	show_schedules      *bool
+	reminders_enabled   *bool
+	reminder_minutes    *int
+	addreminder_minutes *int
+	created_at          *time.Time
+	updated_at          *time.Time
+	clearedFields       map[string]struct{}
+	done                bool
+	oldValue            func(context.Context) (*UserPreference, error)
+	predicates          []predicate.UserPreference
 }
 
 var _ ent.Mutation = (*UserPreferenceMutation)(nil)
@@ -2261,6 +2265,134 @@ func (m *UserPreferenceMutation) ResetBulbStyle() {
 	m.bulb_style = nil
 }
 
+// SetShowSchedules sets the "show_schedules" field.
+func (m *UserPreferenceMutation) SetShowSchedules(b bool) {
+	m.show_schedules = &b
+}
+
+// ShowSchedules returns the value of the "show_schedules" field in the mutation.
+func (m *UserPreferenceMutation) ShowSchedules() (r bool, exists bool) {
+	v := m.show_schedules
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldShowSchedules returns the old "show_schedules" field's value of the UserPreference entity.
+// If the UserPreference object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserPreferenceMutation) OldShowSchedules(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldShowSchedules is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldShowSchedules requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldShowSchedules: %w", err)
+	}
+	return oldValue.ShowSchedules, nil
+}
+
+// ResetShowSchedules resets all changes to the "show_schedules" field.
+func (m *UserPreferenceMutation) ResetShowSchedules() {
+	m.show_schedules = nil
+}
+
+// SetRemindersEnabled sets the "reminders_enabled" field.
+func (m *UserPreferenceMutation) SetRemindersEnabled(b bool) {
+	m.reminders_enabled = &b
+}
+
+// RemindersEnabled returns the value of the "reminders_enabled" field in the mutation.
+func (m *UserPreferenceMutation) RemindersEnabled() (r bool, exists bool) {
+	v := m.reminders_enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRemindersEnabled returns the old "reminders_enabled" field's value of the UserPreference entity.
+// If the UserPreference object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserPreferenceMutation) OldRemindersEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRemindersEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRemindersEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRemindersEnabled: %w", err)
+	}
+	return oldValue.RemindersEnabled, nil
+}
+
+// ResetRemindersEnabled resets all changes to the "reminders_enabled" field.
+func (m *UserPreferenceMutation) ResetRemindersEnabled() {
+	m.reminders_enabled = nil
+}
+
+// SetReminderMinutes sets the "reminder_minutes" field.
+func (m *UserPreferenceMutation) SetReminderMinutes(i int) {
+	m.reminder_minutes = &i
+	m.addreminder_minutes = nil
+}
+
+// ReminderMinutes returns the value of the "reminder_minutes" field in the mutation.
+func (m *UserPreferenceMutation) ReminderMinutes() (r int, exists bool) {
+	v := m.reminder_minutes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReminderMinutes returns the old "reminder_minutes" field's value of the UserPreference entity.
+// If the UserPreference object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserPreferenceMutation) OldReminderMinutes(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReminderMinutes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReminderMinutes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReminderMinutes: %w", err)
+	}
+	return oldValue.ReminderMinutes, nil
+}
+
+// AddReminderMinutes adds i to the "reminder_minutes" field.
+func (m *UserPreferenceMutation) AddReminderMinutes(i int) {
+	if m.addreminder_minutes != nil {
+		*m.addreminder_minutes += i
+	} else {
+		m.addreminder_minutes = &i
+	}
+}
+
+// AddedReminderMinutes returns the value that was added to the "reminder_minutes" field in this mutation.
+func (m *UserPreferenceMutation) AddedReminderMinutes() (r int, exists bool) {
+	v := m.addreminder_minutes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetReminderMinutes resets all changes to the "reminder_minutes" field.
+func (m *UserPreferenceMutation) ResetReminderMinutes() {
+	m.reminder_minutes = nil
+	m.addreminder_minutes = nil
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *UserPreferenceMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -2367,12 +2499,21 @@ func (m *UserPreferenceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserPreferenceMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 7)
 	if m.user_id != nil {
 		fields = append(fields, userpreference.FieldUserID)
 	}
 	if m.bulb_style != nil {
 		fields = append(fields, userpreference.FieldBulbStyle)
+	}
+	if m.show_schedules != nil {
+		fields = append(fields, userpreference.FieldShowSchedules)
+	}
+	if m.reminders_enabled != nil {
+		fields = append(fields, userpreference.FieldRemindersEnabled)
+	}
+	if m.reminder_minutes != nil {
+		fields = append(fields, userpreference.FieldReminderMinutes)
 	}
 	if m.created_at != nil {
 		fields = append(fields, userpreference.FieldCreatedAt)
@@ -2392,6 +2533,12 @@ func (m *UserPreferenceMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case userpreference.FieldBulbStyle:
 		return m.BulbStyle()
+	case userpreference.FieldShowSchedules:
+		return m.ShowSchedules()
+	case userpreference.FieldRemindersEnabled:
+		return m.RemindersEnabled()
+	case userpreference.FieldReminderMinutes:
+		return m.ReminderMinutes()
 	case userpreference.FieldCreatedAt:
 		return m.CreatedAt()
 	case userpreference.FieldUpdatedAt:
@@ -2409,6 +2556,12 @@ func (m *UserPreferenceMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldUserID(ctx)
 	case userpreference.FieldBulbStyle:
 		return m.OldBulbStyle(ctx)
+	case userpreference.FieldShowSchedules:
+		return m.OldShowSchedules(ctx)
+	case userpreference.FieldRemindersEnabled:
+		return m.OldRemindersEnabled(ctx)
+	case userpreference.FieldReminderMinutes:
+		return m.OldReminderMinutes(ctx)
 	case userpreference.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case userpreference.FieldUpdatedAt:
@@ -2436,6 +2589,27 @@ func (m *UserPreferenceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetBulbStyle(v)
 		return nil
+	case userpreference.FieldShowSchedules:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetShowSchedules(v)
+		return nil
+	case userpreference.FieldRemindersEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRemindersEnabled(v)
+		return nil
+	case userpreference.FieldReminderMinutes:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReminderMinutes(v)
+		return nil
 	case userpreference.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -2457,13 +2631,21 @@ func (m *UserPreferenceMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *UserPreferenceMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addreminder_minutes != nil {
+		fields = append(fields, userpreference.FieldReminderMinutes)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *UserPreferenceMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case userpreference.FieldReminderMinutes:
+		return m.AddedReminderMinutes()
+	}
 	return nil, false
 }
 
@@ -2472,6 +2654,13 @@ func (m *UserPreferenceMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *UserPreferenceMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case userpreference.FieldReminderMinutes:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddReminderMinutes(v)
+		return nil
 	}
 	return fmt.Errorf("unknown UserPreference numeric field %s", name)
 }
@@ -2504,6 +2693,15 @@ func (m *UserPreferenceMutation) ResetField(name string) error {
 		return nil
 	case userpreference.FieldBulbStyle:
 		m.ResetBulbStyle()
+		return nil
+	case userpreference.FieldShowSchedules:
+		m.ResetShowSchedules()
+		return nil
+	case userpreference.FieldRemindersEnabled:
+		m.ResetRemindersEnabled()
+		return nil
+	case userpreference.FieldReminderMinutes:
+		m.ResetReminderMinutes()
 		return nil
 	case userpreference.FieldCreatedAt:
 		m.ResetCreatedAt()

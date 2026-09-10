@@ -13,14 +13,20 @@ import (
 
 // UserPreferenceRequest represents the request body for updating user preferences.
 type UserPreferenceRequest struct {
-	BulbStyle string `json:"bulb_style" binding:"required,oneof=classic lava vintage liquid lightbulb analog single-led neon-switch fox-daynight"`
+	BulbStyle        *string `json:"bulb_style" binding:"omitempty,oneof=classic lava vintage liquid lightbulb analog single-led neon-switch fox-daynight"`
+	ShowSchedules    *bool   `json:"show_schedules"`
+	RemindersEnabled *bool   `json:"reminders_enabled"`
+	ReminderMinutes  *int    `json:"reminder_minutes" binding:"omitempty,min=1,max=1440"`
 }
 
 // UserPreferenceResponse represents the user preference data returned to the client.
 type UserPreferenceResponse struct {
-	UserID    string `json:"user_id"`
-	BulbStyle string `json:"bulb_style"`
-	UpdatedAt string `json:"updated_at"`
+	UserID           string `json:"user_id"`
+	BulbStyle        string `json:"bulb_style"`
+	UpdatedAt        string `json:"updated_at"`
+	ShowSchedules    bool   `json:"show_schedules"`
+	RemindersEnabled bool   `json:"reminders_enabled"`
+	ReminderMinutes  int    `json:"reminder_minutes"`
 }
 
 // GetUserPreference returns the current user's preference settings.
@@ -45,9 +51,12 @@ func GetUserPreference(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, UserPreferenceResponse{
-		UserID:    pref.UserID,
-		BulbStyle: pref.BulbStyle,
-		UpdatedAt: pref.UpdatedAt.Format(time.RFC3339),
+		UserID:           pref.UserID,
+		BulbStyle:        pref.BulbStyle,
+		UpdatedAt:        pref.UpdatedAt.Format(time.RFC3339),
+		ShowSchedules:    pref.ShowSchedules,
+		RemindersEnabled: pref.RemindersEnabled,
+		ReminderMinutes:  pref.ReminderMinutes,
 	})
 }
 
@@ -65,6 +74,7 @@ func UpdateUserPreference(c *gin.Context) {
 		return
 	}
 
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, 4096)
 	var req UserPreferenceRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -72,47 +82,27 @@ func UpdateUserPreference(c *gin.Context) {
 	}
 
 	client := scheduleUseCase.GetClient()
-	pref, err := client.UserPreference.
-		Query().
-		Where(userpreference.UserID(basicInfo.UserId)).
-		Only(ctx)
-
-	now := time.Now()
-
-	if err != nil {
-		if ent.IsNotFound(err) {
-			// Create new preference
-			pref, err = client.UserPreference.
-				Create().
-				SetUserID(basicInfo.UserId).
-				SetBulbStyle(req.BulbStyle).
-				SetCreatedAt(now).
-				SetUpdatedAt(now).
-				Save(ctx)
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user preference"})
-				return
-			}
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query user preference"})
-			return
-		}
-	} else {
-		// Update existing preference
+	pref, err := getUserPreferenceOrCreate(ctx, client, basicInfo.UserId)
+	if err == nil {
 		pref, err = pref.Update().
-			SetBulbStyle(req.BulbStyle).
-			SetUpdatedAt(now).
-			Save(ctx)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user preference"})
-			return
-		}
+			SetNillableBulbStyle(req.BulbStyle).
+			SetNillableShowSchedules(req.ShowSchedules).
+			SetNillableRemindersEnabled(req.RemindersEnabled).
+			SetNillableReminderMinutes(req.ReminderMinutes).
+			SetUpdatedAt(time.Now()).Save(ctx)
+	}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user preference"})
+		return
 	}
 
 	c.JSON(http.StatusOK, UserPreferenceResponse{
-		UserID:    pref.UserID,
-		BulbStyle: pref.BulbStyle,
-		UpdatedAt: pref.UpdatedAt.Format(time.RFC3339),
+		UserID:           pref.UserID,
+		BulbStyle:        pref.BulbStyle,
+		UpdatedAt:        pref.UpdatedAt.Format(time.RFC3339),
+		ShowSchedules:    pref.ShowSchedules,
+		RemindersEnabled: pref.RemindersEnabled,
+		ReminderMinutes:  pref.ReminderMinutes,
 	})
 }
 
@@ -127,13 +117,17 @@ func getUserPreferenceOrCreate(ctx context.Context, client *ent.Client, userID s
 		if ent.IsNotFound(err) {
 			// Create default preference
 			now := time.Now()
-			return client.UserPreference.
+			created, createErr := client.UserPreference.
 				Create().
 				SetUserID(userID).
 				SetBulbStyle("classic").
 				SetCreatedAt(now).
 				SetUpdatedAt(now).
 				Save(ctx)
+			if ent.IsConstraintError(createErr) {
+				return client.UserPreference.Query().Where(userpreference.UserID(userID)).Only(ctx)
+			}
+			return created, createErr
 		}
 		return nil, err
 	}

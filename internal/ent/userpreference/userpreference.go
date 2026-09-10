@@ -15,6 +15,12 @@ const (
 	FieldUserID = "user_id"
 	// FieldBulbStyle holds the string denoting the bulb_style field in the database.
 	FieldBulbStyle = "bulb_style"
+	// FieldShowSchedules holds the string denoting the show_schedules field in the database.
+	FieldShowSchedules = "show_schedules"
+	// FieldRemindersEnabled holds the string denoting the reminders_enabled field in the database.
+	FieldRemindersEnabled = "reminders_enabled"
+	// FieldReminderMinutes holds the string denoting the reminder_minutes field in the database.
+	FieldReminderMinutes = "reminder_minutes"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -28,6 +34,9 @@ var Columns = []string{
 	FieldID,
 	FieldUserID,
 	FieldBulbStyle,
+	FieldShowSchedules,
+	FieldRemindersEnabled,
+	FieldReminderMinutes,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -45,6 +54,14 @@ func ValidColumn(column string) bool {
 var (
 	// DefaultBulbStyle holds the default value on creation for the "bulb_style" field.
 	DefaultBulbStyle string
+	// DefaultShowSchedules holds the default value on creation for the "show_schedules" field.
+	DefaultShowSchedules bool
+	// DefaultRemindersEnabled holds the default value on creation for the "reminders_enabled" field.
+	DefaultRemindersEnabled bool
+	// DefaultReminderMinutes holds the default value on creation for the "reminder_minutes" field.
+	DefaultReminderMinutes int
+	// ReminderMinutesValidator is a validator for the "reminder_minutes" field. It is called by the builders before save.
+	ReminderMinutesValidator func(int) error
 )
 
 // OrderOption defines the ordering options for the UserPreference queries.
@@ -63,6 +80,21 @@ func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 // ByBulbStyle orders the results by the bulb_style field.
 func ByBulbStyle(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBulbStyle, opts...).ToFunc()
+}
+
+// ByShowSchedules orders the results by the show_schedules field.
+func ByShowSchedules(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldShowSchedules, opts...).ToFunc()
+}
+
+// ByRemindersEnabled orders the results by the reminders_enabled field.
+func ByRemindersEnabled(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRemindersEnabled, opts...).ToFunc()
+}
+
+// ByReminderMinutes orders the results by the reminder_minutes field.
+func ByReminderMinutes(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldReminderMinutes, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.

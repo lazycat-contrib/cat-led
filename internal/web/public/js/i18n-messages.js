@@ -1,5 +1,18 @@
 // Source-language message IDs keep existing Chinese copy stable.
 window.CAT_LED_MESSAGES = Object.freeze({
+  "设置": "Settings",
+  "设置保存到当前账号，在其他浏览器登录后也会生效。": "Settings are saved to your account and apply when you sign in on another browser.",
+  "显示定时任务": "Show scheduled tasks",
+  "隐藏列表后，任务仍会照常执行。": "Tasks continue to run when the list is hidden.",
+  "网页内提前提醒": "Upcoming reminders",
+  "提前时间（分钟）": "Lead time (minutes)",
+  "网页打开时，提醒即将执行的灯光和电源任务。": "While this page is open, show reminders for upcoming light and power tasks.",
+  "通知配置": "Notification settings",
+  "无法读取设置，请关闭后重试。": "Could not load settings. Close and reopen to retry.",
+  "设置已保存": "Settings saved",
+  "即将执行": "Coming up",
+  "{0} 分钟后 · {1}{2}": "In {0} min \u00b7 {1}{2}",
+
   "每天 · {0}{1}": "Every day · {0}{1}",
   "工作日 · {0}{1}": "Weekdays · {0}{1}",
   "登录失败: {0}": "Sign-in failed: {0}",

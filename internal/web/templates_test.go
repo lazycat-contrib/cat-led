@@ -26,8 +26,12 @@ func TestLocalizedTemplatesRender(t *testing.T) {
 			t.Fatal(err)
 		}
 		body := w.Body.String()
-		if !strings.Contains(body, "data-language-toggle") || !strings.Contains(body, "/static/js/i18n.js") {
-			t.Fatalf("missing language controls in %s", test.name)
+		if !strings.Contains(body, "/static/js/i18n.js") {
+			t.Fatalf("missing localization script in %s", test.name)
+		}
+		wantToggle := test.name != "config.html"
+		if strings.Contains(body, "data-language-toggle") != wantToggle {
+			t.Fatalf("unexpected language control presence in %s", test.name)
 		}
 		if test.name == "config.html" && !strings.Contains(body, "{{.Name}} 任务执行成功") {
 			t.Fatal("notification template placeholder was changed")

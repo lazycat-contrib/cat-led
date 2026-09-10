@@ -21,6 +21,12 @@ type UserPreference struct {
 	UserID string `json:"user_id,omitempty"`
 	// 灯泡样式: classic(经典灯泡), lava(熔岩灯), vintage(老式台灯), liquid(液态光效), lightbulb(灯泡开关), analog(点阵时钟), single-led(表情灯泡), neon-switch(霓虹开关), fox-daynight(狐狸日夜灯)
 	BulbStyle string `json:"bulb_style,omitempty"`
+	// ShowSchedules holds the value of the "show_schedules" field.
+	ShowSchedules bool `json:"show_schedules,omitempty"`
+	// RemindersEnabled holds the value of the "reminders_enabled" field.
+	RemindersEnabled bool `json:"reminders_enabled,omitempty"`
+	// ReminderMinutes holds the value of the "reminder_minutes" field.
+	ReminderMinutes int `json:"reminder_minutes,omitempty"`
 	// 创建时间
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -33,7 +39,9 @@ func (*UserPreference) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case userpreference.FieldID:
+		case userpreference.FieldShowSchedules, userpreference.FieldRemindersEnabled:
+			values[i] = new(sql.NullBool)
+		case userpreference.FieldID, userpreference.FieldReminderMinutes:
 			values[i] = new(sql.NullInt64)
 		case userpreference.FieldUserID, userpreference.FieldBulbStyle:
 			values[i] = new(sql.NullString)
@@ -71,6 +79,24 @@ func (_m *UserPreference) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field bulb_style", values[i])
 			} else if value.Valid {
 				_m.BulbStyle = value.String
+			}
+		case userpreference.FieldShowSchedules:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field show_schedules", values[i])
+			} else if value.Valid {
+				_m.ShowSchedules = value.Bool
+			}
+		case userpreference.FieldRemindersEnabled:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field reminders_enabled", values[i])
+			} else if value.Valid {
+				_m.RemindersEnabled = value.Bool
+			}
+		case userpreference.FieldReminderMinutes:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field reminder_minutes", values[i])
+			} else if value.Valid {
+				_m.ReminderMinutes = int(value.Int64)
 			}
 		case userpreference.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -125,6 +151,15 @@ func (_m *UserPreference) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("bulb_style=")
 	builder.WriteString(_m.BulbStyle)
+	builder.WriteString(", ")
+	builder.WriteString("show_schedules=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ShowSchedules))
+	builder.WriteString(", ")
+	builder.WriteString("reminders_enabled=")
+	builder.WriteString(fmt.Sprintf("%v", _m.RemindersEnabled))
+	builder.WriteString(", ")
+	builder.WriteString("reminder_minutes=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ReminderMinutes))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))

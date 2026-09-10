@@ -40,6 +40,48 @@ func (_c *UserPreferenceCreate) SetNillableBulbStyle(v *string) *UserPreferenceC
 	return _c
 }
 
+// SetShowSchedules sets the "show_schedules" field.
+func (_c *UserPreferenceCreate) SetShowSchedules(v bool) *UserPreferenceCreate {
+	_c.mutation.SetShowSchedules(v)
+	return _c
+}
+
+// SetNillableShowSchedules sets the "show_schedules" field if the given value is not nil.
+func (_c *UserPreferenceCreate) SetNillableShowSchedules(v *bool) *UserPreferenceCreate {
+	if v != nil {
+		_c.SetShowSchedules(*v)
+	}
+	return _c
+}
+
+// SetRemindersEnabled sets the "reminders_enabled" field.
+func (_c *UserPreferenceCreate) SetRemindersEnabled(v bool) *UserPreferenceCreate {
+	_c.mutation.SetRemindersEnabled(v)
+	return _c
+}
+
+// SetNillableRemindersEnabled sets the "reminders_enabled" field if the given value is not nil.
+func (_c *UserPreferenceCreate) SetNillableRemindersEnabled(v *bool) *UserPreferenceCreate {
+	if v != nil {
+		_c.SetRemindersEnabled(*v)
+	}
+	return _c
+}
+
+// SetReminderMinutes sets the "reminder_minutes" field.
+func (_c *UserPreferenceCreate) SetReminderMinutes(v int) *UserPreferenceCreate {
+	_c.mutation.SetReminderMinutes(v)
+	return _c
+}
+
+// SetNillableReminderMinutes sets the "reminder_minutes" field if the given value is not nil.
+func (_c *UserPreferenceCreate) SetNillableReminderMinutes(v *int) *UserPreferenceCreate {
+	if v != nil {
+		_c.SetReminderMinutes(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *UserPreferenceCreate) SetCreatedAt(v time.Time) *UserPreferenceCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -91,6 +133,18 @@ func (_c *UserPreferenceCreate) defaults() {
 		v := userpreference.DefaultBulbStyle
 		_c.mutation.SetBulbStyle(v)
 	}
+	if _, ok := _c.mutation.ShowSchedules(); !ok {
+		v := userpreference.DefaultShowSchedules
+		_c.mutation.SetShowSchedules(v)
+	}
+	if _, ok := _c.mutation.RemindersEnabled(); !ok {
+		v := userpreference.DefaultRemindersEnabled
+		_c.mutation.SetRemindersEnabled(v)
+	}
+	if _, ok := _c.mutation.ReminderMinutes(); !ok {
+		v := userpreference.DefaultReminderMinutes
+		_c.mutation.SetReminderMinutes(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -100,6 +154,20 @@ func (_c *UserPreferenceCreate) check() error {
 	}
 	if _, ok := _c.mutation.BulbStyle(); !ok {
 		return &ValidationError{Name: "bulb_style", err: errors.New(`ent: missing required field "UserPreference.bulb_style"`)}
+	}
+	if _, ok := _c.mutation.ShowSchedules(); !ok {
+		return &ValidationError{Name: "show_schedules", err: errors.New(`ent: missing required field "UserPreference.show_schedules"`)}
+	}
+	if _, ok := _c.mutation.RemindersEnabled(); !ok {
+		return &ValidationError{Name: "reminders_enabled", err: errors.New(`ent: missing required field "UserPreference.reminders_enabled"`)}
+	}
+	if _, ok := _c.mutation.ReminderMinutes(); !ok {
+		return &ValidationError{Name: "reminder_minutes", err: errors.New(`ent: missing required field "UserPreference.reminder_minutes"`)}
+	}
+	if v, ok := _c.mutation.ReminderMinutes(); ok {
+		if err := userpreference.ReminderMinutesValidator(v); err != nil {
+			return &ValidationError{Name: "reminder_minutes", err: fmt.Errorf(`ent: validator failed for field "UserPreference.reminder_minutes": %w`, err)}
+		}
 	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "UserPreference.created_at"`)}
@@ -140,6 +208,18 @@ func (_c *UserPreferenceCreate) createSpec() (*UserPreference, *sqlgraph.CreateS
 	if value, ok := _c.mutation.BulbStyle(); ok {
 		_spec.SetField(userpreference.FieldBulbStyle, field.TypeString, value)
 		_node.BulbStyle = value
+	}
+	if value, ok := _c.mutation.ShowSchedules(); ok {
+		_spec.SetField(userpreference.FieldShowSchedules, field.TypeBool, value)
+		_node.ShowSchedules = value
+	}
+	if value, ok := _c.mutation.RemindersEnabled(); ok {
+		_spec.SetField(userpreference.FieldRemindersEnabled, field.TypeBool, value)
+		_node.RemindersEnabled = value
+	}
+	if value, ok := _c.mutation.ReminderMinutes(); ok {
+		_spec.SetField(userpreference.FieldReminderMinutes, field.TypeInt, value)
+		_node.ReminderMinutes = value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(userpreference.FieldCreatedAt, field.TypeTime, value)

@@ -124,6 +124,7 @@ func (s *Server) setupAuthenticatedRoutes() {
 
 	// Schedule API
 	authenticated.GET("/api/schedules", handlers.GetSchedules)
+	authenticated.GET("/api/upcoming-events", handlers.GetUpcomingEvents)
 	authenticated.POST("/api/schedules", auth.RequireSameOrigin(), handlers.CreateSchedule)
 	authenticated.PUT("/api/schedules/:id", auth.RequireSameOrigin(), handlers.UpdateSchedule)
 	authenticated.DELETE("/api/schedules/:id", auth.RequireSameOrigin(), handlers.DeleteSchedule)
@@ -140,7 +141,7 @@ func (s *Server) setupAuthenticatedRoutes() {
 
 	// User Preference API
 	authenticated.GET("/api/user/preference", handlers.GetUserPreference)
-	authenticated.PUT("/api/user/preference", handlers.UpdateUserPreference)
+	authenticated.PUT("/api/user/preference", auth.RequireSameOrigin(), handlers.UpdateUserPreference)
 }
 
 // Run starts the web server on the specified address.

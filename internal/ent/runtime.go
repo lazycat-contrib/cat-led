@@ -84,4 +84,32 @@ func init() {
 	userpreferenceDescBulbStyle := userpreferenceFields[1].Descriptor()
 	// userpreference.DefaultBulbStyle holds the default value on creation for the bulb_style field.
 	userpreference.DefaultBulbStyle = userpreferenceDescBulbStyle.Default.(string)
+	// userpreferenceDescShowSchedules is the schema descriptor for show_schedules field.
+	userpreferenceDescShowSchedules := userpreferenceFields[2].Descriptor()
+	// userpreference.DefaultShowSchedules holds the default value on creation for the show_schedules field.
+	userpreference.DefaultShowSchedules = userpreferenceDescShowSchedules.Default.(bool)
+	// userpreferenceDescRemindersEnabled is the schema descriptor for reminders_enabled field.
+	userpreferenceDescRemindersEnabled := userpreferenceFields[3].Descriptor()
+	// userpreference.DefaultRemindersEnabled holds the default value on creation for the reminders_enabled field.
+	userpreference.DefaultRemindersEnabled = userpreferenceDescRemindersEnabled.Default.(bool)
+	// userpreferenceDescReminderMinutes is the schema descriptor for reminder_minutes field.
+	userpreferenceDescReminderMinutes := userpreferenceFields[4].Descriptor()
+	// userpreference.DefaultReminderMinutes holds the default value on creation for the reminder_minutes field.
+	userpreference.DefaultReminderMinutes = userpreferenceDescReminderMinutes.Default.(int)
+	// userpreference.ReminderMinutesValidator is a validator for the "reminder_minutes" field. It is called by the builders before save.
+	userpreference.ReminderMinutesValidator = func() func(int) error {
+		validators := userpreferenceDescReminderMinutes.Validators
+		fns := [...]func(int) error{
+			validators[0].(func(int) error),
+			validators[1].(func(int) error),
+		}
+		return func(reminder_minutes int) error {
+			for _, fn := range fns {
+				if err := fn(reminder_minutes); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 }

@@ -156,6 +156,7 @@
         const response = await fetch('/api/power-plan',{method,headers:{'Content-Type':'application/json','X-Cat-Led-Request':'1'},body:body ? JSON.stringify(body) : undefined,redirect:'error'});
         const data = await response.json();
         if (!response.ok) throw new Error(I18n.error(data.error) || I18n.t("操作失败，请稍后重试"));
+        if (method !== "GET" && isAdmin) document.dispatchEvent(new CustomEvent("power-status", {detail:{state:data, server_time:response.headers.get("Date")}}));
         return data;
     }
     async function refresh(fill = false) {
@@ -170,9 +171,11 @@
             $('power-device-error').textContent = result.device_error ? I18n.t("RTC 开机暂不可用：{0}", {"0": I18n.error(result.device_error)}) : '';
             $('power-device-error').hidden = !result.device_error;
             renderState(result.state,fill);
+            document.dispatchEvent(new CustomEvent("power-status", {detail:result}));
             if (fill && result.state.error) showError(result.state.error);
         } catch(error) {
             if (version !== refreshVersion || !isAdmin) return;
+            document.dispatchEvent(new CustomEvent("power-status", {detail:null}));
             loadError = error.message;
             renderTasks();
             if (fill) showError(error.message);
@@ -231,9 +234,10 @@
     document.addEventListener('lazycat-role', async event => {
         isAdmin = event.detail === true;
         $('power-plan-button').hidden = !isAdmin;
-        if (!isAdmin) { ++refreshVersion; state=null; loadError=''; clearTimeout(closeTimer); if(dialog.open)dialog.close(); renderTasks(); return; }
+        if (!isAdmin) { document.dispatchEvent(new CustomEvent("power-status", {detail:null})); ++refreshVersion; state=null; loadError=''; clearTimeout(closeTimer); if(dialog.open)dialog.close(); renderTasks(); return; }
         await refresh();
     });
+    document.addEventListener("visibilitychange",()=>{ if (!document.hidden && isAdmin && !busy && !dialog.open) refresh(); });
     setInterval(async()=>{
         if (!isAdmin || busy || dialog.open || document.hidden) return;
         await refresh();

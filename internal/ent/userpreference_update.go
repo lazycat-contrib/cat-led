@@ -42,6 +42,55 @@ func (_u *UserPreferenceUpdate) SetNillableBulbStyle(v *string) *UserPreferenceU
 	return _u
 }
 
+// SetShowSchedules sets the "show_schedules" field.
+func (_u *UserPreferenceUpdate) SetShowSchedules(v bool) *UserPreferenceUpdate {
+	_u.mutation.SetShowSchedules(v)
+	return _u
+}
+
+// SetNillableShowSchedules sets the "show_schedules" field if the given value is not nil.
+func (_u *UserPreferenceUpdate) SetNillableShowSchedules(v *bool) *UserPreferenceUpdate {
+	if v != nil {
+		_u.SetShowSchedules(*v)
+	}
+	return _u
+}
+
+// SetRemindersEnabled sets the "reminders_enabled" field.
+func (_u *UserPreferenceUpdate) SetRemindersEnabled(v bool) *UserPreferenceUpdate {
+	_u.mutation.SetRemindersEnabled(v)
+	return _u
+}
+
+// SetNillableRemindersEnabled sets the "reminders_enabled" field if the given value is not nil.
+func (_u *UserPreferenceUpdate) SetNillableRemindersEnabled(v *bool) *UserPreferenceUpdate {
+	if v != nil {
+		_u.SetRemindersEnabled(*v)
+	}
+	return _u
+}
+
+// SetReminderMinutes sets the "reminder_minutes" field.
+func (_u *UserPreferenceUpdate) SetReminderMinutes(v int) *UserPreferenceUpdate {
+	_u.mutation.ResetReminderMinutes()
+	_u.mutation.SetReminderMinutes(v)
+	return _u
+}
+
+// SetNillableReminderMinutes sets the "reminder_minutes" field if the given value is not nil.
+func (_u *UserPreferenceUpdate) SetNillableReminderMinutes(v *int) *UserPreferenceUpdate {
+	if v != nil {
+		_u.SetReminderMinutes(*v)
+	}
+	return _u
+}
+
+// AddReminderMinutes adds value to the "reminder_minutes" field.
+func (_u *UserPreferenceUpdate) AddReminderMinutes(v int) *UserPreferenceUpdate {
+	_u.mutation.AddReminderMinutes(v)
+	return _u
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *UserPreferenceUpdate) SetUpdatedAt(v time.Time) *UserPreferenceUpdate {
 	_u.mutation.SetUpdatedAt(v)
@@ -88,7 +137,20 @@ func (_u *UserPreferenceUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *UserPreferenceUpdate) check() error {
+	if v, ok := _u.mutation.ReminderMinutes(); ok {
+		if err := userpreference.ReminderMinutesValidator(v); err != nil {
+			return &ValidationError{Name: "reminder_minutes", err: fmt.Errorf(`ent: validator failed for field "UserPreference.reminder_minutes": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *UserPreferenceUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(userpreference.Table, userpreference.Columns, sqlgraph.NewFieldSpec(userpreference.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -99,6 +161,18 @@ func (_u *UserPreferenceUpdate) sqlSave(ctx context.Context) (_node int, err err
 	}
 	if value, ok := _u.mutation.BulbStyle(); ok {
 		_spec.SetField(userpreference.FieldBulbStyle, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.ShowSchedules(); ok {
+		_spec.SetField(userpreference.FieldShowSchedules, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.RemindersEnabled(); ok {
+		_spec.SetField(userpreference.FieldRemindersEnabled, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.ReminderMinutes(); ok {
+		_spec.SetField(userpreference.FieldReminderMinutes, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedReminderMinutes(); ok {
+		_spec.AddField(userpreference.FieldReminderMinutes, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(userpreference.FieldUpdatedAt, field.TypeTime, value)
@@ -134,6 +208,55 @@ func (_u *UserPreferenceUpdateOne) SetNillableBulbStyle(v *string) *UserPreferen
 	if v != nil {
 		_u.SetBulbStyle(*v)
 	}
+	return _u
+}
+
+// SetShowSchedules sets the "show_schedules" field.
+func (_u *UserPreferenceUpdateOne) SetShowSchedules(v bool) *UserPreferenceUpdateOne {
+	_u.mutation.SetShowSchedules(v)
+	return _u
+}
+
+// SetNillableShowSchedules sets the "show_schedules" field if the given value is not nil.
+func (_u *UserPreferenceUpdateOne) SetNillableShowSchedules(v *bool) *UserPreferenceUpdateOne {
+	if v != nil {
+		_u.SetShowSchedules(*v)
+	}
+	return _u
+}
+
+// SetRemindersEnabled sets the "reminders_enabled" field.
+func (_u *UserPreferenceUpdateOne) SetRemindersEnabled(v bool) *UserPreferenceUpdateOne {
+	_u.mutation.SetRemindersEnabled(v)
+	return _u
+}
+
+// SetNillableRemindersEnabled sets the "reminders_enabled" field if the given value is not nil.
+func (_u *UserPreferenceUpdateOne) SetNillableRemindersEnabled(v *bool) *UserPreferenceUpdateOne {
+	if v != nil {
+		_u.SetRemindersEnabled(*v)
+	}
+	return _u
+}
+
+// SetReminderMinutes sets the "reminder_minutes" field.
+func (_u *UserPreferenceUpdateOne) SetReminderMinutes(v int) *UserPreferenceUpdateOne {
+	_u.mutation.ResetReminderMinutes()
+	_u.mutation.SetReminderMinutes(v)
+	return _u
+}
+
+// SetNillableReminderMinutes sets the "reminder_minutes" field if the given value is not nil.
+func (_u *UserPreferenceUpdateOne) SetNillableReminderMinutes(v *int) *UserPreferenceUpdateOne {
+	if v != nil {
+		_u.SetReminderMinutes(*v)
+	}
+	return _u
+}
+
+// AddReminderMinutes adds value to the "reminder_minutes" field.
+func (_u *UserPreferenceUpdateOne) AddReminderMinutes(v int) *UserPreferenceUpdateOne {
+	_u.mutation.AddReminderMinutes(v)
 	return _u
 }
 
@@ -196,7 +319,20 @@ func (_u *UserPreferenceUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *UserPreferenceUpdateOne) check() error {
+	if v, ok := _u.mutation.ReminderMinutes(); ok {
+		if err := userpreference.ReminderMinutesValidator(v); err != nil {
+			return &ValidationError{Name: "reminder_minutes", err: fmt.Errorf(`ent: validator failed for field "UserPreference.reminder_minutes": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *UserPreferenceUpdateOne) sqlSave(ctx context.Context) (_node *UserPreference, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(userpreference.Table, userpreference.Columns, sqlgraph.NewFieldSpec(userpreference.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
@@ -224,6 +360,18 @@ func (_u *UserPreferenceUpdateOne) sqlSave(ctx context.Context) (_node *UserPref
 	}
 	if value, ok := _u.mutation.BulbStyle(); ok {
 		_spec.SetField(userpreference.FieldBulbStyle, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.ShowSchedules(); ok {
+		_spec.SetField(userpreference.FieldShowSchedules, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.RemindersEnabled(); ok {
+		_spec.SetField(userpreference.FieldRemindersEnabled, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.ReminderMinutes(); ok {
+		_spec.SetField(userpreference.FieldReminderMinutes, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedReminderMinutes(); ok {
+		_spec.AddField(userpreference.FieldReminderMinutes, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(userpreference.FieldUpdatedAt, field.TypeTime, value)
