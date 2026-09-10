@@ -2,8 +2,9 @@
 
 ## Scope and acceptance criteria
 
-- The main toolbar opens a settings dialog. Notification configuration remains reachable there.
+- The main toolbar opens a settings dialog. Notification configuration has its own paper-plane icon in the toolbar.
 - `show_schedules` defaults to true and controls the complete LED/power task list, without changing execution. The toolbar, user information and light remain visible.
+- Only when the saved list default is hidden, a chevron below the light temporarily expands/collapses the list without changing the saved default. It appears on hover or keyboard focus on desktop and remains visible on touch devices. Saving settings resets the temporary override.
 - `reminders_enabled` defaults to true; `reminder_minutes` defaults to 5 and accepts integers from 1 to 1440.
 - Preferences belong to the authenticated user in the existing SQLite user preference record. Partial updates preserve unspecified settings, including bulb style. Existing rows receive defaults during migration.
 - Reminders appear inside the open webpage during the configured lead window, even when the list is hidden. They describe scheduled actions, not confirmed execution.

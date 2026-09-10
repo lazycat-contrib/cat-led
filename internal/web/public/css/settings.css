@@ -12,15 +12,39 @@
 .settings-row > span:first-child { min-width:0; }
 .settings-hint { margin:4px 0 14px; font-size:13px; line-height:1.6; color:var(--text-secondary); }
 #settings-minutes { width:88px; min-height:40px; padding:8px; border:1px solid var(--border-color); border-radius:10px; background:var(--input-background); color:var(--text-primary); }
-.settings-actions { display:flex; align-items:center; justify-content:space-between; gap:16px; }
-.settings-actions a { color:var(--primary-color); font-size:14px; }
+.settings-actions { display:flex; align-items:center; justify-content:flex-end; gap:16px; }
 .upcoming-reminders { margin:16px; padding:14px 18px; border:1px solid var(--border-color); border-radius:16px; background:var(--card-background); color:var(--text-primary); }
 .upcoming-reminders p { margin:4px 0; font-size:14px; line-height:1.5; overflow-wrap:anywhere; }
 .upcoming-reminders strong { display:block; margin-bottom:6px; font-size:14px; }
 .upcoming-reminders[hidden], .schedules-section[hidden] { display:none; }
+.schedule-disclosure[hidden] { display:none; }
+.schedule-disclosure { display:flex; justify-content:center; margin:-12px 16px 0; }
+#schedule-list-toggle {
+  display:grid; place-items:center; width:64px; height:44px; padding:0;
+  color:var(--text-secondary); background:transparent; border:0; border-radius:14px;
+  cursor:pointer; transition:opacity 160ms ease, background 160ms ease;
+}
+#schedule-list-toggle > i { font-size:26px; transition:transform 180ms var(--ease-out); }
+#schedule-list-toggle[aria-expanded="true"] > i { transform:rotate(180deg); }
+#schedule-list-toggle:focus-visible { outline:2px solid var(--primary-color); outline-offset:2px; }
+.schedule-disclosure:not([hidden]) + .schedules-section { margin-top:8px; }
+@media (hover:hover) and (pointer:fine) {
+  #schedule-list-toggle { opacity:0; }
+  .led-status-section:hover + .schedule-disclosure #schedule-list-toggle,
+  .schedule-disclosure:hover #schedule-list-toggle,
+  .schedule-disclosure:focus-within #schedule-list-toggle { opacity:1; }
+  #schedule-list-toggle:hover { background:var(--card-background); }
+}
 @media(max-width:480px) {
+  .app-header { padding-left:12px; }
   .header-actions { gap:4px; }
+  .app-header .header-actions > button, .app-header .header-actions > a { width:36px; height:36px; flex-shrink:0; }
+  html[lang="en"] .header-title { font-size:12px; }
   .upcoming-reminders { margin:12px 10px; }
+}
+@media(max-width:360px) {
+  .app-header { flex-wrap:wrap; gap:8px; }
+  .app-header .header-actions { width:100%; justify-content:space-between; }
 }
 
 /* Quiet surface hierarchy and feedback, using the existing glass palette. */
@@ -46,7 +70,7 @@
   .settings-dialog[data-motion="pointer"][open]::backdrop { opacity:0; }
 }
 .app-header .header-actions > button { transition:transform 160ms var(--ease-out), background 160ms ease, color 160ms ease; }
-.header-actions > button > i, .header-actions > button > svg, .header-actions > button > span {
+.header-actions > button > i, .header-actions > button > svg, .header-actions > button > span, #notification-settings-link > i {
   display:inline-block; transform-origin:center; transition:transform 180ms var(--ease-out);
 }
 @media (hover:hover) and (pointer:fine) {
@@ -55,6 +79,7 @@
   #theme-toggle:hover > svg { transform:rotate(18deg); }
   #power-plan-button:hover > i { transform:rotate(-12deg); }
   #add-schedule-btn:hover > i { transform:rotate(90deg); }
+  #notification-settings-link:hover > i { transform:translate(2px, -2px); }
   .header-actions .language-switch:hover > span { transform:translateY(-1px); }
 }
 .app-header .header-actions > button:active { transform:scale(.96); }
@@ -63,6 +88,8 @@
   .app-header .header-actions > button:active { transform:scale(.96); }
 }
 @media (prefers-reduced-motion:reduce) {
+  #schedule-list-toggle, #schedule-list-toggle > i, #notification-settings-link > i { transition:none; }
+  #notification-settings-link:hover > i { transform:none; }
   .settings-dialog[data-motion="pointer"], .settings-dialog[data-motion="pointer"][open] { transform:none; transition:none; }
   .settings-dialog[data-motion="pointer"]::backdrop { transition:none; }
   .app-header .header-actions > button, .header-actions > button > i, .header-actions > button > svg, .header-actions > button > span { transition:none; }

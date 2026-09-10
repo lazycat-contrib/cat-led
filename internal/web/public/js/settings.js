@@ -2,6 +2,7 @@
     const $ = id => document.getElementById(id);
     const dialog = $('settings-dialog');
     let preference = null;
+    let scheduleVisibility = null;
     let busy = false;
     let loading = false;
     let scheduleSample = null;
@@ -38,9 +39,24 @@
     }
     function apply(value) {
         preference = value;
-        document.querySelector('.schedules-section').hidden = value.show_schedules === false;
+        renderScheduleVisibility();
         renderReminders();
     }
+    function renderScheduleVisibility() {
+        document.querySelector('.schedule-disclosure').hidden = preference?.show_schedules !== false;
+        const expanded = preference?.show_schedules !== false || scheduleVisibility === true;
+        $('schedule-list-section').hidden = !expanded;
+        const toggle = $('schedule-list-toggle');
+        toggle.setAttribute('aria-expanded', String(expanded));
+        const label = expanded ? '收起定时任务' : '展开定时任务';
+        toggle.dataset.i18nAriaLabel = label;
+        toggle.dataset.i18nTitle = label;
+        I18n.render(toggle);
+    }
+    $('schedule-list-toggle').addEventListener('click', () => {
+        scheduleVisibility = $('schedule-list-section').hidden;
+        renderScheduleVisibility();
+    });
     function fill() {
         if (!preference) return;
         $('settings-show-schedules').checked = preference.show_schedules;
@@ -111,7 +127,9 @@
                 method:'PUT', headers:{'Content-Type':'application/json','X-Cat-Led-Request':'1'}, body:JSON.stringify(next)
             });
             if (!response.ok) throw new Error();
-            apply(await response.json()); fill(); message('设置已保存'); refresh();
+            const saved = await response.json();
+            scheduleVisibility = null;
+            apply(saved); fill(); message('设置已保存'); refresh();
         } catch { message('保存失败，请重试'); }
         finally {
             busy = false;

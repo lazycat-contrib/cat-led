@@ -96,6 +96,7 @@
                             ></path>
                         </svg>
                     </button>
+                    <a id="notification-settings-link" href="/config.html" aria-label="通知配置" data-i18n-aria-label="通知配置" title="通知配置" data-i18n-title="通知配置"><i class="ri-send-plane-line" aria-hidden="true"></i></a>
                     <button id="settings-button" type="button" aria-label="设置" data-i18n-aria-label="设置" aria-controls="settings-dialog" aria-haspopup="dialog"><i class="ri-settings-3-line" aria-hidden="true"></i></button>
                     <button id="power-plan-button" type="button" aria-label="定时开关机" data-i18n-aria-label="定时开关机" title="定时开关机" data-i18n-title="定时开关机" aria-haspopup="dialog" hidden>
                         <i class="ri-timer-line" aria-hidden="true"></i>
@@ -145,7 +146,7 @@
 
             <!-- LED当前状态展示 -->
             <section class="led-status-section" data-power="unknown" aria-busy="true">
-                <div class="lamp-heading"><div><h2><span data-i18n="设备灯光">设备灯光</span></h2><p id="lamp-style-name"><span data-i18n="经典灯泡">经典灯泡</span></p></div><span class="lamp-hint"><span data-i18n="轻触灯具，切换明暗">轻触灯具，切换明暗</span></span></div>
+                <div class="lamp-heading"><div><h2><span data-i18n="设备灯光">设备灯光</span></h2><p id="lamp-style-name"><span data-i18n="经典灯泡">经典灯泡</span></p></div></div>
                 <div class="lamp-stage" inert>
                 <!-- 经典灯泡样式 -->
                 <div class="bulb-container bulb-classic active">
@@ -676,7 +677,10 @@
             </section>
 
             <!-- 定时任务列表 -->
-            <section class="schedules-section">
+            <div class="schedule-disclosure" hidden>
+                <button id="schedule-list-toggle" type="button" aria-controls="schedule-list-section" aria-expanded="true" aria-label="收起定时任务" data-i18n-aria-label="收起定时任务" title="收起定时任务" data-i18n-title="收起定时任务"><i class="ri-arrow-down-s-line" aria-hidden="true"></i></button>
+            </div>
+            <section class="schedules-section" id="schedule-list-section">
                 <h2 class="section-title"><span data-i18n="定时任务">定时任务</span></h2>
                 <div class="schedules-list" id="schedules-list">
                     <!-- 定时任务将通过JavaScript动态插入 -->
@@ -1059,7 +1063,7 @@
                     <p class="settings-hint" data-i18n="网页打开时，提醒即将执行的灯光和电源任务。">网页打开时，提醒即将执行的灯光和电源任务。</p>
                 </fieldset>
                 <p id="settings-status" role="status" class="settings-hint"></p>
-                <div class="settings-actions"><a href="/config.html" data-i18n="通知配置">通知配置</a><button id="settings-save" type="submit" class="primary-button" disabled data-i18n="保存设置">保存设置</button></div>
+                <div class="settings-actions"><button id="settings-save" type="submit" class="primary-button" disabled data-i18n="保存设置">保存设置</button></div>
             </form>
         </dialog>
         <dialog id="power-dialog" class="power-dialog" aria-labelledby="power-title" aria-describedby="power-description">

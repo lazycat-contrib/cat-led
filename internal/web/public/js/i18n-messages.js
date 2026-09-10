@@ -1,5 +1,7 @@
 // Source-language message IDs keep existing Chinese copy stable.
 window.CAT_LED_MESSAGES = Object.freeze({
+  "展开定时任务": "Show scheduled tasks",
+  "收起定时任务": "Hide scheduled tasks",
   "设置": "Settings",
   "设置保存到当前账号，在其他浏览器登录后也会生效。": "Settings are saved to your account and apply when you sign in on another browser.",
   "显示定时任务": "Show scheduled tasks",
