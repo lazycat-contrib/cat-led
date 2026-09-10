@@ -1,5 +1,13 @@
 // Source-language message IDs keep existing Chinese copy stable.
 window.CAT_LED_MESSAGES = Object.freeze({
+  "关于懒猫小灯": "About LazyCat LED Helper",
+  "懒猫设备的灯光与定时控制助手。": "Light and schedule controls for your LazyCat device.",
+  "应用版本": "App version",
+  "作者": "Author",
+  "项目主页": "Project homepage",
+  "摸摸小猫": "Pet the cat",
+  "嘘，小猫正在打盹。": "Shh, the little cat is napping.",
+  "喵，把今晚的小星星送给你。": "Meow. Tonight's little stars are yours.",
   "展开定时任务": "Show scheduled tasks",
   "收起定时任务": "Hide scheduled tasks",
   "设置": "Settings",

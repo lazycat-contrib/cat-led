@@ -47,7 +47,7 @@ test('English messages have matching placeholders and no unintended Chinese',()=
 });
 test('all literal translation keys and static markup markers have translations',()=>{
  const {messages}=setup('en');
- for(const file of ['index.html','config.html','login.html','js/app.js','js/config.js','js/power.js','js/settings.js']){
+ for(const file of ['index.html','config.html','login.html','js/app.js','js/config.js','js/power.js','js/settings.js','js/about.js']){
   const source=fs.readFileSync(path.join(publicDir,file),'utf8');
   const keys=[...source.matchAll(/I18n\.t\(("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')/g)].map(m=>vm.runInNewContext(m[1]));
   for(const key of keys)assert.ok(Object.hasOwn(messages,key),`${file}: ${key}`);

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"time"
 
 	"cat-led/internal/auth"
+	"cat-led/internal/buildinfo"
 	"cat-led/internal/handlers"
 	"cat-led/internal/pkg/zlog"
 	"cat-led/internal/power"
@@ -36,6 +38,13 @@ const (
 const shutdownTimeout = 5 * time.Second
 
 func main() {
+	showVersion := flag.Bool("version", false, "Print the application version and exit")
+	flag.Parse()
+	if *showVersion {
+		fmt.Println("cat-led", buildinfo.Version)
+		return
+	}
+
 	logger := initLogger()
 	logger.Info().Msg("懒猫关灯助手启动中...")
 

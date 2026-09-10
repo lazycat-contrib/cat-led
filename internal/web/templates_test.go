@@ -1,11 +1,33 @@
 package web
 
 import (
-	"github.com/gin-gonic/gin"
+	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"cat-led/internal/buildinfo"
+
+	"github.com/gin-gonic/gin"
 )
+
+func TestHomeShowsBinaryVersion(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	server := &Server{engine: gin.New()}
+	if err := server.SetupRoutes(); err != nil {
+		t.Fatal(err)
+	}
+	request := httptest.NewRequest(http.MethodGet, "/", nil)
+	request.Header.Set("x-hc-user-id", "version-test")
+	w := httptest.NewRecorder()
+	server.engine.ServeHTTP(w, request)
+	if w.Code != http.StatusOK {
+		t.Fatalf("home status = %d", w.Code)
+	}
+	if want := `id="about-version">` + buildinfo.Version + `</dd>`; !strings.Contains(w.Body.String(), want) {
+		t.Fatalf("home is missing binary version %q", buildinfo.Version)
+	}
+}
 
 func TestLocalizedTemplatesRender(t *testing.T) {
 	gin.SetMode(gin.TestMode)

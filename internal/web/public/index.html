@@ -24,7 +24,10 @@
         <div id="app">
             <!-- 顶部导航栏 -->
             <header class="app-header">
-                <div class="header-title"><span data-i18n="懒猫小灯">懒猫小灯</span></div>
+                <div class="header-title header-brand">
+                    <span data-i18n="懒猫小灯">懒猫小灯</span>
+                    <button id="about-button" type="button" aria-label="关于懒猫小灯" data-i18n-aria-label="关于懒猫小灯" title="关于懒猫小灯" data-i18n-title="关于懒猫小灯" aria-controls="about-dialog" aria-haspopup="dialog"><i class="ri-information-line" aria-hidden="true"></i></button>
+                </div>
                 <div class="header-actions">
                     <button type="button" class="language-switch" data-language-toggle aria-label="Switch to English"><span data-language-label>EN</span></button>
                     <button id="theme-toggle" aria-label="切换主题" data-i18n-aria-label="切换主题">
@@ -1048,6 +1051,35 @@
             aria-atomic="true"
         ></div>
 
+        <dialog id="about-dialog" class="settings-dialog about-dialog" aria-labelledby="about-title" aria-describedby="about-description">
+            <div class="settings-heading">
+                <h2 id="about-title" data-i18n="关于懒猫小灯">关于懒猫小灯</h2>
+                <button id="about-close" class="power-icon-button" type="button" aria-label="关闭" data-i18n-aria-label="关闭" autofocus><i class="ri-close-line" aria-hidden="true"></i></button>
+            </div>
+            <div class="about-content">
+                <div class="about-playground">
+                    <button id="about-cat" type="button" aria-label="摸摸小猫" data-i18n-aria-label="摸摸小猫" aria-pressed="false" aria-describedby="about-cat-message">
+                        <span class="cat-orbit" aria-hidden="true"></span>
+                        <span class="cat-spark cat-spark-one ri-sparkling-fill" aria-hidden="true"></span>
+                        <span class="cat-spark cat-spark-two ri-heart-fill" aria-hidden="true"></span>
+                        <span class="cat-spark cat-spark-three ri-star-fill" aria-hidden="true"></span>
+                        <span class="cat-sleep" aria-hidden="true">z z Z</span>
+                        <span class="about-cat-face" aria-hidden="true">
+                            <span class="cat-ear cat-ear-left"></span><span class="cat-ear cat-ear-right"></span>
+                            <span class="cat-face"><span class="cat-eye cat-eye-left"></span><span class="cat-eye cat-eye-right"></span><span class="cat-nose"></span><span class="cat-mouth"></span><span class="cat-blush cat-blush-left"></span><span class="cat-blush cat-blush-right"></span></span>
+                            <span class="cat-paw cat-paw-left"></span><span class="cat-paw cat-paw-right"></span>
+                        </span>
+                    </button>
+                    <p id="about-cat-message" data-i18n="嘘，小猫正在打盹。" role="status">嘘，小猫正在打盹。</p>
+                </div>
+                <p id="about-description" data-i18n="懒猫设备的灯光与定时控制助手。">懒猫设备的灯光与定时控制助手。</p>
+                <dl class="about-details">
+                    <div><dt data-i18n="应用版本">应用版本</dt><dd id="about-version">{{if .Version}}{{.Version}}{{else}}dev{{end}}</dd></div>
+                    <div><dt data-i18n="作者">作者</dt><dd>czyt</dd></div>
+                </dl>
+                <a class="about-project" href="https://github.com/lazycat-contrib/cat-led" target="_blank" rel="noopener noreferrer"><i class="ri-github-line" aria-hidden="true"></i><span data-i18n="项目主页">项目主页</span><i class="ri-external-link-line" aria-hidden="true"></i></a>
+            </div>
+        </dialog>
         <dialog id="settings-dialog" class="settings-dialog" aria-labelledby="settings-title">
             <div class="settings-heading">
                 <h2 id="settings-title" data-i18n="设置">设置</h2>
@@ -1113,6 +1145,8 @@
         </dialog>
         <link rel="stylesheet" href="/static/css/power.css" />
         <link rel="stylesheet" href="/static/css/settings.css" />
+        <link rel="stylesheet" href="/static/css/about.css" />
+        <script src="/static/js/about.js"></script>
         <script src="/static/js/reminders.js"></script>
         <script src="/static/js/settings.js"></script>
         <script src="/static/js/power.js"></script>

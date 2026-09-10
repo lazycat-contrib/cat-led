@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"cat-led/internal/auth"
+	"cat-led/internal/buildinfo"
 	"cat-led/internal/handlers"
 	"cat-led/internal/power"
 
@@ -109,7 +110,7 @@ func (s *Server) setupAuthenticatedRoutes() {
 
 	// HTML pages
 	authenticated.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", nil)
+		c.HTML(http.StatusOK, "index.html", gin.H{"Version": buildinfo.Version})
 	})
 	authenticated.GET("/config.html", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "config.html", nil)
