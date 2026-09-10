@@ -1,0 +1,25 @@
+.language-switch {
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  min-width:44px; min-height:44px; padding:0 9px; border:1px solid var(--border-color);
+  border-radius:12px; color:var(--text-secondary); background:transparent;
+  font-size:13px; font-weight:600; cursor:pointer;
+}
+.language-switch:focus-visible { outline:2px solid var(--primary-color); outline-offset:3px; }
+.login-language { display:flex; justify-content:flex-end; margin:-12px -12px 8px; }
+html[lang="en"] .schedule-item.disabled .schedule-name::after { content:"Disabled"; }
+html[lang="en"] .lamp-hint { max-width:13em; }
+html[lang="en"] .header-title { font-size:16px; }
+.user-details { min-width:0; }
+.user-actions { flex-shrink:0; gap:8px; }
+.power-heading h2 { overflow-wrap:anywhere; }
+.power-body { scrollbar-gutter:stable; }
+@media (max-width:480px) {
+ html[lang="en"] .header-title { font-size:14px; }
+ .user-actions { gap:4px; }
+ html[lang="en"] .user-profile { flex-wrap:wrap; }
+ html[lang="en"] .user-actions { margin-left:auto; }
+ html[lang="en"] .power-weekdays { grid-template-columns:repeat(4,minmax(44px,1fr)); }
+ .power-body { scrollbar-gutter:auto; }
+}
+
+.language-switch > i { font-size:17px; line-height:1; }

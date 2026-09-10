@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登录 - 懒猫关灯</title>
+    <title data-i18n="登录 - 懒猫关灯">登录 - 懒猫关灯</title>
     <link rel="stylesheet" href="/static/css/normalize-5.0.0.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/remixicon.css">
@@ -254,49 +254,54 @@
             color: #D70015;
         }
     </style>
+    <link rel="stylesheet" href="/static/css/i18n.css">
+    <script src="/static/js/i18n-messages.js"></script>
+    <script src="/static/js/i18n.js"></script>
 </head>
 <body>
     <div class="login-page">
         <div class="login-card">
+            <div class="login-language"><button type="button" class="language-switch" data-language-toggle aria-label="Switch to English"><i class="ri-translate-2" aria-hidden="true"></i><span data-language-label>EN</span></button></div>
             <div class="login-logo">
                 <i class="ri-lightbulb-flash-line"></i>
             </div>
             
-            <h1 class="login-title">懒猫关灯</h1>
-            <p class="login-subtitle">请使用您的账户登录以继续</p>
+            <h1 class="login-title"><span data-i18n="懒猫关灯">懒猫关灯</span></h1>
+            <p class="login-subtitle"><span data-i18n="请使用您的账户登录以继续">请使用您的账户登录以继续</span></p>
             
             <div id="error-message" class="error-message">
                 <i class="ri-error-warning-line"></i>
-                <span id="error-text">登录失败，请重试</span>
+                <span id="error-text"><span data-i18n="登录失败，请重试">登录失败，请重试</span></span>
             </div>
             
             {{if .OIDCAvailable}}
             <a href="{{.OIDCLoginURL}}" class="login-button" id="login-btn">
                 <i class="ri-login-circle-line"></i>
-                <span id="login-text">使用 OIDC 登录</span>
+                <span id="login-text"><span data-i18n="使用 OIDC 登录">使用 OIDC 登录</span></span>
                 <i class="ri-loader-4-line loading" id="loading-icon"></i>
             </a>
             {{else}}
             <div class="login-button login-button--disabled">
                 <i class="ri-error-warning-line"></i>
-                <span>OIDC 未配置</span>
+                <span><span data-i18n="OIDC 未配置">OIDC 未配置</span></span>
             </div>
             {{end}}
             
             <div class="login-footer">
                 {{if .OIDCAvailable}}
-                <p>通过 OIDC 统一身份认证系统登录</p>
-                <p>安全、便捷、统一管理</p>
+                <p><span data-i18n="通过 OIDC 统一身份认证系统登录">通过 OIDC 统一身份认证系统登录</span></p>
+                <p><span data-i18n="安全、便捷、统一管理">安全、便捷、统一管理</span></p>
                 {{else}}
-                <p>OIDC 认证未配置</p>
-                <p>请联系管理员配置认证系统或使用 Header 认证</p>
+                <p><span data-i18n="OIDC 认证未配置">OIDC 认证未配置</span></p>
+                <p><span data-i18n="请联系管理员配置认证系统或使用 Header 认证">请联系管理员配置认证系统或使用 Header 认证</span></p>
                 {{end}}
             </div>
         </div>
     </div>
 
     <script>
-        let currentTheme = localStorage.getItem('theme') || 'dark';
+        let currentTheme = 'dark';
+        try { currentTheme = localStorage.getItem('theme') || 'dark'; } catch {}
         document.documentElement.setAttribute('data-theme', currentTheme);
 
         const loginBtn = document.getElementById('login-btn');
@@ -307,17 +312,17 @@
                 const errorMessage = document.getElementById('error-message');
                 
                 errorMessage.classList.remove('show');
-                loginText.textContent = '正在跳转…';
+                I18n.text(loginText,"正在跳转…");
                 loadingIcon.classList.add('show');
                 loginBtn.style.pointerEvents = 'none';
                 
                 setTimeout(() => {
                     if (loginBtn.style.pointerEvents === 'none') {
-                        loginText.textContent = '使用 OIDC 登录';
+                        I18n.text(loginText,"使用 OIDC 登录");
                         loadingIcon.classList.remove('show');
                         loginBtn.style.pointerEvents = 'auto';
                         
-                        document.getElementById('error-text').textContent = '登录超时，请检查网络连接或重试';
+                        I18n.text(document.getElementById('error-text'),"登录超时，请检查网络连接或重试");
                         errorMessage.classList.add('show');
                     }
                 }, 5000);
@@ -332,23 +337,23 @@
             
             switch (error) {
                 case 'access_denied':
-                    errorText.textContent = '访问被拒绝，请检查您的权限';
+                    I18n.text(errorText,"访问被拒绝，请检查您的权限");
                     break;
                 case 'invalid_request':
-                    errorText.textContent = '请求无效，请重试';
+                    I18n.text(errorText,"请求无效，请重试");
                     break;
                 case 'server_error':
-                    errorText.textContent = '服务器错误，请稍后重试';
+                    I18n.text(errorText,"服务器错误，请稍后重试");
                     break;
                 case 'oidc_not_configured':
-                    errorText.textContent = 'OIDC认证未配置，请联系管理员或使用Header认证';
+                    I18n.text(errorText,"OIDC认证未配置，请联系管理员或使用Header认证");
                     const loginButton = document.getElementById('login-btn');
                     if (loginButton) {
                         loginButton.style.display = 'none';
                     }
                     break;
                 default:
-                    errorText.textContent = '登录失败: ' + error;
+                    I18n.text(errorText,"登录失败: {0}",{"0":error});
             }
             
             errorMessage.classList.add('show');

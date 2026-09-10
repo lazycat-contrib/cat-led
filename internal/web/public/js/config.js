@@ -42,7 +42,7 @@ async function fetchServerChanConfig() {
     try {
         const response = await fetch('/api/serverchan/config');
         if (!response.ok) {
-            throw new Error('获取Server酱配置失败');
+            throw new Error(I18n.t("获取Server酱配置失败"));
         }
 
         const config = await response.json();
@@ -51,7 +51,7 @@ async function fetchServerChanConfig() {
         updateConfigForm(config);
     } catch (error) {
         console.error('获取Server酱配置错误:', error);
-        showNotification('获取配置失败', 'error');
+        showNotification(I18n.t("获取配置失败"), 'error');
     }
 }
 
@@ -59,8 +59,8 @@ async function fetchServerChanConfig() {
 function updateConfigForm(config) {
     $serverchanEnabled.checked = config.enabled || false;
     $sendKey.value = config.sendKey || '';
-    $onTemplate.value = config.onTemplate || '{{.Name}} 任务执行成功，灯已开启';
-    $offTemplate.value = config.offTemplate || '{{.Name}} 任务执行成功，灯已关闭';
+    $onTemplate.value = config.onTemplate || I18n.t("{{.Name}} 任务执行成功，灯已开启");
+    $offTemplate.value = config.offTemplate || I18n.t("{{.Name}} 任务执行成功，灯已关闭");
 }
 
 // 保存Server酱配置
@@ -86,14 +86,14 @@ async function saveServerChanConfig(e) {
         
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || '保存配置失败');
+            throw new Error(I18n.error(errorData.error) || I18n.t("保存配置失败"));
         }
         
-        showNotification('配置保存成功', 'success');
+        showNotification(I18n.t("配置保存成功"), 'success');
         
     } catch (error) {
         console.error('保存Server酱配置错误:', error);
-        showNotification(`配置保存失败: ${error.message}`, 'error');
+        showNotification(I18n.t("配置保存失败: {0}", {"0": error.message}), 'error');
     }
 }
 
@@ -101,14 +101,14 @@ async function saveServerChanConfig(e) {
 async function fetchNtfyConfig() {
     try {
         const response = await fetch('/api/ntfy/config');
-        if (!response.ok) throw new Error('获取ntfy配置失败');
+        if (!response.ok) throw new Error(I18n.t("获取ntfy配置失败"));
         const config = await response.json();
         $ntfyEnabled.checked = config.enabled || false;
         $ntfyServerUrl.value = config.server_url || 'https://ntfy.sh';
         $ntfyTopic.value = config.topic || '';
         $ntfyToken.value = config.token || '';
-        $ntfyOnTemplate.value = config.on_template || '{{.Name}} 任务执行成功，灯已开启';
-        $ntfyOffTemplate.value = config.off_template || '{{.Name}} 任务执行成功，灯已关闭';
+        $ntfyOnTemplate.value = config.on_template || I18n.t("{{.Name}} 任务执行成功，灯已开启");
+        $ntfyOffTemplate.value = config.off_template || I18n.t("{{.Name}} 任务执行成功，灯已关闭");
     } catch (error) {
         console.error('获取ntfy配置错误:', error);
     }
@@ -133,29 +133,29 @@ async function saveNtfyConfig(e) {
         });
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || '保存配置失败');
+            throw new Error(I18n.error(errorData.error) || I18n.t("保存配置失败"));
         }
-        showNotification('ntfy配置保存成功', 'success');
+        showNotification(I18n.t("ntfy配置保存成功"), 'success');
     } catch (error) {
         console.error('保存ntfy配置错误:', error);
-        showNotification(`配置保存失败: ${error.message}`, 'error');
+        showNotification(I18n.t("配置保存失败: {0}", {"0": error.message}), 'error');
     }
 }
 
 // 测试ntfy连接
 async function testNtfyConnection() {
     $testNtfyBtn.disabled = true;
-    $testNtfyBtn.textContent = '测试中...';
+    $testNtfyBtn.textContent = I18n.t("测试中...");
     try {
         const response = await fetch('/api/ntfy/test', { method: 'POST' });
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error || '测试失败');
-        showNotification(data.message || '测试通知已发送', 'success');
+        if (!response.ok) throw new Error(I18n.error(data.error) || I18n.t("测试失败"));
+        showNotification(data.message || I18n.t("测试通知已发送"), 'success');
     } catch (error) {
-        showNotification(`测试失败: ${error.message}`, 'error');
+        showNotification(I18n.t("测试失败: {0}", {"0": error.message}), 'error');
     } finally {
         $testNtfyBtn.disabled = false;
-        $testNtfyBtn.textContent = '测试连接';
+        $testNtfyBtn.textContent = I18n.t("测试连接");
     }
 }
 
@@ -187,12 +187,13 @@ function showNotification(message, type = 'info') {
         <div class="toast-content">
             <p></p>
         </div>
-        <button class="toast-close" aria-label="关闭">
+        <button class="toast-close" aria-label="关闭" data-i18n-aria-label="关闭">
             <i class="ri-close-line"></i>
         </button>
     `;
 
-    toast.querySelector('.toast-content p').textContent = message;
+    toast.querySelector('.toast-content p').dataset.i18nMessage = message;
+    toast.querySelector('.toast-content p').textContent = I18n.error(message);
     // Append the notification after its text is populated.
     const container = document.getElementById('toast-container');
     container.appendChild(toast);
@@ -246,7 +247,8 @@ function initEventListeners() {
 // 初始化主题
 function initTheme() {
     // 检查本地存储中是否有保存的主题设置
-    const savedTheme = localStorage.getItem('theme');
+    let savedTheme;
+    try { savedTheme = localStorage.getItem('theme'); } catch {}
     if (savedTheme) {
         currentTheme = savedTheme;
     }
@@ -271,7 +273,7 @@ function initTheme() {
 function toggleTheme() {
     currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
     applyTheme(currentTheme);
-    localStorage.setItem('theme', currentTheme);
+    try { localStorage.setItem('theme', currentTheme); } catch {}
 }
 
 // 应用主题
@@ -290,3 +292,6 @@ function applyTheme(theme) {
         lightIcon.style.display = 'block';
     }
 }
+document.addEventListener('languagechange', () => {
+    $testNtfyBtn.textContent = I18n.t($testNtfyBtn.disabled ? '测试中...' : '测试连接');
+});

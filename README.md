@@ -66,3 +66,15 @@ use a mock backend and never schedule a real shutdown.
 
 Power-off uses LazyCat SDK `Poweroff`. RTC alarm readback cannot verify successful
 OS boot or network recovery.
+
+
+## 0.3.2
+
+- Keep the RTC dialog header and close button visible while its content scrolls.
+- Add English/Chinese switching on the main, settings and sign-in pages, with a
+  remembered browser preference and localized status, date and error messages.
+- Preserve unsaved form input, user-created schedule names and notification templates
+  when the display language changes.
+
+Validation also includes `node --test tests/i18n.test.cjs` for locale selection,
+placeholder preservation, error translation and message coverage.

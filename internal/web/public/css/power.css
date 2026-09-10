@@ -3,9 +3,11 @@
 /* Power scheduling follows the existing surface and typography tokens. */
 #power-plan-button[hidden], .power-dialog [hidden] { display: none !important; }
 #power-plan-button[data-active="true"] { color:var(--primary-color); border-color:var(--primary-color); }
-.power-dialog { color-scheme:light; width:min(560px, calc(100% - 32px)); max-height:calc(100dvh - 32px); margin:auto; padding:28px; overflow:auto; border:1px solid var(--border-color); border-radius:22px; background:var(--power-surface); color:var(--text-primary); box-shadow:var(--box-shadow-lg); }
+.power-dialog { color-scheme:light; width:min(560px, calc(100% - 32px)); max-height:calc(100dvh - 32px); margin:auto; padding:0; overflow:hidden; border:1px solid var(--border-color); border-radius:22px; background:var(--power-surface); color:var(--text-primary); box-shadow:var(--box-shadow-lg); }
 .power-dialog::backdrop { background:var(--modal-background); }
-.power-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:22px; }
+.power-dialog[open] { display:flex; flex-direction:column; }
+.power-body { min-height:0; overflow-y:auto; overscroll-behavior:contain; padding:0 28px 28px; }
+.power-heading { flex:none; padding:24px 28px 18px; background:var(--power-surface); display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:0; }
 .power-heading h2 { margin:0; font-size:23px; letter-spacing:-.02em; }
 .power-heading p { margin:7px 0 0; color:var(--text-secondary); font-size:14px; }
 .power-icon-button { display:grid; place-items:center; flex:none; width:44px; height:44px; border:0; border-radius:12px; background:transparent; color:var(--text-secondary); font-size:24px; cursor:pointer; }
@@ -40,7 +42,7 @@
 .power-dialog :focus-visible { outline:2px solid var(--primary-color); outline-offset:3px; }
 .power-dialog button:disabled, .power-dialog fieldset:disabled { opacity:.55; cursor:not-allowed; }
 @media (hover:hover) and (pointer:fine) { .power-icon-button:hover { background:var(--background-color); } }
-@media (max-width:480px) { .power-dialog { padding:20px; } .power-times { grid-template-columns:1fr; gap:10px; } .power-weekdays { display:grid; grid-template-columns:repeat(4,minmax(44px,1fr)); gap:8px; } .power-actions { flex-wrap:wrap; } }
+@media (max-width:480px) { .power-heading { padding:18px 20px 14px; } .power-body { padding:0 20px 20px; } .power-times { grid-template-columns:1fr; gap:10px; } .power-weekdays { display:grid; grid-template-columns:repeat(4,minmax(44px,1fr)); gap:8px; } .power-actions { flex-wrap:wrap; } }
 /* The RTC sheet reveals downward like paper and retracts along the same path. */
 .power-dialog {
   clip-path:inset(0 0 100% 0 round 22px);

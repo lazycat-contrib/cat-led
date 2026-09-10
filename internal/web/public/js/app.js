@@ -71,7 +71,7 @@ async function fetchUserInfo() {
     try {
         const response = await fetch('/userinfo');
         if (!response.ok) {
-            throw new Error('获取用户信息失败');
+            throw new Error(I18n.t("获取用户信息失败"));
         }
 
         const data = await response.json();
@@ -81,7 +81,7 @@ async function fetchUserInfo() {
 
         // 确保数据格式正确
         if (!data || typeof data !== 'object') {
-            throw new Error('用户信息格式不正确');
+            throw new Error(I18n.t("用户信息格式不正确"));
         }
 
         currentUserInfo = data.CurrentUserInfo || {};
@@ -93,7 +93,7 @@ async function fetchUserInfo() {
         updateUserInfoDisplay();
     } catch (error) {
         console.error('获取用户信息错误:', error);
-        showNotification('获取用户信息失败', 'error');
+        showNotification(I18n.t("获取用户信息失败"), 'error');
     }
 }
 
@@ -109,7 +109,7 @@ function updateUserInfoDisplay() {
         // 如果有头像，替换默认图标为图片
         const avatar = document.createElement('img');
         avatar.src = detailInfo.avatar;
-        avatar.alt = '用户头像';
+        avatar.alt = I18n.t("用户头像");
         userAvatarElem.replaceChildren(avatar);
     } else {
         // 没有头像时使用默认图标
@@ -117,7 +117,7 @@ function updateUserInfoDisplay() {
     }
 
     // 构建用户名显示文本，同时显示nickname和uid（如果存在）
-    let userNameText = '您好！ ';
+    let userNameText = I18n.t("您好！ ");
 
     // 检查nickname是否存在
     if (detailInfo && detailInfo.nickname) {
@@ -131,7 +131,7 @@ function updateUserInfoDisplay() {
         userNameText += detailInfo.uid;
     } else {
         // 都不存在
-        userNameText += '没名字的小懒猫';
+        userNameText += I18n.t("没名字的小懒猫");
     }
 
     // 安全地更新DOM
@@ -143,13 +143,13 @@ function updateUserInfoDisplay() {
         const userRoleElem = document.querySelector('.user-role');
         if (detailInfo && detailInfo.role) {
             // 根据role值显示对应角色名称
-            let roleName = '普通用户';
+            let roleName = I18n.t("普通用户");
             if (detailInfo.role === 1) {
-                roleName = '管理员';
+                roleName = I18n.t("管理员");
             } else if (detailInfo.role === 2) {
-                roleName = '超级管理员';
+                roleName = I18n.t("超级管理员");
             }
-            userRoleElem.textContent = `角色: ${roleName}`;
+            userRoleElem.textContent = I18n.t("角色: {0}", {"0": roleName});
             userRoleElem.style.display = ''; // 显示
         } else {
             userRoleElem.style.display = 'none'; // 隐藏
@@ -164,14 +164,14 @@ function updateUserInfoDisplay() {
         if (currentUserInfo && (currentUserInfo.DeviceID || currentUserInfo.DeviceVersion)) {
             // 只有在有值时显示相应信息
             if (currentUserInfo.DeviceID) {
-                deviceIdElem.textContent = `设备ID: ${currentUserInfo.DeviceID}`;
+                deviceIdElem.textContent = I18n.t("设备ID: {0}", {"0": currentUserInfo.DeviceID});
                 deviceIdElem.style.display = '';
             } else {
                 deviceIdElem.style.display = 'none';
             }
 
             if (currentUserInfo.DeviceVersion) {
-                deviceVersionElem.textContent = `版本: ${currentUserInfo.DeviceVersion}`;
+                deviceVersionElem.textContent = I18n.t("版本: {0}", {"0": currentUserInfo.DeviceVersion});
                 deviceVersionElem.style.display = '';
             } else {
                 deviceVersionElem.style.display = 'none';
@@ -195,7 +195,7 @@ async function fetchLedStatus() {
     try {
         const response = await fetch('/api/led-status');
         if (!response.ok) {
-            throw new Error('获取LED状态失败');
+            throw new Error(I18n.t("获取LED状态失败"));
         }
 
         const data = await response.json();
@@ -204,13 +204,13 @@ async function fetchLedStatus() {
         console.log('LED状态API响应:', data);
 
         if (typeof data.status !== 'boolean') {
-            throw new Error('无效的LED状态数据');
+            throw new Error(I18n.t("无效的LED状态数据"));
         }
 
         if (!ledPending && revision === ledRevision) updateLedStatus(data.status);
     } catch (error) {
         console.error('获取LED状态错误:', error);
-        if (!ledPending && revision === ledRevision) handleLedStatusError('获取状态失败');
+        if (!ledPending && revision === ledRevision) handleLedStatusError(I18n.t("获取状态失败"));
     }
 }
 
@@ -220,7 +220,7 @@ function handleLedStatusError(errorMsg) {
     console.error('LED状态错误:', errorMsg);
 
     // 更新UI以显示错误状态
-    $ledStatus.textContent = '状态未知';
+    $ledStatus.textContent = I18n.t("状态未知");
     $ledStatus.classList.add('error');
 
     ledKnown = false;
@@ -348,7 +348,7 @@ function updateLedStatus(status) {
         foxToggle.checked = !status; // LED开启=白天(unchecked), LED关闭=夜晚(checked)
     }
 
-    $ledStatus.textContent = status ? '已开启' : '已关闭';
+    $ledStatus.textContent = status ? I18n.t("已开启") : I18n.t("已关闭");
     $ledStatus.classList.remove('error');
 }
 
@@ -368,7 +368,7 @@ async function toggleLedStatus() {
         if (classicToggle) {
             classicToggle.disabled = true;
         }
-        $ledStatus.textContent = '更新中…';
+        $ledStatus.textContent = I18n.t("更新中…");
 
         // 构建请求URL
         const url = `/ledcontrol?turn=${newStatus ? 'on' : 'off'}`;
@@ -377,16 +377,16 @@ async function toggleLedStatus() {
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error('切换LED状态失败');
+            throw new Error(I18n.t("切换LED状态失败"));
         }
 
         // 更新UI
         const result = await response.json();
-        if (typeof result.status !== 'boolean') throw new Error('无效的LED状态数据');
+        if (typeof result.status !== 'boolean') throw new Error(I18n.t("无效的LED状态数据"));
         updateLedStatus(result.status);
 
         // 显示通知
-        showNotification(`灯已${currentLedStatus ? '开启' : '关闭'}`, 'success');
+        showNotification(I18n.t(currentLedStatus ? "灯已开启" : "灯已关闭"), 'success');
     } catch (error) {
         console.error('切换LED状态错误:', error);
 
@@ -394,7 +394,7 @@ async function toggleLedStatus() {
         updateLedStatus(currentLedStatus);
 
         // 显示错误通知
-        showNotification('操作失败', 'error');
+        showNotification(I18n.t("操作失败"), 'error');
     } finally {
         ledPending = false;
         document.querySelector(".lamp-stage").inert = false;
@@ -411,7 +411,7 @@ async function fetchSchedules() {
     try {
         const response = await fetch('/api/schedules');
         if (!response.ok) {
-            throw new Error('获取定时任务失败');
+            throw new Error(I18n.t("获取定时任务失败"));
         }
 
         schedules = await response.json();
@@ -421,7 +421,7 @@ async function fetchSchedules() {
         renderSchedulesList();
     } catch (error) {
         console.error('获取定时任务错误:', error);
-        showNotification('获取定时任务失败', 'error');
+        showNotification(I18n.t("获取定时任务失败"), 'error');
     }
 }
 
@@ -435,7 +435,7 @@ function renderSchedulesList() {
         $schedulesList.innerHTML = `
             <div class="empty-state">
                 <i class="ri-time-line"></i>
-                <p>暂无定时任务，点击右上角添加</p>
+                <p><span data-i18n="暂无定时任务，点击右上角添加">暂无定时任务，点击右上角添加</span></p>
             </div>
         `;
         document.dispatchEvent(new Event('schedules-rendered'));
@@ -455,24 +455,24 @@ function renderSchedulesList() {
         switch (schedule.operation) {
             case 'on':
                 operationIcon = 'ri-lightbulb-flash-line';
-                operationText = '开灯';
+                operationText = I18n.t("开灯");
                 break; // 不要忘记 break!
             case 'off': // 需要显式处理 'off'
                 operationIcon = 'ri-lightbulb-line';
-                operationText = '关灯';
+                operationText = I18n.t("关灯");
                 break;
             case 'shutdown':
                 operationIcon = 'ri-shut-down-fill';
-                operationText = '关机';
+                operationText = I18n.t("关机");
                 break;
             case 'reboot':
                 operationIcon = 'ri-restart-fill';
-                operationText = '重启';
+                operationText = I18n.t("重启");
                 break;
             default:
                 // 可选：处理未知的 operation 值
                 operationIcon = 'ri-question-mark'; // 示例：未知操作图标
-                operationText = '未知';
+                operationText = I18n.t("未知");
                 //console.warn(`Unknown schedule operation: ${schedule.operation}`);
         }
 
@@ -490,10 +490,10 @@ function renderSchedulesList() {
             <div class="schedule-header">
                 <h3 class="schedule-name"></h3>
                 <div class="schedule-actions">
-                    <button class="edit-btn" data-id="${schedule.id}" aria-label="编辑任务">
+                    <button class="edit-btn" data-id="${schedule.id}" aria-label="编辑任务" data-i18n-aria-label="编辑任务">
                         <i class="ri-edit-line"></i>
                     </button>
-                    <button class="delete-btn" data-id="${schedule.id}" aria-label="删除任务">
+                    <button class="delete-btn" data-id="${schedule.id}" aria-label="删除任务" data-i18n-aria-label="删除任务">
                         <i class="ri-delete-bin-line"></i>
                     </button>
                 </div>
@@ -513,11 +513,11 @@ function renderSchedulesList() {
                 </div>
             </div>
             <div class="schedule-notifications">
-                ${schedule.notifyViaServerChan ? '<span class="enabled"><i class="ri-notification-line"></i>Server酱</span>' : ''}
-                ${schedule.notifyViaLzc ? '<span class="enabled"><i class="ri-notification-badge-line"></i>懒猫</span>' : ''}
+                ${schedule.notifyViaServerChan ? "<span class=\"enabled\"><i class=\"ri-notification-line\"></i><span data-i18n=\"Server酱\">Server酱</span></span>" : ''}
+                ${schedule.notifyViaLzc ? "<span class=\"enabled\"><i class=\"ri-notification-badge-line\"></i><span data-i18n=\"懒猫\">懒猫</span></span>" : ''}
                 ${schedule.notifyViaNtfy ? '<span class="enabled"><i class="ri-notification-3-line"></i>ntfy</span>' : ''}
             </div>
-            <div class="schedule-creator" title="创建者">
+            <div class="schedule-creator" title="创建者" data-i18n-title="创建者">
                 <i class="ri-user-line"></i>
                 <span></span>
             </div>
@@ -530,7 +530,7 @@ function renderSchedulesList() {
         `;
 
         scheduleElement.querySelector('.schedule-name').textContent = schedule.name;
-        scheduleElement.querySelector('.schedule-creator span').textContent = schedule.creatorId || '未知';
+        scheduleElement.querySelector('.schedule-creator span').textContent = schedule.creatorId || I18n.t("未知");
         // Add only text for values controlled by other users.
         $schedulesList.appendChild(scheduleElement);
 
@@ -551,16 +551,16 @@ function renderSchedulesList() {
 
 // 渲染星期几
 function renderWeekdays(days) {
-    if (!days || days.length === 0) return '无重复';
+    if (!days || days.length === 0) return I18n.t("无重复");
 
-    const weekdayNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+    const weekdayNames = [I18n.t("周日"), I18n.t("周一"), I18n.t("周二"), I18n.t("周三"), I18n.t("周四"), I18n.t("周五"), I18n.t("周六")];
 
     // 如果包含所有日期
-    if (days.length === 7) return '每天';
+    if (days.length === 7) return I18n.t("每天");
 
     // 如果是工作日
     if (days.length === 5 && days.includes(1) && days.includes(2) && days.includes(3) && days.includes(4) && days.includes(5)) {
-        return '工作日';
+        return I18n.t("工作日");
     }
 
     return days.map(day => weekdayNames[day]).join(', ');
@@ -570,7 +570,7 @@ function renderWeekdays(days) {
 function openAddScheduleModal() {
     // 重置表单
     $scheduleForm.reset();
-    $modalTitle.textContent = '添加定时任务';
+    $modalTitle.textContent = I18n.t("添加定时任务");
     currentEditingScheduleId = null;
 
     // 重置选择的星期几
@@ -598,7 +598,7 @@ function openEditScheduleModal(scheduleId) {
 
     // 设置当前正在编辑的任务ID
     currentEditingScheduleId = scheduleId;
-    $modalTitle.textContent = '编辑定时任务';
+    $modalTitle.textContent = I18n.t("编辑定时任务");
 
     // 填充表单数据
     document.getElementById('schedule-name').value = schedule.name;
@@ -666,13 +666,13 @@ async function testLzcNotification() {
 
         const data = await response.json().catch(() => ({}));
         if (!response.ok) {
-            throw new Error(data.error || '发送测试通知失败');
+            throw new Error(I18n.error(data.error) || I18n.t("发送测试通知失败"));
         }
 
-        showNotification(data.message || '测试通知已发送', 'success');
+        showNotification(data.message || I18n.t("测试通知已发送"), 'success');
     } catch (error) {
         console.error('发送懒猫内置测试通知错误:', error);
-        showNotification(`测试通知失败: ${error.message}`, 'error');
+        showNotification(I18n.t("测试通知失败: {0}", {"0": error.message}), 'error');
     } finally {
         $testLzcNotifyBtn.disabled = false;
         $testLzcNotifyBtn.innerHTML = previousHTML;
@@ -757,7 +757,7 @@ async function saveSchedule(e) {
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || (currentEditingScheduleId ? '更新任务失败' : '创建任务失败'));
+            throw new Error(I18n.error(errorData.error) || (currentEditingScheduleId ? I18n.t("更新任务失败") : I18n.t("创建任务失败")));
         }
 
         // 关闭模态框
@@ -766,10 +766,10 @@ async function saveSchedule(e) {
         // 重新获取任务列表
         await fetchSchedules();
 
-        showNotification(currentEditingScheduleId ? '任务已更新' : '任务已创建', 'success');
+        showNotification(currentEditingScheduleId ? I18n.t("任务已更新") : I18n.t("任务已创建"), 'success');
     } catch (error) {
         console.error('保存定时任务错误:', error);
-        showNotification(`保存任务失败: ${error.message}`, 'error');
+        showNotification(I18n.t("保存任务失败: {0}", {"0": error.message}), 'error');
     }
 }
 
@@ -804,16 +804,16 @@ async function toggleSchedule(scheduleId) {
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || '更新任务状态失败');
+            throw new Error(I18n.error(errorData.error) || I18n.t("更新任务状态失败"));
         }
 
         // 重新获取任务列表而不是直接更新本地数据
         await fetchSchedules();
 
-        showNotification(`任务已${!schedule.enabled ? '启用' : '禁用'}`, 'success');
+        showNotification(I18n.t(!schedule.enabled ? "任务已启用" : "任务已禁用"), 'success');
     } catch (error) {
         console.error('切换任务状态错误:', error);
-        showNotification(`更新任务状态失败: ${error.message}`, 'error');
+        showNotification(I18n.t("更新任务状态失败: {0}", {"0": error.message}), 'error');
 
         // 恢复UI状态（因为操作失败）
         const toggleInput = document.querySelector(`#toggle-${scheduleId}`);
@@ -825,7 +825,7 @@ async function toggleSchedule(scheduleId) {
 
 // 删除定时任务
 async function deleteSchedule(scheduleId) {
-    if (!confirm('确定要删除这个任务吗？')) return;
+    if (!confirm(I18n.t("确定要删除这个任务吗？"))) return;
 
     try {
         const response = await fetch(`/api/schedules/${scheduleId}`, {
@@ -834,16 +834,16 @@ async function deleteSchedule(scheduleId) {
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || '删除任务失败');
+            throw new Error(I18n.error(errorData.error) || I18n.t("删除任务失败"));
         }
 
         // 重新获取任务列表
         await fetchSchedules();
 
-        showNotification('任务已删除', 'success');
+        showNotification(I18n.t("任务已删除"), 'success');
     } catch (error) {
         console.error('删除任务错误:', error);
-        showNotification(`删除任务失败: ${error.message}`, 'error');
+        showNotification(I18n.t("删除任务失败: {0}", {"0": error.message}), 'error');
     }
 }
 
@@ -875,12 +875,13 @@ function showNotification(message, type = 'info') {
         <div class="toast-content">
             <p></p>
         </div>
-        <button class="toast-close" aria-label="关闭">
+        <button class="toast-close" aria-label="关闭" data-i18n-aria-label="关闭">
             <i class="ri-close-line"></i>
         </button>
     `;
 
-    toast.querySelector('.toast-content p').textContent = message;
+    toast.querySelector('.toast-content p').dataset.i18nMessage = message;
+    toast.querySelector('.toast-content p').textContent = I18n.error(message);
     // Append the notification after its text is populated.
     const container = document.getElementById('toast-container');
     container.appendChild(toast);
@@ -1174,7 +1175,8 @@ function initEventListeners() {
 // 初始化主题
 function initTheme() {
     // 检查本地存储中是否有保存的主题设置
-    const savedTheme = localStorage.getItem('theme');
+    let savedTheme;
+    try { savedTheme = localStorage.getItem('theme'); } catch {}
     if (savedTheme) {
         currentTheme = savedTheme;
     }
@@ -1199,7 +1201,7 @@ function initTheme() {
 function toggleTheme() {
     currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
     applyTheme(currentTheme);
-    localStorage.setItem('theme', currentTheme);
+    try { localStorage.setItem('theme', currentTheme); } catch {}
 }
 
 // 应用主题
@@ -1221,10 +1223,10 @@ function applyTheme(theme) {
 
 // 处理登出
 function handleLogout() {
-    if (confirm('确定要退出登录吗?')) {
+    if (confirm(I18n.t("确定要退出登录吗?"))) {
         // 显示加载状态
         if ($logoutBtn) {
-            $logoutBtn.innerHTML = '<i class="ri-loader-4-line" style="animation: spin 1s linear infinite;"></i><span>退出中…</span>';
+            $logoutBtn.innerHTML = "<i class=\"ri-loader-4-line\" style=\"animation: spin 1s linear infinite;\"></i><span><span data-i18n=\"退出中…\">退出中…</span></span>";
             $logoutBtn.disabled = true;
         }
         
@@ -1400,7 +1402,8 @@ async function updateUserPreference(bulbStyle) {
     if ($bulbStyleModal.contains(document.activeElement)) $closeBulbStyleModalBtn.focus({preventScroll: true});
     cards.forEach(card => { card.disabled = true; });
     const status = document.getElementById('style-save-status');
-    status.textContent = '正在保存…';
+    status.dataset.i18n = "正在保存…";
+    status.textContent = I18n.t("正在保存…");
     try {
         const response = await fetch('/api/user/preference', {
             method: 'PUT',
@@ -1414,7 +1417,7 @@ async function updateUserPreference(bulbStyle) {
         });
 
         if (!response.ok) {
-            throw new Error('更新用户偏好失败');
+            throw new Error(I18n.t("更新用户偏好失败"));
         }
 
         const data = await response.json();
@@ -1422,11 +1425,13 @@ async function updateUserPreference(bulbStyle) {
 
         // 应用新样式
         applyBulbStyle(bulbStyle);
+        delete status.dataset.i18n;
         status.textContent = '';
         return true;
     } catch (error) {
         console.error('更新用户偏好错误:', error);
-        status.textContent = '保存失败，请重试';
+        status.dataset.i18n = "保存失败，请重试";
+        status.textContent = I18n.t("保存失败，请重试");
         return false;
     } finally {
         stylePending = false;
@@ -1634,4 +1639,16 @@ $bulbStyleModal.addEventListener('keydown', event => {
     } else if (!event.shiftKey && (document.activeElement === last || !controls.includes(document.activeElement))) {
         event.preventDefault(); first.focus();
     }
+});
+
+// Refresh labels from current state without reloading or resetting open forms.
+document.addEventListener('languagechange', () => {
+    if (currentUserInfo) updateUserInfoDisplay();
+    if (!ledPending) $ledStatus.textContent = I18n.t(ledKnown ? (currentLedStatus ? '已开启' : '已关闭') : '状态未知');
+    else $ledStatus.textContent = I18n.t('更新中…');
+    $modalTitle.textContent = I18n.t(currentEditingScheduleId ? '编辑定时任务' : '添加定时任务');
+    const styleName = document.querySelector(`.bulb-style-card[data-style="${currentBulbStyle}"] .style-name`);
+    if (styleName) document.getElementById('lamp-style-name').textContent = styleName.textContent;
+    if (stylePending) document.getElementById('style-save-status').textContent = I18n.t('正在保存…');
+    renderSchedulesList();
 });

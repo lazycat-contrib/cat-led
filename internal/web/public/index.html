@@ -5,12 +5,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="color-scheme" content="dark light" />
         <meta name="theme-color" content="#514878" />
-        <title>懒猫小灯</title>
+        <title data-i18n="懒猫小灯">懒猫小灯</title>
         <link rel="stylesheet" href="/static/css/normalize-5.0.0.min.css" />
         <link rel="stylesheet" href="/static/css/style.css" />
         <!-- 添加图标库 -->
         <link rel="stylesheet" href="/static/css/remixicon.css" />
-    </head>
+        <link rel="stylesheet" href="/static/css/i18n.css">
+    <script src="/static/js/i18n-messages.js"></script>
+    <script src="/static/js/i18n.js"></script>
+</head>
     <body>
         <!-- 动效背景容器 -->
         <div class="background-container">
@@ -21,9 +24,9 @@
         <div id="app">
             <!-- 顶部导航栏 -->
             <header class="app-header">
-                <div class="header-title">懒猫小灯</div>
+                <div class="header-title"><span data-i18n="懒猫小灯">懒猫小灯</span></div>
                 <div class="header-actions">
-                    <button id="theme-toggle" aria-label="切换主题">
+                    <button id="theme-toggle" aria-label="切换主题" data-i18n-aria-label="切换主题">
                         <!-- 暗色主题图标 -->
                         <svg
                             id="dark-icon"
@@ -92,7 +95,7 @@
                             ></path>
                         </svg>
                     </button>
-                    <a href="/config.html" aria-label="配置">
+                    <a href="/config.html" aria-label="配置" data-i18n-aria-label="配置">
                         <svg
                             t="1757391383098"
                             class="icon"
@@ -112,10 +115,10 @@
                             ></path>
                         </svg>
                     </a>
-                    <button id="power-plan-button" type="button" aria-label="定时开关机" title="定时开关机" aria-haspopup="dialog" hidden>
+                    <button id="power-plan-button" type="button" aria-label="定时开关机" data-i18n-aria-label="定时开关机" title="定时开关机" data-i18n-title="定时开关机" aria-haspopup="dialog" hidden>
                         <i class="ri-timer-line" aria-hidden="true"></i>
                     </button>
-                    <button id="add-schedule-btn" aria-label="添加定时任务">
+                    <button id="add-schedule-btn" aria-label="添加定时任务" data-i18n-aria-label="添加定时任务">
                         <i class="ri-add-line"></i>
                     </button>
                 </div>
@@ -129,28 +132,29 @@
                             class="ri-user-3-line"
                             aria-hidden="true"
                             role="img"
-                            aria-label="用户头像"
+                            aria-label="用户头像" data-i18n-aria-label="用户头像"
                         ></i>
                     </div>
                     <div class="user-details">
-                        <div class="user-name">加载中…</div>
-                        <div class="user-role">角色: 加载中…</div>
+                        <div class="user-name"><span data-i18n="加载中…">加载中…</span></div>
+                        <div class="user-role"><span data-i18n="角色: 加载中…">角色: 加载中…</span></div>
                     </div>
                     <div class="user-actions">
+                        <button type="button" class="language-switch" data-language-toggle aria-label="Switch to English"><i class="ri-translate-2" aria-hidden="true"></i><span data-language-label>EN</span></button>
                         <button
                             id="logout-btn"
-                            aria-label="登出"
-                            title="退出登录"
+                            aria-label="登出" data-i18n-aria-label="登出"
+                            title="退出登录" data-i18n-title="退出登录"
                             class="logout-button"
                         >
                             <i class="ri-logout-circle-r-line"></i>
-                            <span>退出</span>
+                            <span><span data-i18n="退出">退出</span></span>
                         </button>
                     </div>
                 </div>
                 <div class="device-info">
-                    <div class="device-id">设备ID: 加载中…</div>
-                    <div class="device-version">版本: 加载中…</div>
+                    <div class="device-id"><span data-i18n="设备ID: 加载中…">设备ID: 加载中…</span></div>
+                    <div class="device-version"><span data-i18n="版本: 加载中…">版本: 加载中…</span></div>
                 </div>
             </section>
 
@@ -158,12 +162,12 @@
 
             <!-- LED当前状态展示 -->
             <section class="led-status-section" data-power="unknown" aria-busy="true">
-                <div class="lamp-heading"><div><h2>设备灯光</h2><p id="lamp-style-name">经典灯泡</p></div><span class="lamp-hint">轻触灯具，切换明暗</span></div>
+                <div class="lamp-heading"><div><h2><span data-i18n="设备灯光">设备灯光</span></h2><p id="lamp-style-name"><span data-i18n="经典灯泡">经典灯泡</span></p></div><span class="lamp-hint"><span data-i18n="轻触灯具，切换明暗">轻触灯具，切换明暗</span></span></div>
                 <div class="lamp-stage" inert>
                 <!-- 经典灯泡样式 -->
                 <div class="bulb-container bulb-classic active">
                     <div class="switch">
-                        <input type="checkbox" name="toggle" id="led-toggle" aria-label="设备灯光" />
+                        <input type="checkbox" name="toggle" id="led-toggle" aria-label="设备灯光" data-i18n-aria-label="设备灯光" />
                         <label for="led-toggle">
                             <i class="bulb">
                                 <span class="bulb-center"></span>
@@ -188,7 +192,7 @@
                     class="bulb-container bulb-lava"
                     role="button"
                     tabindex="0"
-                    aria-label="熔岩灯开关"
+                    aria-label="熔岩灯开关" data-i18n-aria-label="熔岩灯开关"
                 >
                     <div class="glow-lava"></div>
                     <div class="frame-lava">
@@ -212,7 +216,7 @@
                     class="bulb-container bulb-vintage"
                     role="button"
                     tabindex="0"
-                    aria-label="老式台灯开关"
+                    aria-label="老式台灯开关" data-i18n-aria-label="老式台灯开关"
                 >
                     <svg
                         class="vintage-lamp"
@@ -220,7 +224,7 @@
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                         role="img"
-                        aria-label="老式台灯"
+                        aria-label="老式台灯" data-i18n-aria-label="老式台灯"
                     >
                         <g class="lamp__shade shade">
                             <ellipse
@@ -455,7 +459,7 @@
                             fill="#C4C4C4"
                             role="button"
                             tabindex="0"
-                            aria-label="拉绳开关"
+                            aria-label="拉绳开关" data-i18n-aria-label="拉绳开关"
                         />
                     </svg>
                 </div>
@@ -465,12 +469,12 @@
                     class="bulb-container bulb-liquid"
                     role="button"
                     tabindex="0"
-                    aria-label="液态光效开关"
+                    aria-label="液态光效开关" data-i18n-aria-label="液态光效开关"
                 >
                     <canvas
                         id="liquid-canvas"
                         role="img"
-                        aria-label="液态光效动画"
+                        aria-label="液态光效动画" data-i18n-aria-label="液态光效动画"
                     ></canvas>
                     <div class="liquid-title" aria-hidden="true">
                         Liquid Lights
@@ -495,7 +499,7 @@
                     class="bulb-container bulb-analog"
                     role="button"
                     tabindex="0"
-                    aria-label="点阵时钟"
+                    aria-label="点阵时钟" data-i18n-aria-label="点阵时钟"
                 >
                     <div class="analog-clock" data-time="000000">
                         <div class="analog-row">
@@ -569,7 +573,7 @@
                     class="bulb-container bulb-single-led"
                     role="button"
                     tabindex="0"
-                    aria-label="Single LED开关"
+                    aria-label="Single LED开关" data-i18n-aria-label="Single LED开关"
                 >
                     <div class="single-led-bulb">
                         <div class="single-led-eyes">
@@ -585,7 +589,7 @@
                     class="bulb-container bulb-neon-switch"
                     role="button"
                     tabindex="0"
-                    aria-label="霓虹开关"
+                    aria-label="霓虹开关" data-i18n-aria-label="霓虹开关"
                 >
                     <label class="neon-switch">
                         <input class="neon-switch__input" type="checkbox" role="switch">
@@ -629,11 +633,11 @@
                     class="bulb-container bulb-fox-daynight"
                     role="button"
                     tabindex="0"
-                    aria-label="狐狸日夜灯开关"
+                    aria-label="狐狸日夜灯开关" data-i18n-aria-label="狐狸日夜灯开关"
                 >
                     <div class="fox-container">
                         <input type="checkbox" id="fox-toggle" />
-                        <label for="fox-toggle" aria-label="日夜切换"></label>
+                        <label for="fox-toggle" aria-label="日夜切换" data-i18n-aria-label="日夜切换"></label>
 
                         <div class="fox-day-night-cont">
                             <span class="fox-sun-indicator" aria-hidden="true"></span>
@@ -668,11 +672,11 @@
 
                 </div>
                 <div class="led-status-text" role="status" aria-live="polite">
-                    当前状态: <span id="led-status">加载中…</span>
+                    <span data-i18n="当前状态:">当前状态:</span> <span id="led-status"><span data-i18n="加载中…">加载中…</span></span>
                 </div>
 
                 <!-- 灯泡样式切换按钮 -->
-                <button id="bulb-style-toggle" aria-label="选择灯泡样式" aria-controls="bulb-style-modal" aria-expanded="false">
+                <button id="bulb-style-toggle" aria-label="选择灯泡样式" data-i18n-aria-label="选择灯泡样式" aria-controls="bulb-style-modal" aria-expanded="false">
                     <svg
                         class="bulb-style-icon"
                         viewBox="0 0 1024 1024"
@@ -690,7 +694,7 @@
 
             <!-- 定时任务列表 -->
             <section class="schedules-section">
-                <h2 class="section-title">定时任务</h2>
+                <h2 class="section-title"><span data-i18n="定时任务">定时任务</span></h2>
                 <div class="schedules-list" id="schedules-list">
                     <!-- 定时任务将通过JavaScript动态插入 -->
                     <div class="empty-state">
@@ -698,9 +702,9 @@
                             class="ri-time-line"
                             aria-hidden="true"
                             role="img"
-                            aria-label="时钟图标"
+                            aria-label="时钟图标" data-i18n-aria-label="时钟图标"
                         ></i>
-                        <p>暂无定时任务，点击右上角添加</p>
+                        <p><span data-i18n="暂无定时任务，点击右上角添加">暂无定时任务，点击右上角添加</span></p>
                     </div>
                 </div>
             </section>
@@ -709,25 +713,25 @@
             <div class="modal" id="schedule-modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h3 id="modal-title">添加定时任务</h3>
-                        <button id="close-modal-btn" aria-label="关闭">
+                        <h3 id="modal-title"><span data-i18n="添加定时任务">添加定时任务</span></h3>
+                        <button id="close-modal-btn" aria-label="关闭" data-i18n-aria-label="关闭">
                             <i class="ri-close-line"></i>
                         </button>
                     </div>
                     <div class="modal-body">
                         <form id="schedule-form">
                             <div class="form-group">
-                                <label for="schedule-name">任务名称</label>
+                                <label for="schedule-name"><span data-i18n="任务名称">任务名称</span></label>
                                 <input
                                     type="text"
                                     id="schedule-name"
-                                    placeholder="请输入任务名称"
+                                    placeholder="请输入任务名称" data-i18n-placeholder="请输入任务名称"
                                     required
                                 />
                             </div>
                             <div class="form-group time-picker-group">
                                 <div class="time-picker">
-                                    <label for="start-time">执行时间</label>
+                                    <label for="start-time"><span data-i18n="执行时间">执行时间</span></label>
                                     <input
                                         type="time"
                                         id="start-time"
@@ -735,17 +739,17 @@
                                     />
                                 </div>
                                 <div class="operation-picker">
-                                    <label for="operation">操作</label>
+                                    <label for="operation"><span data-i18n="操作">操作</span></label>
                                     <select id="operation" required>
-                                        <option value="on">开灯</option>
-                                        <option value="off">关灯</option>
-                                        <option value="shutdown">关机</option>
-                                        <option value="reboot">重启</option>
+                                        <option value="on" data-i18n="开灯">开灯</option>
+                                        <option value="off" data-i18n="关灯">关灯</option>
+                                        <option value="shutdown" data-i18n="关机">关机</option>
+                                        <option value="reboot" data-i18n="重启">重启</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label id="repeat-label">重复</label>
+                                <label id="repeat-label"><span data-i18n="重复">重复</span></label>
                                 <div
                                     class="repeat-days"
                                     role="group"
@@ -758,7 +762,7 @@
                                         aria-checked="false"
                                         tabindex="0"
                                     >
-                                        日
+                                        <span data-i18n="日">日</span>
                                     </div>
                                     <div
                                         class="day-select"
@@ -767,7 +771,7 @@
                                         aria-checked="false"
                                         tabindex="0"
                                     >
-                                        一
+                                        <span data-i18n="一">一</span>
                                     </div>
                                     <div
                                         class="day-select"
@@ -776,7 +780,7 @@
                                         aria-checked="false"
                                         tabindex="0"
                                     >
-                                        二
+                                        <span data-i18n="二">二</span>
                                     </div>
                                     <div
                                         class="day-select"
@@ -785,7 +789,7 @@
                                         aria-checked="false"
                                         tabindex="0"
                                     >
-                                        三
+                                        <span data-i18n="三">三</span>
                                     </div>
                                     <div
                                         class="day-select"
@@ -794,7 +798,7 @@
                                         aria-checked="false"
                                         tabindex="0"
                                     >
-                                        四
+                                        <span data-i18n="四">四</span>
                                     </div>
                                     <div
                                         class="day-select"
@@ -803,7 +807,7 @@
                                         aria-checked="false"
                                         tabindex="0"
                                     >
-                                        五
+                                        <span data-i18n="五">五</span>
                                     </div>
                                     <div
                                         class="day-select"
@@ -812,12 +816,12 @@
                                         aria-checked="false"
                                         tabindex="0"
                                     >
-                                        六
+                                        <span data-i18n="六">六</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group toggle-group">
-                                <label for="allow-edit">允许他人编辑</label>
+                                <label for="allow-edit"><span data-i18n="允许他人编辑">允许他人编辑</span></label>
                                 <div class="toggle-switch">
                                     <input type="checkbox" id="allow-edit" />
                                     <label
@@ -827,7 +831,7 @@
                                 </div>
                             </div>
                             <div class="form-group toggle-group">
-                                <label for="schedule-enabled">启用任务</label>
+                                <label for="schedule-enabled"><span data-i18n="启用任务">启用任务</span></label>
                                 <div class="toggle-switch">
                                     <input
                                         type="checkbox"
@@ -842,7 +846,7 @@
                             </div>
                             <div class="form-group toggle-group">
                                 <label for="notify-via-server-chan"
-                                    >Server酱通知</label
+                                    ><span data-i18n="Server酱通知">Server酱通知</span></label
                                 >
                                 <div class="toggle-switch">
                                     <input
@@ -857,15 +861,15 @@
                             </div>
                             <div class="form-group toggle-group">
                                 <label for="notify-via-lzc"
-                                    >懒猫内置通知</label
+                                    ><span data-i18n="懒猫内置通知">懒猫内置通知</span></label
                                 >
                                 <div class="notification-toggle-actions">
                                     <button
                                         type="button"
                                         class="secondary-button notification-test-button"
                                         id="test-lzc-notify-btn"
-                                        aria-label="发送懒猫内置测试通知"
-                                        title="发送测试通知"
+                                        aria-label="发送懒猫内置测试通知" data-i18n-aria-label="发送懒猫内置测试通知"
+                                        title="发送测试通知" data-i18n-title="发送测试通知"
                                         hidden
                                     >
                                         <i class="ri-send-plane-line"></i>
@@ -884,7 +888,7 @@
                             </div>
                             <div class="form-group toggle-group">
                                 <label for="notify-via-ntfy"
-                                    >ntfy 通知</label
+                                    ><span data-i18n="ntfy 通知">ntfy 通知</span></label
                                 >
                                 <div class="toggle-switch">
                                     <input
@@ -903,14 +907,14 @@
                                     class="primary-button"
                                     id="save-schedule-btn"
                                 >
-                                    保存
+                                    <span data-i18n="保存">保存</span>
                                 </button>
                                 <button
                                     type="button"
                                     class="secondary-button"
                                     id="cancel-schedule-btn"
                                 >
-                                    取消
+                                    <span data-i18n="取消">取消</span>
                                 </button>
                             </div>
                         </form>
@@ -922,16 +926,16 @@
             <div class="modal" id="bulb-style-modal" role="dialog" aria-modal="true" aria-labelledby="bulb-style-title" inert>
                 <div class="modal-content bulb-style-modal-content">
                     <div class="modal-header">
-                        <h3 id="bulb-style-title">选择灯光样式</h3>
+                        <h3 id="bulb-style-title"><span data-i18n="选择灯光样式">选择灯光样式</span></h3>
                         <button
                             id="close-bulb-style-modal-btn"
-                            aria-label="关闭"
+                            aria-label="关闭" data-i18n-aria-label="关闭"
                         >
                             <i class="ri-close-line"></i>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p class="style-guide">选一种喜欢的光，开关状态始终与设备同步。</p><p id="style-save-status" role="status" aria-live="polite"></p>
+                        <p class="style-guide"><span data-i18n="选一种喜欢的光，开关状态始终与设备同步。">选一种喜欢的光，开关状态始终与设备同步。</span></p><p id="style-save-status" role="status" aria-live="polite"></p>
                         <div class="bulb-style-grid">
                             <button
                                 class="bulb-style-card active"
@@ -941,9 +945,9 @@
                                     <div class="preview-classic-bulb"></div>
                                 </div>
                                 <div class="style-info">
-                                    <h4 class="style-name">经典灯泡</h4>
+                                    <h4 class="style-name"><span data-i18n="经典灯泡">经典灯泡</span></h4>
                                     <p class="style-desc">
-                                        暖色玻璃灯泡，细腻灯丝光晕
+                                        <span data-i18n="暖色玻璃灯泡，细腻灯丝光晕">暖色玻璃灯泡，细腻灯丝光晕</span>
                                     </p>
                                 </div>
                             </button>
@@ -954,9 +958,9 @@
                                     </div>
                                 </div>
                                 <div class="style-info">
-                                    <h4 class="style-name">熔岩灯</h4>
+                                    <h4 class="style-name"><span data-i18n="熔岩灯">熔岩灯</span></h4>
                                     <p class="style-desc">
-                                        六边形熔岩灯，浮动气泡效果
+                                        <span data-i18n="六边形熔岩灯，浮动气泡效果">六边形熔岩灯，浮动气泡效果</span>
                                     </p>
                                 </div>
                             </button>
@@ -968,9 +972,9 @@
                                     <div class="preview-vintage-lamp"></div>
                                 </div>
                                 <div class="style-info">
-                                    <h4 class="style-name">老式台灯</h4>
+                                    <h4 class="style-name"><span data-i18n="老式台灯">老式台灯</span></h4>
                                     <p class="style-desc">
-                                        复古台灯，拉绳开关设计
+                                        <span data-i18n="复古台灯，拉绳开关设计">复古台灯，拉绳开关设计</span>
                                     </p>
                                 </div>
                             </button>
@@ -979,9 +983,9 @@
                                     <div class="preview-liquid-light"></div>
                                 </div>
                                 <div class="style-info">
-                                    <h4 class="style-name">液态光效</h4>
+                                    <h4 class="style-name"><span data-i18n="液态光效">液态光效</span></h4>
                                     <p class="style-desc">
-                                        琥珀色光点，缓缓流动
+                                        <span data-i18n="琥珀色光点，缓缓流动">琥珀色光点，缓缓流动</span>
                                     </p>
                                 </div>
                             </button>
@@ -993,9 +997,9 @@
                                     <div class="preview-lightbulb"></div>
                                 </div>
                                 <div class="style-info">
-                                    <h4 class="style-name">灯泡开关</h4>
+                                    <h4 class="style-name"><span data-i18n="灯泡开关">灯泡开关</span></h4>
                                     <p class="style-desc">
-                                        拨动开关样式，简洁设计
+                                        <span data-i18n="拨动开关样式，简洁设计">拨动开关样式，简洁设计</span>
                                     </p>
                                 </div>
                             </button>
@@ -1004,9 +1008,9 @@
                                     <div class="preview-analog-clock"></div>
                                 </div>
                                 <div class="style-info">
-                                    <h4 class="style-name">点阵时钟</h4>
+                                    <h4 class="style-name"><span data-i18n="点阵时钟">点阵时钟</span></h4>
                                     <p class="style-desc">
-                                        7×7点阵，实时显示时间
+                                        <span data-i18n="7×7点阵，实时显示时间">7×7点阵，实时显示时间</span>
                                     </p>
                                 </div>
                             </button>
@@ -1015,9 +1019,9 @@
                                     <div class="preview-single-led"></div>
                                 </div>
                                 <div class="style-info">
-                                    <h4 class="style-name">微光灯泡</h4>
+                                    <h4 class="style-name"><span data-i18n="微光灯泡">微光灯泡</span></h4>
                                     <p class="style-desc">
-                                        表情灯泡，可爱设计
+                                        <span data-i18n="表情灯泡，可爱设计">表情灯泡，可爱设计</span>
                                     </p>
                                 </div>
                             </button>
@@ -1026,9 +1030,9 @@
                                     <div class="preview-neon-switch"></div>
                                 </div>
                                 <div class="style-info">
-                                    <h4 class="style-name">霓虹开关</h4>
+                                    <h4 class="style-name"><span data-i18n="霓虹开关">霓虹开关</span></h4>
                                     <p class="style-desc">
-                                        霓虹灯效果，科技感设计
+                                        <span data-i18n="霓虹灯效果，科技感设计">霓虹灯效果，科技感设计</span>
                                     </p>
                                 </div>
                             </button>
@@ -1037,9 +1041,9 @@
                                     <div class="preview-fox-daynight"></div>
                                 </div>
                                 <div class="style-info">
-                                    <h4 class="style-name">狐狸日夜灯</h4>
+                                    <h4 class="style-name"><span data-i18n="狐狸日夜灯">狐狸日夜灯</span></h4>
                                     <p class="style-desc">
-                                        日夜切换，可爱狐狸设计
+                                        <span data-i18n="日夜切换，可爱狐狸设计">日夜切换，可爱狐狸设计</span>
                                     </p>
                                 </div>
                             </button>
@@ -1059,12 +1063,13 @@
 
         <dialog id="power-dialog" class="power-dialog" aria-labelledby="power-title" aria-describedby="power-description">
             <div class="power-heading">
-                <div><h2 id="power-title">定时开关机</h2><p id="power-description">按需开启，保存后生效。</p></div>
-                <button id="power-close" type="button" class="power-icon-button" aria-label="关闭定时开关机"><i class="ri-close-line" aria-hidden="true"></i></button>
+                <div><h2 id="power-title"><span data-i18n="定时开关机">定时开关机</span></h2><p id="power-description"><span data-i18n="按需开启，保存后生效。">按需开启，保存后生效。</span></p></div>
+                <button id="power-close" type="button" class="power-icon-button" aria-label="关闭定时开关机" data-i18n-aria-label="关闭定时开关机"><i class="ri-close-line" aria-hidden="true"></i></button>
             </div>
+            <div class="power-body">
             <div class="power-status" aria-live="polite">
-                <span id="power-phase">正在读取设备…</span>
-                <dl id="power-next" hidden><div id="power-next-off-row"><dt>下次关机</dt><dd id="power-next-off"></dd></div><div id="power-next-on-row"><dt>下次开机</dt><dd id="power-next-on"></dd></div></dl>
+                <span id="power-phase"><span data-i18n="正在读取设备…">正在读取设备…</span></span>
+                <dl id="power-next" hidden><div id="power-next-off-row"><dt><span data-i18n="下次关机">下次关机</span></dt><dd id="power-next-off"></dd></div><div id="power-next-on-row"><dt><span data-i18n="下次开机">下次开机</span></dt><dd id="power-next-on"></dd></div></dl>
             </div>
             <p id="power-device-error" class="power-error" role="status" hidden></p>
             <form id="power-form">
@@ -1072,33 +1077,34 @@
                     <div class="power-switches">
                         <label class="power-switch-row" for="power-off-enabled">
                             <i class="ri-timer-2-line" aria-hidden="true"></i>
-                            <span class="power-switch-copy"><strong>定时关机</strong></span>
+                            <span class="power-switch-copy"><strong><span data-i18n="定时关机">定时关机</span></strong></span>
                             <span class="power-switch"><input id="power-off-enabled" type="checkbox" role="switch" aria-controls="power-off-field power-options"><span aria-hidden="true"></span></span>
                         </label>
                         <label class="power-switch-row" for="power-on-enabled">
                             <i class="ri-alarm-line" aria-hidden="true"></i>
-                            <span class="power-switch-copy"><strong>定时开机</strong></span>
+                            <span class="power-switch-copy"><strong><span data-i18n="定时开机">定时开机</span></strong></span>
                             <span class="power-switch"><input id="power-on-enabled" type="checkbox" role="switch" aria-controls="power-on-field power-options"><span aria-hidden="true"></span></span>
                         </label>
                     </div>
                     <div id="power-options" hidden>
-                        <div class="power-field"><label for="power-mode">重复方式</label><select id="power-mode"><option value="once">仅一次</option><option value="weekly">每周重复</option></select></div>
-                        <fieldset id="power-weekdays" class="power-weekdays" hidden><legend id="power-days-label">执行日期</legend>
-                            <label><input type="checkbox" value="1" aria-label="周一"><span>一</span></label><label><input type="checkbox" value="2" aria-label="周二"><span>二</span></label><label><input type="checkbox" value="3" aria-label="周三"><span>三</span></label><label><input type="checkbox" value="4" aria-label="周四"><span>四</span></label><label><input type="checkbox" value="5" aria-label="周五"><span>五</span></label><label><input type="checkbox" value="6" aria-label="周六"><span>六</span></label><label><input type="checkbox" value="0" aria-label="周日"><span>日</span></label>
+                        <div class="power-field"><label for="power-mode"><span data-i18n="重复方式">重复方式</span></label><select id="power-mode"><option value="once" data-i18n="仅一次">仅一次</option><option value="weekly" data-i18n="每周重复">每周重复</option></select></div>
+                        <fieldset id="power-weekdays" class="power-weekdays" hidden><legend id="power-days-label"><span data-i18n="执行日期">执行日期</span></legend>
+                            <label><input type="checkbox" value="1" aria-label="周一" data-i18n-aria-label="周一"><span><span data-i18n="一">一</span></span></label><label><input type="checkbox" value="2" aria-label="周二" data-i18n-aria-label="周二"><span><span data-i18n="二">二</span></span></label><label><input type="checkbox" value="3" aria-label="周三" data-i18n-aria-label="周三"><span><span data-i18n="三">三</span></span></label><label><input type="checkbox" value="4" aria-label="周四" data-i18n-aria-label="周四"><span><span data-i18n="四">四</span></span></label><label><input type="checkbox" value="5" aria-label="周五" data-i18n-aria-label="周五"><span><span data-i18n="五">五</span></span></label><label><input type="checkbox" value="6" aria-label="周六" data-i18n-aria-label="周六"><span><span data-i18n="六">六</span></span></label><label><input type="checkbox" value="0" aria-label="周日" data-i18n-aria-label="周日"><span><span data-i18n="日">日</span></span></label>
                         </fieldset>
                         <div class="power-times">
-                            <div class="power-field" id="power-off-field" hidden><label for="power-off">关机时间</label><input id="power-off" type="datetime-local"></div>
-                            <div class="power-field" id="power-on-field" hidden><label for="power-on">开机时间</label><input id="power-on" type="datetime-local"></div>
+                            <div class="power-field" id="power-off-field" hidden><label for="power-off"><span data-i18n="关机时间">关机时间</span></label><input id="power-off" type="datetime-local"></div>
+                            <div class="power-field" id="power-on-field" hidden><label for="power-on"><span data-i18n="开机时间">开机时间</span></label><input id="power-on" type="datetime-local"></div>
                         </div>
                         <p id="power-time-hint" class="power-hint"></p>
-                        <div class="power-field"><label for="power-timezone">时区</label><input id="power-timezone" type="text" list="power-timezones" aria-describedby="power-zone-hint"><datalist id="power-timezones"><option value="Asia/Shanghai"><option value="UTC"><option value="Asia/Tokyo"><option value="America/New_York"><option value="Europe/London"></datalist><p id="power-zone-hint" class="power-hint">单次日期使用当前浏览器时区。</p></div>
+                        <div class="power-field"><label for="power-timezone"><span data-i18n="时区">时区</span></label><input id="power-timezone" type="text" list="power-timezones" aria-describedby="power-zone-hint"><datalist id="power-timezones"><option value="Asia/Shanghai"><option value="UTC"><option value="Asia/Tokyo"><option value="America/New_York"><option value="Europe/London"></datalist><p id="power-zone-hint" class="power-hint"><span data-i18n="单次日期使用当前浏览器时区。">单次日期使用当前浏览器时区。</span></p></div>
                     </div>
-                    <p id="power-disabled-hint" class="power-hint">开启后设置时间。</p>
+                    <p id="power-disabled-hint" class="power-hint"><span data-i18n="开启后设置时间。">开启后设置时间。</span></p>
                 </fieldset>
                 <p id="power-form-error" class="power-error" role="alert" tabindex="-1" hidden></p>
-                <p id="power-wake-note" class="power-hint power-note" hidden>RTC 开机需要持续供电。</p>
-                <div class="power-actions"><button type="button" id="power-cancel-plan" class="power-secondary" hidden>取消计划</button><button type="submit" id="power-save" class="power-primary" disabled>保存设置</button></div>
+                <p id="power-wake-note" class="power-hint power-note" hidden><span data-i18n="RTC 开机需要持续供电。">RTC 开机需要持续供电。</span></p>
+                <div class="power-actions"><button type="button" id="power-cancel-plan" class="power-secondary" hidden><span data-i18n="取消计划">取消计划</span></button><button type="submit" id="power-save" class="power-primary" disabled><span data-i18n="保存设置">保存设置</span></button></div>
             </form>
+            </div>
         </dialog>
         <link rel="stylesheet" href="/static/css/power.css" />
         <script src="/static/js/power.js"></script>
