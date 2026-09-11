@@ -117,6 +117,7 @@ func (s *Server) setupAuthenticatedRoutes() {
 	})
 
 	// API routes
+	authenticated.GET("/api/system/uptime", handleSystemUptime)
 	authenticated.GET("/ledcontrol", handlers.LedControl)
 	authenticated.GET("/api/led-status", handlers.GetLedStatus)
 	authenticated.GET("/userinfo", handlers.GetUserInfo)

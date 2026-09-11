@@ -12,6 +12,11 @@ PC端![image-20250331161932400](https://lzc-playground-1301583638.cos.ap-chengdu
 
 懒猫微服官网：[懒猫微服](https://lazycat.cloud/)
 
+## 0.4.4
+
+- 关于窗口默认显示会眨眼、左右看的黑猫，点击可切换为抱着毛线球荡秋千的小猫。
+- 新增系统运行时长，以 `1小时2分` 等易读格式显示，支持深浅主题和中英文切换。
+
 ## 0.4.3
 
 - 点击标题旁的信息图标，可查看应用版本、作者和项目主页。
@@ -20,12 +25,16 @@ PC端![image-20250331161932400](https://lzc-playground-1301583638.cos.ap-chengdu
 ### Application version
 
 `./build.sh` embeds the version from `package.yml` in the binary. Set `VERSION`
-to override it for a custom build, for example `VERSION=0.4.3 ./build.sh`.
+to override it for a custom build, for example `VERSION=0.4.4 ./build.sh`.
 Plain `go build` or `go run` without linker flags reports `dev`.
 Run `./dist/cat-led --version` to check it without starting the server, or click
 the info icon beside the main page title to open About. The device version shown
 in the user information area is the LazyCat OS version, separate from the app.
-Tap the sleeping cat in About for a small surprise; tap again to let it sleep.
+Tap the black cat in About to play with a ball of yarn; tap again to switch back.
+System uptime comes from Linux `/proc/uptime`, including suspend time, and is
+refreshed every minute while About is open. It measures time since system boot,
+not the lifetime of the app process. If the clock cannot be read, About shows
+an unavailable message. Both cat animations respect reduced-motion settings.
 
 ## 0.2.0
 

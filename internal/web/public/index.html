@@ -1059,20 +1059,41 @@
             <div class="about-content">
                 <div class="about-playground">
                     <button id="about-cat" type="button" aria-label="摸摸小猫" data-i18n-aria-label="摸摸小猫" aria-pressed="false" aria-describedby="about-cat-message">
-                        <span class="cat-orbit" aria-hidden="true"></span>
-                        <span class="cat-spark cat-spark-one ri-sparkling-fill" aria-hidden="true"></span>
-                        <span class="cat-spark cat-spark-two ri-heart-fill" aria-hidden="true"></span>
-                        <span class="cat-spark cat-spark-three ri-star-fill" aria-hidden="true"></span>
-                        <span class="cat-sleep" aria-hidden="true">z z Z</span>
-                        <span class="about-cat-face" aria-hidden="true">
-                            <span class="cat-ear cat-ear-left"></span><span class="cat-ear cat-ear-right"></span>
-                            <span class="cat-face"><span class="cat-eye cat-eye-left"></span><span class="cat-eye cat-eye-right"></span><span class="cat-nose"></span><span class="cat-mouth"></span><span class="cat-blush cat-blush-left"></span><span class="cat-blush cat-blush-right"></span></span>
-                            <span class="cat-paw cat-paw-left"></span><span class="cat-paw cat-paw-right"></span>
+                        <span class="about-idle-cat" aria-hidden="true">
+                            <span class="ear ear--left"></span><span class="ear ear--right"></span>
+                            <span class="face">
+                                <span class="eye eye--left"><span class="eye-pupil"></span></span>
+                                <span class="eye eye--right"><span class="eye-pupil"></span></span>
+                                <span class="muzzle"></span>
+                            </span>
+                        </span>
+                        <span class="about-yarn-scene" aria-hidden="true">
+                            <span class="all-wrap"><span class="all">
+                                <span class="yarn"></span>
+                                <span class="cat-wrap"><span class="cat">
+                                    <span class="cat-upper">
+                                        <span class="cat-leg"></span><span class="cat-leg"></span>
+                                        <span class="cat-head">
+                                            <span class="cat-ears"><span class="cat-ear"></span><span class="cat-ear"></span></span>
+                                            <span class="cat-face"><span class="cat-eyes"></span><span class="cat-mouth"></span><span class="cat-whiskers"></span></span>
+                                        </span>
+                                    </span>
+                                    <span class="cat-lower-wrap"><span class="cat-lower">
+                                        <span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-paw"></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>
+                                        <span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-leg"><span class="cat-paw"></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>
+                                        <span class="cat-tail"><span class="cat-tail"><span class="cat-tail"><span class="cat-tail"><span class="cat-tail"><span class="cat-tail"><span class="cat-tail"><span class="cat-tail"><span class="cat-tail"><span class="cat-tail"><span class="cat-tail"><span class="cat-tail"><span class="cat-tail"><span class="cat-tail"><span class="cat-tail"><span class="cat-tail"></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>
+                                    </span></span>
+                                </span></span>
+                            </span></span>
                         </span>
                     </button>
-                    <p id="about-cat-message" data-i18n="嘘，小猫正在打盹。" role="status">嘘，小猫正在打盹。</p>
+                    <p id="about-cat-message" data-i18n="点点小猫，一起玩毛线球。" role="status">点点小猫，一起玩毛线球。</p>
                 </div>
                 <p id="about-description" data-i18n="懒猫设备的灯光与定时控制助手。">懒猫设备的灯光与定时控制助手。</p>
+                <dl class="about-uptime">
+                    <dt><i class="ri-time-line" aria-hidden="true"></i><span data-i18n="系统已运行">系统已运行</span></dt>
+                    <dd id="about-uptime" data-i18n="加载中…" role="status">加载中…</dd>
+                </dl>
                 <dl class="about-details">
                     <div><dt data-i18n="应用版本">应用版本</dt><dd id="about-version">{{if .Version}}{{.Version}}{{else}}dev{{end}}</dd></div>
                     <div><dt data-i18n="作者">作者</dt><dd>czyt</dd></div>
