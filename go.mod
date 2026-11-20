@@ -13,7 +13,7 @@ require (
 	github.com/lib-x/entsqlite v0.2.7
 	github.com/lib-x/rtc v0.1.0
 	github.com/rs/zerolog v1.35.1
-	golang.org/x/oauth2 v0.37.0
+	golang.org/x/oauth2 v0.38.0
 	google.golang.org/grpc v1.84.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
